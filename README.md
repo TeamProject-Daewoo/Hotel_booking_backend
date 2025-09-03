@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ## Git 협업 방식
 Git Flow
 
@@ -32,3 +33,6 @@ cd frontend
 npm install
 
 
+=======
+# Hotel
+>>>>>>> 6245cdd (Initial commit)
