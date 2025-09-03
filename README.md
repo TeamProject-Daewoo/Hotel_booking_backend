@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ## Git 협업 방식
 Git Flow
 
@@ -29,3 +30,6 @@ Git Convention
 
 
 
+=======
+# Hotel
+>>>>>>> 6245cdd (Initial commit)
