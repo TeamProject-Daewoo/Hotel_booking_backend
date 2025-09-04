@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 6f44c12 (Update README.md)
 ## Git 협업 방식
 Git Flow
 
@@ -36,9 +32,3 @@ cd frontend
 npm install
 
 
-<<<<<<< HEAD
-=======
-# Hotel
->>>>>>> 6245cdd (Initial commit)
-=======
->>>>>>> 6f44c12 (Update README.md)
