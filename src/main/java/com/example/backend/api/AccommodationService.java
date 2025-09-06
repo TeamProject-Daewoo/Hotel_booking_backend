@@ -1,7 +1,8 @@
 package com.example.backend.api;
 
-import com.example.backend.api2.DetailRequestDTO;
+import com.example.backend.Intro.IntroService;
 import com.example.backend.api2.DetailTourService;
+import com.example.backend.common.TourApi;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -20,7 +21,9 @@ public class AccommodationService {
     @Autowired
     private AccommodationRepa AccDAO;
     @Autowired
-    private DetailTourService detailTourService; 
+    private DetailTourService detailTourService;
+    @Autowired
+    private IntroService introService; 
 
     public List<AccommodationDto> getAccommodations(String uri) throws Exception {
         String response = restTemplate.getForObject(uri, String.class);
@@ -55,19 +58,15 @@ public class AccommodationService {
                     dto.setContenttypeid(item.path("contenttypeid").asText(""));
                     dto.setMapx(item.path("mapx").asText(""));
                     dto.setMapy(item.path("mapy").asText(""));
-                    AccDAO.save(dto);
-                    DetailRequestDTO requestDTO = new DetailRequestDTO();
-                    // 모두 고정값으로 세팅
-                    requestDTO.setMobileOS("WEB");
-                    requestDTO.setMobileApp("AppTest");
-                    requestDTO.set_type("json");
-                    requestDTO.setContentId(dto.getContentid());
-                    requestDTO.setContentTypeId("32");
-                    requestDTO.setNumOfRows(10);
-                    requestDTO.setPageNo(1);
-                    requestDTO.setServiceKey("d3edf95d6c9d0b621067fbce1f7fd2521372055015a6d19f6dd61b5c9879b661");
-                    detailTourService.getDetailInfo(requestDTO);
-                    result.add(dto);
+                    
+                    TourApi api = new TourApi();
+                    String detailUri = api.getDetailUri( "1", "10", dto.getContentid());
+                    String introUri = api.getIntroUri("1", "10", dto.getContentid());
+                    //상세 정보와 소개가 존재할 때만 추가
+                    if(detailTourService.getDetailInfo(detailUri) != null && introService.getIntroDTO(introUri) != null) {
+                        AccDAO.save(dto);
+                        result.add(dto);
+                    }
                 }
             }
         }
