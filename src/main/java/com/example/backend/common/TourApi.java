@@ -1,9 +1,29 @@
 package com.example.backend.common;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URLEncoder;
+import java.util.Properties;
+
+import org.hibernate.boot.cfgxml.internal.ConfigLoader;
 
 public class TourApi {
-    public final String KEY = "d3edf95d6c9d0b621067fbce1f7fd2521372055015a6d19f6dd61b5c9879b661";
+    public static final String KEY;
+
+    static {
+        Properties properties = new Properties();
+        // 클래스패스에서 파일을 읽어옵니다.
+        try (InputStream inputStream = ConfigLoader.class.getClassLoader().getResourceAsStream("config.properties")) {
+            if (inputStream == null) {
+                throw new RuntimeException("경로 못찾음");
+            }
+            properties.load(inputStream);
+            KEY = properties.getProperty("API_KEY");
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException("예외 발생", e);
+        }
+    }
 
     private String getUri(String apiType, String pageNo, String pageCount) throws Exception {
         return "http://apis.data.go.kr/B551011/KorService2/"+apiType

@@ -19,8 +19,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "HOTELS")
 public class AccommodationDto {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String contentid;
     private String title;
     private String addr1;
     private String tel;
@@ -37,7 +36,6 @@ public class AccommodationDto {
     private String cat3;
     private String lDongRegnCd;
     private String lDongSignguCd;
-    private String contentid;
     private String contenttypeid;
     private String mapx;
     private String mapy;
