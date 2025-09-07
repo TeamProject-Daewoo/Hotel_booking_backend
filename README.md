@@ -28,4 +28,8 @@ Git Convention
 * chore : 빌드 업무 수정, 패키지 매니저 수정
 
 
+처음 import시   
+cd frontend   
+npm install
+
 

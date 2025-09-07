@@ -1,13 +1,13 @@
-package com.example.demo;
+package com.example.backend;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class HotelBookingServiceApplication {
+public class MyBackendApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(HotelBookingServiceApplication.class, args);
+		SpringApplication.run(MyBackendApplication.class, args);
 	}
 
 }
