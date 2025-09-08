@@ -31,9 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
-<<<<<<< HEAD
-=======
 
 # .gitignore
 /src/main/resources/config.properties
->>>>>>> e60d57bfd6e2541e3d9208b39f75003be9932703

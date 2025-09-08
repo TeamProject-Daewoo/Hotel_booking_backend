@@ -30,9 +30,9 @@ public class IntroDTO {
     private String checkintime;
     private String checkouttime;
     private String chkcooking;
-    private String seminar;
-    private String sports;
-    private String sauna;
+    private int seminar;
+    private int sports;
+    private int sauna;
     private String subfacility;
     private String foodplace;
     private String reservationurl;
@@ -41,5 +41,5 @@ public class IntroDTO {
     private String parkinglodging;
     private String reservationlodging;
     private String scalelodging;
-    private String accomcountlodging;
+    private int accomcountlodging;
 }
