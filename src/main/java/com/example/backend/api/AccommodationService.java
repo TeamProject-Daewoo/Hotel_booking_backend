@@ -1,11 +1,13 @@
 package com.example.backend.api;
 
+import com.example.backend.Intro.IntroService;
+import com.example.backend.api2.DetailTourService;
+import com.example.backend.common.TourApi;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +16,12 @@ public class AccommodationService {
 
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper mapper = new ObjectMapper();
+    @Autowired
+    private AccommodationRepa AccDAO;
+    @Autowired
+    private DetailTourService detailTourService;
+    @Autowired
+    private IntroService introService; 
 
     public List<AccommodationDto> getAccommodations(String uri) throws Exception {
         String response = restTemplate.getForObject(uri, String.class);
@@ -48,8 +56,15 @@ public class AccommodationService {
                     dto.setContenttypeid(item.path("contenttypeid").asText(""));
                     dto.setMapx(item.path("mapx").asText(""));
                     dto.setMapy(item.path("mapy").asText(""));
-
-                    result.add(dto);
+                    
+                    TourApi api = new TourApi();
+                    String detailUri = api.getDetailUri( "1", "10", dto.getContentid());
+                    String introUri = api.getIntroUri("1", "10", dto.getContentid());
+                    //상세 정보와 소개가 존재할 때만 추가
+                    if(detailTourService.getDetailInfo(detailUri) != null && introService.getIntroDTO(introUri) != null) {
+                        AccDAO.save(dto);
+                        result.add(dto);
+                    }
                 }
             }
         }

@@ -1,5 +1,7 @@
 package com.example.backend.api;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.persistence.Table;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -12,10 +14,11 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
+@Table(name = "HOTELS")
 public class AccommodationDto {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String contentid;
     private String title;
     private String addr1;
     private String tel;
@@ -32,7 +35,6 @@ public class AccommodationDto {
     private String cat3;
     private String lDongRegnCd;
     private String lDongSignguCd;
-    private String contentid;
     private String contenttypeid;
     private String mapx;
     private String mapy;

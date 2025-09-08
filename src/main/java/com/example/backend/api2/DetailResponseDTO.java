@@ -2,8 +2,10 @@ package com.example.backend.api2;
 
 import lombok.Data;
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class DetailResponseDTO {
     private DetailResponseDTO1 response;
 }
