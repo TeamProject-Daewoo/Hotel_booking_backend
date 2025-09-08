@@ -31,5 +31,3 @@ Git Convention
 처음 import시   
 cd frontend   
 npm install
-
-
