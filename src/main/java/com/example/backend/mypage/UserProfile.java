@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(name = "users")
-public class User {
+@Table(name = "usersprofile")
+public class UserProfile {
 
     @Id
     @Column(name = "user_name")

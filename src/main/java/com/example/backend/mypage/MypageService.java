@@ -13,13 +13,13 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MypageService {
 
-    private final UserRepository userRepository;
+    private final UserProfileRepository userRepository;
     private final ReservationRepository reservationRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Transactional(readOnly = true)
     public ProfileResponseDto getMemberProfile(String memberId) {
-        User user = userRepository.findById(memberId)
+        UserProfile user = userRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
         
         return ProfileResponseDto.builder()
@@ -30,7 +30,7 @@ public class MypageService {
     }
 
     public void updateMemberProfile(String memberId, ProfileUpdateRequestDto requestDto) {
-        User user = userRepository.findById(memberId)
+        UserProfile user = userRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
         if (!passwordEncoder.matches(requestDto.getCurrentPassword(), user.getPassword())) {
