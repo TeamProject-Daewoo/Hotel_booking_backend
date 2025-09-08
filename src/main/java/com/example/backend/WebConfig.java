@@ -9,10 +9,15 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**") // 모든 경로에 대해
-                .allowedOrigins("http://127.0.0.1:5173") // Vue 개발 서버 주소
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
+        registry.addMapping("/api/**")
+                .allowedOrigins(
+                    "http://localhost:5173", // Vite 기본 포트
+                    "http://localhost:8080", // Vue CLI 기본 포트
+                    "http://localhost:8888"  // 사용자 지정 포트
+                )
+                .allowedMethods("GET", "POST", "PATCH", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
-                .allowCredentials(true);
+                .allowCredentials(true)
+                .maxAge(3600);
     }
 }
