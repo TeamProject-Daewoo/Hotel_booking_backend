@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AccommodationService {
@@ -70,6 +71,10 @@ public class AccommodationService {
         }
 
         return result;
+    }
+
+    public Optional<AccommodationDto> getAccommodation(String contentid) {
+        return AccDAO.findById(contentid);
     }
 }
 

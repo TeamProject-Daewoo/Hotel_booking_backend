@@ -38,7 +38,8 @@ public class SecurityConfig {
             // 요청별 권한 설정
             .authorizeHttpRequests(authorize -> authorize
                 // '/api/auth/**' 경로의 요청은 모두 허용
-                .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/api/**").permitAll()
+                .requestMatchers("/accommodations/**", "/tour/**").permitAll()
                 // 그 외 모든 요청은 인증 필요
                 .anyRequest().authenticated())
             
