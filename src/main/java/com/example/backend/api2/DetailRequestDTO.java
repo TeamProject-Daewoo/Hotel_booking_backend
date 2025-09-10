@@ -3,7 +3,7 @@ package com.example.backend.api2;
 import lombok.Data;
 
 @Data
-public class DetailRequestDTO {
+public class DetailRequestDto {
     private String mobileOS;
     private String mobileApp;
     private String _type;

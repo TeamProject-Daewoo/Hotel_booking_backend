@@ -13,14 +13,14 @@ public class DetailTourService {
     @Autowired
     private DetailRepa detailRepa;
 
-    public DetailResponseDTO getDetailInfo(String uri) {
+    public DetailResponseDto getDetailInfo(String uri) {
         try{
             RestTemplate restTemplate = new RestTemplate();
     
             // JSON 응답 받기 위해 DetailResponseDTO로 변환
-            DetailResponseDTO dto = restTemplate.getForObject(uri, DetailResponseDTO.class);
+            DetailResponseDto dto = restTemplate.getForObject(uri, DetailResponseDto.class);
             for (Item item : dto.getResponse().getBody().getItems().getItem()) {
-                DetailDTO res = new DetailDTO();
+                Detail res = new Detail();
                 BeanUtils.copyProperties(item, res);
                 detailRepa.save(res);
             }

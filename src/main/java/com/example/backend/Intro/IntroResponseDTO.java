@@ -8,7 +8,7 @@ import lombok.Data;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class IntroResponseDTO {
+public class IntroResponseDto {
     private Response response;
 
     @Data

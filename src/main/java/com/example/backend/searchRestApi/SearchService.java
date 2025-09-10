@@ -1,17 +1,17 @@
 package com.example.backend.searchRestApi;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class SearchService {
-
+    
     @Autowired
-    SearchViewRepository searchViewRepository;
+    private SearchRepository searchRepository;
 
-    public SearchResponseDTO getListByKeyword(SearchRequestDTO request) {
-        System.out.println(request);
-        return searchViewRepository.getSearchView(request);
+    public List<SearchResponseDto> findBySearchElements(SearchRequestDto searchRequest) {
+        return searchRepository.findBySearchElements(searchRequest);
     }
-  
 }

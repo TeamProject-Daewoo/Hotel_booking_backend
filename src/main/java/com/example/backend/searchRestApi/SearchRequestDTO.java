@@ -6,7 +6,7 @@ import java.util.Map;
 import lombok.Data;
 
 @Data
-public class SearchRequestDTO {
+public class SearchRequestDto {
     private String keyword;
     private Date checkInDate;
     private Date checkOutDate;

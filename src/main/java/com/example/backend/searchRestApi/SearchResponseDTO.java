@@ -3,8 +3,8 @@ package com.example.backend.searchRestApi;
 import lombok.Data;
 
 @Data
-public class SearchResponseDTO {
-    private String contentid;
+public class SearchResponseDto {
+    private String contentId;
     private String title;
     private String image;
     private int price;
