@@ -6,18 +6,19 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+
 
 @RestController
-@RequestMapping("api/search")
+@RequestMapping("api")
 public class SearchController {
 
     @Autowired
     SearchService searchService;
 
-    @GetMapping("/")
+    @PostMapping("search")
     public ResponseEntity<List<SearchResponseDto>> search(@RequestBody SearchRequestDto request) {
         return ResponseEntity.ok(searchService.findBySearchElements(request));
     }

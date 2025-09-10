@@ -41,22 +41,32 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
             .select(
                 Projections.fields(
                     SearchResponseDto.class,
-                    acc.contentid,
-                    acc.title,
-                    acc.firstimage,
-                    rooms.roomoffseasonminfee1,
-                    acc.addr1
+                    acc.contentid.as("contentId"),
+                    acc.title.as("title"),
+                    acc.firstimage.as("image"),
+                    rooms.roomoffseasonminfee1.min().as("price"),
+                    acc.addr1.as("address")
                 )
             )
+            .distinct()
             .from(acc)
             .join(rooms).on(acc.contentid.eq(rooms.contentid))
-            .where(
-                keywordCondition(searchRequest.getKeyword()),
-                availableDateCondition(checkInDate, checkOutDate),
-                rooms.roomcount.goe(searchRequest.getRoomCount()),
-                rooms.roommaxcount.goe(searchRequest.getGuestCount()),
-                rooms.roomoffseasonminfee1.between(searchRequest.getMinPrice(), searchRequest.getMaxPrice())
-            )
+            .groupBy(acc.contentid)
+             .where(
+                //키워드 검색
+                 keywordCondition(searchRequest.getKeyword()),      
+                 //비용 0 제외
+                 rooms.roomoffseasonminfee1.ne(0),      
+                 //이미지 없는 목록 제외
+                 acc.firstimage.isNotEmpty(),
+                 //체크인, 체크아웃 기간에 예약 일정 없는지 체크
+                 availableDateCondition(checkInDate, checkOutDate),
+                 //객실와 인원 수 숙박 충분한지 체크
+                 rooms.roomcount.goe(searchRequest.getRoomCount()),
+                 rooms.roommaxcount.goe(searchRequest.getGuestCount()),
+                 //비용 필터
+                 rooms.roomoffseasonminfee1.between(searchRequest.getMinPrice(), searchRequest.getMaxPrice())
+             )
             .fetch();
     }
 
