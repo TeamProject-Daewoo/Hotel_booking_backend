@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class DetailResponseDTO {
+public class DetailResponseDto {
     private DetailResponseDTO1 response;
 }
 
@@ -35,7 +35,7 @@ class DetailResponseDTO1 {
 
             @Data
             public static class Item {
-                private String roomoffseasonminfee1;
+                private Integer roomoffseasonminfee1;
                 private String roomimg4;
                 private String roomtoiletries;
                 private String roomsofa;
@@ -57,12 +57,12 @@ class DetailResponseDTO1 {
                 private String roomcode;
                 private String roomtitle;
                 private String roomsize1;
-                private String roomcount;
-                private String roombasecount;
-                private String roommaxcount;
-                private String roomoffseasonminfee2;
-                private String roompeakseasonminfee1;
-                private String roompeakseasonminfee2;
+                private Integer roomcount;
+                private Integer roombasecount;
+                private Integer roommaxcount;
+                private Integer roomoffseasonminfee2;
+                private Integer roompeakseasonminfee1;
+                private Integer roompeakseasonminfee2;
                 private String roomintro;
                 private String roombathfacility;
                 private String roombath;

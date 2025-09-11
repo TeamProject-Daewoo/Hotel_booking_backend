@@ -18,10 +18,10 @@ public class AccommodationController {
     private AccommodationService accommodationService;
 
     @GetMapping("/accommodations")
-    public List<AccommodationDto> getAccommodations() throws Exception {
+    public List<Accommodation> getAccommodations() throws Exception {
 
         TourApi API = new TourApi();
-        String uri = API.getAreaBase("1", "10", "");
+        String uri = API.getAreaBase("1", "100", "");
         return accommodationService.getAccommodations(uri);
     }
 

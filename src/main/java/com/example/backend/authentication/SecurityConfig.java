@@ -31,13 +31,17 @@ public class SecurityConfig {
             .httpBasic(httpBasic -> httpBasic.disable())
             .csrf(csrf -> csrf.disable())
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            
+
             // 세션 관리 정책을 STATELESS(상태 비저장)로 설정
             .sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             
             // 요청별 권한 설정
             .authorizeHttpRequests(authorize -> authorize
                 // '/api/auth/**' 경로의 요청은 모두 허용
+                .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/api/search/**").permitAll()
+                .requestMatchers("/accommodations").permitAll()
+                .requestMatchers("/tour/detail/**").permitAll()
                 .requestMatchers("/api/**").permitAll()
                 // 그 외 모든 요청은 인증 필요
                 .anyRequest().authenticated())
