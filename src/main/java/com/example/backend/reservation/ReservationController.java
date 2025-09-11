@@ -20,6 +20,9 @@ public class ReservationController {
     public ResponseEntity<Reservation> createReservation(
             @RequestBody ReservationRequestDto requestDto,
             Authentication authentication) {
+    	
+        System.out.println("===== ReservationController.createReservation 진입 =====");
+
 
         if (authentication == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();

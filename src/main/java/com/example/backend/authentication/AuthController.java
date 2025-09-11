@@ -28,8 +28,6 @@ public class AuthController {
     public ResponseEntity<UserDto.AccessTokenResponse> login(@RequestBody UserDto.Login loginDto) {
         // 1. UserService에서 토큰 정보 받아오기
         TokenInfo tokenInfo = userService.login(loginDto);
-
-        System.out.println(tokenInfo.getRefreshToken());
     
         // 2. Refresh Token을 HttpOnly 쿠키로 설정
         ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", tokenInfo.getRefreshToken())

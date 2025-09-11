@@ -1,5 +1,7 @@
 package com.example.backend.reservation;
 
+import com.example.backend.api.Accommodation;
+import com.example.backend.authentication.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,9 +9,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-
-import com.example.backend.api.AccommodationDto;
-import com.example.backend.mypage.User;
 
 @Entity
 @Getter
@@ -26,11 +25,11 @@ public class Reservation {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_name")
-    private UserProfile user;
+    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "contentid")
-    private AccommodationDto hotel;
+    private Accommodation hotel;
 
     private String roomcode;
 

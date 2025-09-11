@@ -1,7 +1,8 @@
 package com.example.backend.api;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface AccommodationRepa extends JpaRepository<AccommodationDto,String> {
-    
+@Repository
+public interface AccommodationRepa extends JpaRepository<Accommodation, String> {
 }
