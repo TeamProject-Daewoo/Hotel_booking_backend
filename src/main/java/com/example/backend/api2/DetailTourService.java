@@ -12,7 +12,7 @@ import org.springframework.web.client.RestTemplate;
 @RequiredArgsConstructor
 public class DetailTourService {
 
-    private final a detailRepa;
+    private final DetailRepa detailRepa;
 
     public DetailResponseDTO getDetailInfo(String uri) {
         try {
