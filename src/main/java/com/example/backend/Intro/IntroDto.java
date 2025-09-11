@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Table(name = "HOTEL_INTRO")
-public class IntroDTO {
+public class IntroDto {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

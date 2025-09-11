@@ -16,11 +16,11 @@ public class IntroService {
     @Autowired
     private IntroRepository introRepository;
 
-    public IntroDTO getIntroDTO(String uri) {
+    public IntroDto getIntroDTO(String uri) {
         try {
             String json = restTemplate.getForObject(uri, String.class);
-            IntroResponseDTO responseDto = mapper.readValue(json, IntroResponseDTO.class);
-            IntroDTO res = new IntroDTO();
+            IntroResponseDto responseDto = mapper.readValue(json, IntroResponseDto.class);
+            IntroDto res = new IntroDto();
             if(responseDto != null) {
                 BeanUtils.copyProperties(responseDto.getResponse().getBody().getItems().getItem().get(0), res);
                 introRepository.save(res);

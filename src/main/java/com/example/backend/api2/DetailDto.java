@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "ROOMS")
-public class DetailDTO {
+public class DetailDto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

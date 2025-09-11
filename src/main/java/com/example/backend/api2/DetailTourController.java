@@ -16,7 +16,7 @@ public class DetailTourController {
     private DetailTourService detailTourService;
 
     @GetMapping("/detail/{id}")
-    public DetailResponseDTO getTourDetail(@PathVariable Long id) throws Exception {
+    public DetailResponseDto getTourDetail(@PathVariable Long id) throws Exception {
         TourApi api = new TourApi();
         
         return detailTourService.getDetailInfo(api.getDetailUri("1", "10", String.valueOf(id)));

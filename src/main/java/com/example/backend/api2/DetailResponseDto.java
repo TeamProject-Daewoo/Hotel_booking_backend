@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class DetailResponseDTO {
+public class DetailResponseDto {
     private DetailResponseDTO1 response;
 }
 

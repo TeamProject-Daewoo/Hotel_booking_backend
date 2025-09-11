@@ -14,12 +14,12 @@ public class IntroController {
     private IntroService introService;
 
     @GetMapping("/intro/{contentId}")
-    public ResponseEntity<IntroDTO> getIntro(@PathVariable String contentId) throws Exception {
+    public ResponseEntity<IntroDto> getIntro(@PathVariable String contentId) throws Exception {
         // KorService2 detailIntro2 호출용 URI 생성
         TourApi api = new TourApi();
         String introUri = api.getIntroUri("1", "10", contentId);
 
-        IntroDTO dto = introService.getIntroDTO(introUri);
+        IntroDto dto = introService.getIntroDTO(introUri);
         if (dto == null) {
             return ResponseEntity.notFound().build();
         }
