@@ -27,7 +27,7 @@ public class AccommodationController {
 
     
     @GetMapping("/accommodations/{contentid}")
-    public ResponseEntity<AccommodationDto> getAccommodation(@PathVariable String contentid) {
+    public ResponseEntity<Accommodation> getAccommodation(@PathVariable String contentid) {
         return accommodationService.getAccommodation(contentid)
             .map(ResponseEntity::ok)
             .orElse(ResponseEntity.notFound().build());

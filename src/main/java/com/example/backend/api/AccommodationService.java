@@ -74,7 +74,7 @@ public class AccommodationService {
         return result;
     }
 
-    public Optional<AccommodationDto> getAccommodation(String contentid) {
+    public Optional<Accommodation> getAccommodation(String contentid) {
         return AccDAO.findById(contentid);
     }
 }

@@ -1,6 +1,6 @@
 package com.example.backend.reservation;
 
-import com.example.backend.api.AccommodationDto;
+import com.example.backend.api.Accommodation;
 import com.example.backend.api.AccommodationRepa;
 import com.example.backend.authentication.User;
 import com.example.backend.authentication.UserRepository;
@@ -21,7 +21,7 @@ public class ReservationService {
         User user = userRepository.findById(userName)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
-        AccommodationDto accommodation = accommodationRepository.findById(requestDto.getContentid())
+        Accommodation accommodation = accommodationRepository.findById(requestDto.getContentid())
                 .orElseThrow(() -> new IllegalArgumentException("숙소를 찾을 수 없습니다."));
 
         Reservation reservation = Reservation.builder()
