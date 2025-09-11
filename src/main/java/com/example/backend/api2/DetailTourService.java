@@ -20,7 +20,7 @@ public class DetailTourService {
             // JSON 응답 받기 위해 DetailResponseDTO로 변환
             DetailResponseDto dto = restTemplate.getForObject(uri, DetailResponseDto.class);
             for (Item item : dto.getResponse().getBody().getItems().getItem()) {
-                DetailDto res = new DetailDto();
+                Detail res = new Detail();
                 BeanUtils.copyProperties(item, res);
                 detailRepa.save(res);
             }

@@ -24,19 +24,19 @@ public class AccommodationService {
     @Autowired
     private IntroService introService; 
 
-    public List<AccommodationDto> getAccommodations(String uri) throws Exception {
+    public List<Accommodation> getAccommodations(String uri) throws Exception {
         String response = restTemplate.getForObject(uri, String.class);
         JsonNode root = mapper.readTree(response);
 
         // API 구조에 맞게 path 설정
         JsonNode items = root.path("response").path("body").path("items").path("item");
-        List<AccommodationDto> result = new ArrayList<>();
+        List<Accommodation> result = new ArrayList<>();
 
         if (items.isArray()) {
             for (JsonNode item : items) {
                 // lclsSystm1이 "AC"인 경우만 추가
                 if ("AC".equals(item.path("lclsSystm1").asText(""))) {
-                    AccommodationDto dto = new AccommodationDto();
+                    Accommodation dto = new Accommodation();
                     dto.setTitle(item.path("title").asText(""));
                     dto.setAddr1(item.path("addr1").asText(""));
                     dto.setTel(item.path("tel").asText(""));
@@ -73,7 +73,7 @@ public class AccommodationService {
         return result;
     }
 
-    public Optional<AccommodationDto> getAccommodation(String contentid) {
+    public Optional<Accommodation> getAccommodation(String contentid) {
         return AccDAO.findById(contentid);
     }
 }

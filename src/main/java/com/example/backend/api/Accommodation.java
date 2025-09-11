@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Table(name = "HOTELS")
-public class AccommodationDto {
+public class Accommodation {
     @Id
     private String contentid;
     private String title;

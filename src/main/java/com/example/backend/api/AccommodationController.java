@@ -17,16 +17,16 @@ public class AccommodationController {
     private AccommodationService accommodationService;
 
     @GetMapping("/accommodations")
-    public List<AccommodationDto> getAccommodations() throws Exception {
+    public List<Accommodation> getAccommodations() throws Exception {
 
         TourApi API = new TourApi();
-        String uri = API.getAreaBase("1", "10", "");
+        String uri = API.getAreaBase("1", "100", "");
         return accommodationService.getAccommodations(uri);
     }
 
     
     @GetMapping("/accommodations/{contentid}")
-    public ResponseEntity<AccommodationDto> getAccommodation(@PathVariable String contentid) {
+    public ResponseEntity<Accommodation> getAccommodation(@PathVariable String contentid) {
         return accommodationService.getAccommodation(contentid)
             .map(ResponseEntity::ok)
             .orElse(ResponseEntity.notFound().build());
