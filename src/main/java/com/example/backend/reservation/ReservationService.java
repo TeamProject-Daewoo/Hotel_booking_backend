@@ -17,25 +17,25 @@ public class ReservationService {
     private final AccommodationRepa accommodationRepository;
 
     @Transactional
-    public Reservation createReservation(ReservationRequestDto requestDto, String userName) {
-        User user = userRepository.findById(userName)
+    public Reservation createReservation(ReservationRequestDto requestDto, String username) {
+        User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
-        Accommodation accommodation = accommodationRepository.findById(requestDto.getContentid())
-                .orElseThrow(() -> new IllegalArgumentException("숙소를 찾을 수 없습니다."));
+        Accommodation hotel = accommodationRepository.findById(requestDto.getContentid())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 숙소입니다."));
 
-        Reservation reservation = Reservation.builder()
+        Reservation newReservation = Reservation.builder()
                 .user(user)
-                .hotel(accommodation)
+                .hotel(hotel)
                 .roomcode(requestDto.getRoomcode())
                 .checkInDate(requestDto.getCheckInDate())
                 .checkOutDate(requestDto.getCheckOutDate())
                 .numAdults(requestDto.getNumAdults())
                 .numChildren(requestDto.getNumChildren())
-                .totalPrice(requestDto.getTotalPrice())
-                .status("RESERVED")
+                .totalPrice(requestDto.getTotalPrice()) 
+                .status("PENDING")
                 .build();
-
-        return reservationRepository.save(reservation);
+        
+        return reservationRepository.save(newReservation);
     }
 }
