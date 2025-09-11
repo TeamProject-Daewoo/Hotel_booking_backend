@@ -1,6 +1,6 @@
 package com.example.backend.mypage;
 
-import com.example.backend.api.Accommodation;
+import com.example.backend.api.AccommodationDto;
 import com.example.backend.authentication.User;
 import com.example.backend.authentication.UserRepository;
 import com.example.backend.reservation.Reservation;
@@ -64,7 +64,7 @@ public class MypageService {
 
         return reservations.stream()
                 .map(reservation -> {
-                    Accommodation hotel = reservation.getHotel();
+                    AccommodationDto hotel = reservation.getHotel();
                     return BookingResponseDto.builder()
                         .reservationId(reservation.getReservationId())
                         .hotelId(hotel.getContentid())

@@ -1,15 +1,23 @@
 package com.example.backend.api2;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "ROOMS")
 public class DetailDTO {
-    // @Id, @GeneratedValue, @Entity, @Table 등 DB 관련 어노테이션 모두 제거
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String roomoffseasonminfee1;
     private String roomimg4;
     private String roomtoiletries;

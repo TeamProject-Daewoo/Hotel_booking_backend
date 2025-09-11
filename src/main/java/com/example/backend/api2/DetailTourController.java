@@ -22,4 +22,3 @@ public class DetailTourController {
         return detailTourService.getDetailInfo(api.getDetailUri("1", "10", String.valueOf(id)));
     }
 }
-

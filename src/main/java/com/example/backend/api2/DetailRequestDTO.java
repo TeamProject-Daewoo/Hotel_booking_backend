@@ -13,4 +13,3 @@ public class DetailRequestDTO {
     private Integer pageNo;
     private String serviceKey;
 }
-

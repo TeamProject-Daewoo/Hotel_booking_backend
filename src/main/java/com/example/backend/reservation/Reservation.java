@@ -1,6 +1,6 @@
 package com.example.backend.reservation;
 
-import com.example.backend.api.Accommodation;
+import com.example.backend.api.AccommodationDto;
 import com.example.backend.authentication.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -29,7 +29,7 @@ public class Reservation {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "contentid")
-    private Accommodation hotel;
+    private AccommodationDto hotel;
 
     private String roomcode;
 
