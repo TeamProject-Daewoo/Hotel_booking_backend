@@ -1,14 +1,30 @@
 package com.example.backend.api2;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import com.example.backend.api2.DetailResponseDTO1.Body.Items.Item;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.BeanUtils;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class DetailDTO {
-    // @Id, @GeneratedValue, @Entity, @Table 등 DB 관련 어노테이션 모두 제거
+@Entity
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "ROOMS")
+public class DetailEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    // Item DTO를 Entity로 변환하는 생성자
+    public DetailEntity(Item itemDto) {
+        BeanUtils.copyProperties(itemDto, this);
+    }
 
     private String roomoffseasonminfee1;
     private String roomimg4;

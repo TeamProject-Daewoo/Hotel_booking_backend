@@ -1,27 +1,17 @@
 package com.example.backend.Intro;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-@Table(name = "HOTEL_INTRO")
 public class IntroDTO {
+    // @Id, @GeneratedValue, @Entity, @Table 등 DB 관련 어노테이션 모두 제거
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
     private String contentid;
     private String contenttypeid;
     private int roomcount;

@@ -34,7 +34,7 @@ public class Accommodation {
 
     @Column(name = "sigungu_code")
     private String sigunguCode;
-    
+
     @Column(name = "l_dong_regn_cd")
     private String lDongRegnCd;
 
@@ -49,7 +49,7 @@ public class Accommodation {
 
     @Column(name = "lcls_systm3")
     private String lclsSystm3;
-    
+
     public Accommodation(AccommodationDto dto) {
         this.contentid = dto.getContentid();
         this.title = dto.getTitle();
