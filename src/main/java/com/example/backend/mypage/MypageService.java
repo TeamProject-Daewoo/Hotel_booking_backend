@@ -26,23 +26,29 @@ public class MypageService {
     public ProfileResponseDto getMemberProfile(String memberId) {
         User user = userRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
-        return new ProfileResponseDto(user.getUsername(), user.getEmail(), user.getPhoneNumber());
+        return ProfileResponseDto.builder()
+                .name(user.getName())
+                .email(user.getEmail())
+                .phoneNumber(user.getPhoneNumber())
+                .build();
     }
 
     public void updateMemberProfile(String memberId, ProfileUpdateRequestDto requestDto) {
         User user = userRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
+        // 비밀번호 변경이 요청된 경우에만 처리
         if (requestDto.getNewPassword() != null && !requestDto.getNewPassword().isEmpty()) {
+            // 현재 비밀번호 확인
             if (requestDto.getCurrentPassword() == null || !passwordEncoder.matches(requestDto.getCurrentPassword(), user.getPassword())) {
                 throw new IllegalArgumentException("현재 비밀번호가 일치하지 않습니다.");
             }
+            // 새 비밀번호 암호화 및 업데이트
             user.updatePassword(passwordEncoder.encode(requestDto.getNewPassword()));
         }
 
-        if (requestDto.getPhoneNumber() != null && !requestDto.getPhoneNumber().isEmpty()) {
-            user.updateProfile(null, requestDto.getPhoneNumber());
-        }
+        // 이름 또는 휴대폰 번호 업데이트
+        user.updateProfile(requestDto.getName(), requestDto.getPhoneNumber());
     }
 
     public void deleteMember(String memberId) {
@@ -59,7 +65,6 @@ public class MypageService {
         return reservations.stream()
                 .map(reservation -> {
                     Accommodation hotel = reservation.getHotel();
-
                     return BookingResponseDto.builder()
                         .reservationId(reservation.getReservationId())
                         .hotelId(hotel.getContentid())

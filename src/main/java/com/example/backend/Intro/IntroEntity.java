@@ -11,7 +11,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.BeanUtils;
 
-
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -22,31 +21,18 @@ public class IntroEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Item DTO를 Entity로 변환하는 생성자
-    public IntroEntity(Item itemDto) {
-        BeanUtils.copyProperties(itemDto, this);
-    }
-
+    // --- 모든 필드를 String 또는 DB 타입에 맞게 수정 ---
     private String contentid;
     private String contenttypeid;
-    private String roomcount;
+    private String roomcount; // Integer -> String
     private String roomtype;
     private String refundregulation;
     private String checkintime;
     private String checkouttime;
     private String chkcooking;
-    private String seminar;
-    private String sports;
-    private String sauna;
-    private String beauty;
-    private String beverage;
-    private String karaoke;
-    private String barbecue;
-    private String campfire;
-    private String bicycle;
-    private String fitness;
-    private String publicpc;
-    private String publicbath;
+    private String seminar; // Integer -> String
+    private String sports; // Integer -> String
+    private String sauna; // Integer -> String
     private String subfacility;
     private String foodplace;
     private String reservationurl;
@@ -55,5 +41,10 @@ public class IntroEntity {
     private String parkinglodging;
     private String reservationlodging;
     private String scalelodging;
-    private String accomcountlodging;
+    private String accomcountlodging; // Integer -> String
+
+    public IntroEntity(Item itemDto) {
+        // DTO의 모든 필드는 String이므로, 그대로 복사
+        BeanUtils.copyProperties(itemDto, this);
+    }
 }

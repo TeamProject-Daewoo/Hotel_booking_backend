@@ -31,5 +31,5 @@ public class IntroDTO {
     private String parkinglodging;
     private String reservationlodging;
     private String scalelodging;
-    private int accomcountlodging;
+    private String accomcountlodging;
 }

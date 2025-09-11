@@ -1,28 +1,27 @@
 package com.example.backend.Intro;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import com.example.backend.common.TourApi;
 
 @RestController
 @RequestMapping("/tour")
+@RequiredArgsConstructor
 public class IntroController {
 
-    @Autowired
-    private IntroService introService;
+    private final IntroService introService;
 
     @GetMapping("/intro/{contentId}")
     public ResponseEntity<IntroDTO> getIntro(@PathVariable String contentId) throws Exception {
-        // KorService2 detailIntro2 호출용 URI 생성
         TourApi api = new TourApi();
         String introUri = api.getIntroUri("1", "10", contentId);
 
-        IntroDTO dto = introService.getIntroDTO(introUri);
-        if (dto == null) {
+        IntroDTO introData = introService.getIntro(introUri);
+
+        if (introData == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(dto);
+        return ResponseEntity.ok(introData);
     }
 }

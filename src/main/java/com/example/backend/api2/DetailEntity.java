@@ -21,12 +21,7 @@ public class DetailEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Item DTO를 Entity로 변환하는 생성자
-    public DetailEntity(Item itemDto) {
-        BeanUtils.copyProperties(itemDto, this);
-    }
-
-    private String roomoffseasonminfee1;
+    private Integer roomoffseasonminfee1;
     private String roomimg4;
     private String roomtoiletries;
     private String roomsofa;
@@ -48,12 +43,12 @@ public class DetailEntity {
     private String roomcode;
     private String roomtitle;
     private String roomsize1;
-    private String roomcount;
-    private String roombasecount;
-    private String roommaxcount;
-    private String roomoffseasonminfee2;
-    private String roompeakseasonminfee1;
-    private String roompeakseasonminfee2;
+    private Integer roomcount; 
+    private Integer roombasecount; 
+    private Integer roommaxcount;
+    private Integer roomoffseasonminfee2; 
+    private Integer roompeakseasonminfee1; 
+    private Integer roompeakseasonminfee2; 
     private String roomintro;
     private String roombathfacility;
     private String roombath;
@@ -79,4 +74,33 @@ public class DetailEntity {
     private String cpyrhtDivCd3;
     private String cpyrhtDivCd4;
     private String cpyrhtDivCd5;
+    
+    // Item DTO를 Entity로 변환하는 생성자
+    public DetailEntity(Item itemDto) {
+        // 모든 String 필드는 그대로 복사
+        BeanUtils.copyProperties(itemDto, this,
+            "roomoffseasonminfee1", "roomcount", "roombasecount", "roommaxcount",
+            "roomoffseasonminfee2", "roompeakseasonminfee1", "roompeakseasonminfee2");
+
+        // String -> Integer 변환 필요한 필드만 수동으로 처리
+        this.roomoffseasonminfee1 = safeParseInt(itemDto.getRoomoffseasonminfee1());
+        this.roomcount = safeParseInt(itemDto.getRoomcount());
+        this.roombasecount = safeParseInt(itemDto.getRoombasecount());
+        this.roommaxcount = safeParseInt(itemDto.getRoommaxcount());
+        this.roomoffseasonminfee2 = safeParseInt(itemDto.getRoomoffseasonminfee2());
+        this.roompeakseasonminfee1 = safeParseInt(itemDto.getRoompeakseasonminfee1());
+        this.roompeakseasonminfee2 = safeParseInt(itemDto.getRoompeakseasonminfee2());
+    }
+
+    private Integer safeParseInt(String s) {
+        if (s == null || s.trim().isEmpty()) {
+            return 0; // 혹은 null을 원하시면 null 반환
+        }
+        try {
+            // 콤마(,)가 포함된 숫자 문자열도 처리
+            return Integer.parseInt(s.replaceAll(",", ""));
+        } catch (NumberFormatException e) {
+            return 0; // 혹은 null
+        }
+    }
 }
