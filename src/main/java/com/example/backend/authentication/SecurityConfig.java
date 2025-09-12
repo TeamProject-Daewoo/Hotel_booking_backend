@@ -38,12 +38,15 @@ public class SecurityConfig {
             // 요청별 권한 설정
             .authorizeHttpRequests(authorize -> authorize
                 // '/api/auth/**' 경로의 요청은 모두 허용
+<<<<<<<<< Temporary merge branch 1
+                .requestMatchers("/api/**").permitAll()
+                .requestMatchers("/accommodations/**", "/tour/**").permitAll()
+=========
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/search/**").permitAll()
                 .requestMatchers("/accommodations").permitAll()
                 .requestMatchers("/tour/detail/**").permitAll()
-                .requestMatchers("/tour/**").permitAll()
-                .requestMatchers("/api/**").permitAll()
+>>>>>>>>> Temporary merge branch 2
                 // 그 외 모든 요청은 인증 필요
 						.anyRequest().permitAll()/* .authenticated() */)
             
