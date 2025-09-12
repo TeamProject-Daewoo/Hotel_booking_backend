@@ -62,7 +62,7 @@ public class HotelsService {
     }
 
     public Optional<Hotels> getAccommodation(String contentid) {
-        return hotels.findById(contentid);
+        return hotels.findByContentid(contentid);
     }
 }
 
