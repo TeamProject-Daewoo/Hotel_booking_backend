@@ -27,13 +27,13 @@ public class User implements UserDetails {
 
     @Id
     @Column(name = "user_name", updatable = false, unique = true, nullable = false)
-    private String username; // 'user_name' 컬럼과 매핑
+    private String username;
 
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
     @Column(name = "password_hash", nullable = false)
-    private String password; // 'password_hash' 컬럼과 매핑
+    private String password;
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -59,19 +59,32 @@ public class User implements UserDetails {
         this.password = password;
         this.name = name;
         this.phoneNumber = phoneNumber;
-        this.joinDate = LocalDateTime.now(); // 가입 시 현재 시간으로 자동 설정
+        this.joinDate = LocalDateTime.now();
         this.role = role;
 
-        // ✨ 핵심 로직: 역할에 따라 승인 상태를 자동으로 설정
         if (role == Role.ADMIN || role == Role.BUSINESS) {
-            this.approvalStatus = ApprovalStatus.PENDING; // 관리자나 사업자는 승인 대기
+            this.approvalStatus = ApprovalStatus.PENDING;
         } else {
-            this.approvalStatus = ApprovalStatus.APPROVED; // 일반 사용자는 즉시 승인
+            this.approvalStatus = ApprovalStatus.APPROVED;
         }
-
     }
 
-    // Spring Security UserDetails 인터페이스 구현
+    // --- UserProfile로부터 가져온 메소드들 ---
+    public void updateProfile(String name, String phoneNumber) {
+        if (name != null && !name.isBlank()) {
+            this.name = name;
+        }
+        if (phoneNumber != null && !phoneNumber.isBlank()) {
+            this.phoneNumber = phoneNumber;
+        }
+    }
+
+    public void updatePassword(String newPassword) {
+        this.password = newPassword;
+    }
+    // ------------------------------------
+
+    // --- Spring Security UserDetails 인터페이스 구현 ---
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));

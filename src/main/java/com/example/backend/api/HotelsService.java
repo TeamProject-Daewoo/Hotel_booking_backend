@@ -1,3 +1,4 @@
+
 package com.example.backend.api;
 
 import com.example.backend.Intro.IntroService;
@@ -65,4 +66,3 @@ public class HotelsService {
         return hotels.findByContentid(contentid);
     }
 }
-

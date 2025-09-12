@@ -6,7 +6,7 @@ import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.example.backend.api.QHotels;
 import com.example.backend.api2.QDetail;
-import com.example.backend.mypage.QReservation;
+import com.example.backend.reservation.QReservation;
 
 import java.time.LocalDate;
 import java.time.ZoneId;

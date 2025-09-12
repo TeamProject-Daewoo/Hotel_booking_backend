@@ -30,5 +30,4 @@ public class Hotels {
     private String sigunguCode;
     private String mapx;
     private String mapy;
-    private String lclsSystm3;
 }
