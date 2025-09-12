@@ -84,7 +84,7 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("해당 아이디를 찾을 수 없습니다."));
-
+        
         // ✨ 로그인 시 승인 상태 검증
         if (!user.isAccountNonLocked()) {
             throw new LockedException("아직 승인되지 않은 계정입니다.");

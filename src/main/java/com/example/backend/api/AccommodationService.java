@@ -1,3 +1,4 @@
+
 package com.example.backend.api;
 
 import com.example.backend.Intro.IntroService;
@@ -77,4 +78,3 @@ public class AccommodationService {
         return AccDAO.findById(contentid);
     }
 }
-
