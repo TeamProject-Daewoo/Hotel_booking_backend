@@ -1,6 +1,6 @@
 package com.example.backend.mypage;
 
-import com.example.backend.api.Accommodation; // import 변경
+import com.example.backend.api.Hotels; // import 변경
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,7 +23,7 @@ public class Reservation {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "contentid")
-    private Accommodation hotel;
+    private Hotels hotel;
 
     private String roomcode;
     private LocalDate checkInDate;

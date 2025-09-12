@@ -11,13 +11,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.backend.common.TourApi;
 
 @RestController
-public class AccommodationController {
+public class HotelsController {
 
     @Autowired
-    private AccommodationService accommodationService;
+    private HotelsService accommodationService;
 
     @GetMapping("/accommodations")
-    public List<Accommodation> getAccommodations() throws Exception {
+    public List<Hotels> getAccommodations() throws Exception {
 
         TourApi API = new TourApi();
         String uri = API.getAreaBase("1", "100", "");
@@ -26,7 +26,7 @@ public class AccommodationController {
 
     
     @GetMapping("/accommodations/{contentid}")
-    public ResponseEntity<Accommodation> getAccommodation(@PathVariable String contentid) {
+    public ResponseEntity<Hotels> getAccommodation(@PathVariable String contentid) {
         return accommodationService.getAccommodation(contentid)
             .map(ResponseEntity::ok)
             .orElse(ResponseEntity.notFound().build());
