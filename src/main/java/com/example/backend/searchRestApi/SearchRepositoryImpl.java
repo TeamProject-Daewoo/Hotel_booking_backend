@@ -11,6 +11,7 @@ import com.example.backend.reservation.QReservation;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Repository;
 
@@ -52,20 +53,22 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
             .from(hotels)
             .join(rooms).on(hotels.contentid.eq(rooms.contentid))
             .groupBy(hotels.contentid)
-             .where(
+            .where(
                 //키워드 검색
-                 keywordCondition(searchRequest.getKeyword()),      
-                 //비용 0 제외
-                 rooms.roomoffseasonminfee1.ne(0),      
-                 //이미지 없는 목록 제외
-                 hotels.firstimage.isNotEmpty(),
-                 //체크인, 체크아웃 기간에 예약 일정 없는지 체크
-                 availableDateCondition(checkInDate, checkOutDate),
-                 //객실와 인원 수 숙박 충분한지 체크
-                 rooms.roomcount.goe(searchRequest.getRoomCount()),
-                 rooms.roommaxcount.goe(searchRequest.getGuestCount()),
-                 //비용 필터
-                 rooms.roomoffseasonminfee1.between(searchRequest.getMinPrice(), searchRequest.getMaxPrice())
+                keywordCondition(searchRequest.getKeyword()),      
+                //비용 0 제외
+                rooms.roomoffseasonminfee1.ne(0),      
+                //이미지 없는 목록 제외
+                hotels.firstimage.isNotEmpty(),
+                //체크인, 체크아웃 기간에 예약 일정 없는지 체크
+                //availableDateCondition(checkInDate, checkOutDate),
+                //객실와 인원 수 숙박 충분한지 체크
+                rooms.roomcount.goe(searchRequest.getRoomCount()),
+                rooms.roommaxcount.goe(searchRequest.getGuestCount()),
+                //비용 필터
+                rooms.roomoffseasonminfee1.between(searchRequest.getMinPrice(), searchRequest.getMaxPrice())
+                //필터링
+
              )
             .fetch();
     }
@@ -79,15 +82,21 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
     }
 
     private BooleanExpression availableDateCondition(LocalDate checkInDate, LocalDate checkOutDate) {
-        return JPAExpressions.selectFrom(reservation)
+        return JPAExpressions.selectOne()
+            .from(reservation)
             .where(
                 reservation.hotel.contentid.eq(hotels.contentid)
-                    .and(
-                        reservation.checkInDate.gt(checkInDate)
-                        .and(reservation.checkOutDate.lt(checkOutDate))
+                .and(reservation.status.eq("PAID"))
+                .and(
+                    // 기존 예약의 체크아웃 날짜가 새로운 체크인 날짜보다 뒤에 있고,
+                    // 기존 예약의 체크인 날짜가 새로운 체크아웃 날짜보다 앞에 있는 경우 (겹치는 조건)
+                    reservation.checkOutDate.gt(checkInDate).and(
+                        reservation.checkInDate.lt(checkOutDate)
                     )
+                )
             )
-            .exists()
+            .exists() // 겹치는 예약이 있으면 true
             .not();
     }
+    
 }
