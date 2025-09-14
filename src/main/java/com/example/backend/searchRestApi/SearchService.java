@@ -12,8 +12,6 @@ public class SearchService {
     private SearchRepository searchRepository;
 
     public List<SearchResponseDto> findBySearchElements(SearchRequestDto searchRequest) {
-        List<SearchResponseDto> res = searchRepository.findBySearchElements(searchRequest);
-        System.out.println(res);
-        return res;
+        return searchRepository.findBySearchElements(searchRequest);
     }
 }

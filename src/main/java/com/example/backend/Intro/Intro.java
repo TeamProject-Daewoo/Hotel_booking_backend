@@ -27,9 +27,9 @@ public class Intro {
     private String checkintime;
     private String checkouttime;
     private String chkcooking;
-    private int seminar;
-    private int sports;
-    private int sauna;
+    private String seminar;
+    private String sports;
+    private String sauna;
     private String beauty;
     private String beverage;
     private String karaoke;
