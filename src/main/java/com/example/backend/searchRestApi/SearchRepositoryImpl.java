@@ -62,19 +62,19 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
                 //키워드 검색
                 keywordCondition(searchRequest.getKeyword()),      
                 //비용 0 제외
-                // rooms.roomoffseasonminfee1.ne(0),      
+                rooms.roomoffseasonminfee1.ne(0),      
                 //이미지 없는 목록 제외
-                // hotels.firstimage.isNotEmpty(),
+                hotels.firstimage.isNotEmpty(),
                 //체크인, 체크아웃 기간에 예약 일정 없는지 체크
                 //availableDateCondition(checkInDate, checkOutDate),
                 //객실과 인원 수 숙박 충분한지 체크
-                // rooms.roomcount.goe(searchRequest.getRoomCount()),
-                // rooms.roommaxcount.goe(searchRequest.getGuestCount()),
+                rooms.roomcount.goe(searchRequest.getRoomCount()),
+                rooms.roommaxcount.goe(searchRequest.getGuestCount()),
                 //비용 필터
                 rooms.roomoffseasonminfee1.between(searchRequest.getMinPrice(), searchRequest.getMaxPrice()),
                 //필터링
-                filterAmenitiesCondition(searchRequest.getAmenities())
-                //filterFreebiesCondition(searchRequest.getFreebies())
+                filterAmenitiesCondition(searchRequest.getAmenities()),
+                filterFreebiesCondition(searchRequest.getFreebies())
              )
             .fetch();
     }
@@ -111,10 +111,9 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
         String[] restKeywords = {"휴게실", "라운지", "카페", "정원", "테라스", "평상", "루프탑"};
         // Map을 순회하며 true로 설정된 필터 조건들을 쿼리에 추가
         for (String key : amenities.keySet()) {
-            Boolean value = amenities.get(key);
             
             // 값이 true인 경우에만 조건을 추가
-            if (Boolean.TRUE.equals(value)) {
+            if (Boolean.TRUE.equals(amenities.get(key))) {
                 switch (key) {
                     case "주차가능":
                         builder.and(intro.parkinglodging.containsIgnoreCase("가능")
@@ -173,10 +172,49 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
         }
         
         return builder;
-        
     }
     private BooleanBuilder filterFreebiesCondition(Map<String, Boolean> freebies) {
         BooleanBuilder builder = new BooleanBuilder();
+
+        for (String key : freebies.keySet()) {
+            if (Boolean.TRUE.equals(freebies.get(key))) {
+                switch (key) {
+                    case "욕실":
+                        builder.and(rooms.roombathfacility.eq("Y"));
+                        break;
+                    case "욕조":
+                        builder.and(rooms.roombath.eq("Y"));
+                        break;
+                    case "세면도구제공":
+                        builder.and(rooms.roomtoiletries.eq("Y"));
+                        break;
+                    case "홈시어터":
+                        builder.and(rooms.roomhometheater.eq("Y"));
+                        break;
+                    case "에어컨":
+                        builder.and(rooms.roomaircondition.eq("Y"));
+                        break;
+                    case "Tv":
+                        builder.and(rooms.roomtv.eq("Y"));
+                        break;
+                    case "Pc":
+                        builder.and(rooms.roompc.eq("Y"));
+                        break;
+                    case "Wifi":
+                        builder.and(rooms.roominternet.eq("Y"));
+                        break;
+                    case "냉장고":
+                        builder.and(rooms.roomrefrigerator.eq("Y"));
+                        break;
+                    case "취사가능":
+                        builder.and(rooms.roomcook.eq("Y"));
+                        break;   
+                    default:
+                        break;
+                }
+            }
+        }
+
         return builder;
     }
     
