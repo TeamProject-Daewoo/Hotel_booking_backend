@@ -1,15 +1,13 @@
 package com.example.backend.searchRestApi;
 
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import lombok.Data;
 
 @Data
 public class SearchResponseDto {
-    private String contentId;
-    private String title;
-    private String image;
-    private int price;
-    private String address;
-    private double rating;
-    private int totalAminities;
-    private int totalReviews;
+    private List<SearchCardDto> searchCards;
+    private Map<String, Integer> counts = new LinkedHashMap<>();
 }

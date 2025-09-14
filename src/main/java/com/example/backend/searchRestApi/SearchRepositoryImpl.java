@@ -1,8 +1,13 @@
 package com.example.backend.searchRestApi;
 
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.CaseBuilder;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.NumberExpression;
+import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.example.backend.Intro.QIntro;
@@ -12,6 +17,7 @@ import com.example.backend.reservation.QReservation;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -26,13 +32,15 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
     private final QDetail rooms = QDetail.detail;
     private final QIntro intro = QIntro.intro;
     private final QReservation reservation = QReservation.reservation;
+    
+    private final static int CATEGORY_COUNT = 4;
 
     public SearchRepositoryImpl(JPAQueryFactory queryFactory) {
         this.queryFactory = queryFactory;
     }
 
     @Override
-    public List<SearchResponseDto> findBySearchElements(SearchRequestDto searchRequest) {
+    public SearchResponseDto findBySearchElements(SearchRequestDto searchRequest) {
         
         // DTO에서 Date를 받아서 LocalDate로 변환
         LocalDate checkInDate = searchRequest.getCheckInDate().toInstant()
@@ -41,11 +49,11 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
         LocalDate checkOutDate = searchRequest.getCheckOutDate().toInstant()
                                      .atZone(ZoneId.systemDefault())
                                      .toLocalDate();
+        BooleanBuilder commonCondition = getCommonConditions(searchRequest, checkInDate, checkOutDate);
         
-        return queryFactory
-            .select(
-                Projections.fields(
-                    SearchResponseDto.class,
+        //카드에 표시될 내용에 대한 쿼리
+        List<SearchCardDto> card = queryFactory
+            .select(Projections.fields(SearchCardDto.class,
                     hotels.contentid.as("contentId"),
                     hotels.title.as("title"),
                     hotels.firstimage.as("image"),
@@ -58,25 +66,89 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
             .join(rooms).on(hotels.contentid.eq(rooms.contentid))
             .join(intro).on(hotels.contentid.eq(intro.contentid))
             .groupBy(hotels.contentid)
-            .where(
-                //키워드 검색
-                keywordCondition(searchRequest.getKeyword()),      
-                //비용 0 제외
-                rooms.roomoffseasonminfee1.ne(0),      
-                //이미지 없는 목록 제외
-                hotels.firstimage.isNotEmpty(),
-                //체크인, 체크아웃 기간에 예약 일정 없는지 체크
-                //availableDateCondition(checkInDate, checkOutDate),
-                //객실과 인원 수 숙박 충분한지 체크
-                rooms.roomcount.goe(searchRequest.getRoomCount()),
-                rooms.roommaxcount.goe(searchRequest.getGuestCount()),
-                //비용 필터
-                rooms.roomoffseasonminfee1.between(searchRequest.getMinPrice(), searchRequest.getMaxPrice()),
-                //필터링
-                filterAmenitiesCondition(searchRequest.getAmenities()),
-                filterFreebiesCondition(searchRequest.getFreebies())
-             )
+            .where(commonCondition, categorySelectCondition(searchRequest.getCategory()))
             .fetch();
+
+        //카테고리별 개수 반환 쿼리
+        List<Tuple> counts = queryFactory
+            .select(
+                hotels.contentid.countDistinct(),
+                hotels.category
+            )
+            .from(hotels)
+            .join(rooms).on(hotels.contentid.eq(rooms.contentid))
+            .join(intro).on(hotels.contentid.eq(intro.contentid))
+            .where(commonCondition)
+            .groupBy(hotels.category)
+            .fetch();
+
+        //전체 합계 반환 쿼리
+        long totalCount = queryFactory
+            .select(hotels.contentid.countDistinct())
+            .from(hotels)
+            .join(rooms).on(hotels.contentid.eq(rooms.contentid))
+            .join(intro).on(hotels.contentid.eq(intro.contentid))
+            .where(commonCondition)
+            .fetchOne();
+
+        SearchResponseDto responseDto = new SearchResponseDto();
+        if (card != null)
+            responseDto.setSearchCards(card);
+
+        int[] countArr = new int[CATEGORY_COUNT];
+        for (Tuple t : counts) {
+            String category = t.get(hotels.category);
+            Long count = t.get(hotels.contentid.countDistinct());
+            //카테고리중 세 가지만 구분
+            int idx = switch (category) {
+                case "B02010100" -> 1;  //호텔
+                case "B02010900" -> 2;  //모텔
+                case "B02010700" -> 3;  //펜션
+                default -> -1;
+            };
+            if(idx != -1) countArr[idx] = count.intValue();
+        }
+        //프론트에 표시될 순서 보장 + LinkedHashMap
+        String[] categorys = {"All", "Hotels", "Motels", "Cottages"};
+        countArr[0] = (int)totalCount;
+        for (int i = 0; i < CATEGORY_COUNT; i++)
+            responseDto.getCounts().put(categorys[i], countArr[i]);
+        
+        return responseDto;
+    }
+
+    //검색+필터링 조건
+    private BooleanBuilder getCommonConditions(SearchRequestDto searchRequest, LocalDate checkInDate, LocalDate checkOutDate) {
+            BooleanBuilder builder = new BooleanBuilder();
+            //키워드 검색
+            BooleanExpression keywordExpr = keywordCondition(searchRequest.getKeyword());
+            if (keywordExpr != null) {
+                builder.and(keywordExpr);
+            }
+            //비용 0 제외
+            builder.and(rooms.roomoffseasonminfee1.ne(0));
+            //이미지 없는 목록 제외
+            builder.and(hotels.firstimage.isNotEmpty());
+            //체크인, 체크아웃 기간에 예약 일정 없는지 체크
+            builder.and(availableDateCondition(checkInDate, checkOutDate));
+            //객실과 인원 수 숙박 충분한지 체크
+            builder.and(rooms.roomcount.goe(searchRequest.getRoomCount()));
+            builder.and(rooms.roommaxcount.goe(searchRequest.getGuestCount()));
+            //비용 필터
+            builder.and(rooms.roomoffseasonminfee1.between(searchRequest.getMinPrice(), searchRequest.getMaxPrice()));
+            //필터링
+            builder.and(filterAmenitiesCondition(searchRequest.getAmenities()));
+            builder.and(filterFreebiesCondition(searchRequest.getFreebies()));
+
+            return builder;
+    }
+    private BooleanExpression categorySelectCondition(String category) {
+        return switch (category) {
+            case "Hotels" -> hotels.category.eq("B02010100");
+            case "Motels" -> hotels.category.eq("B02010900");
+            case "Cottages" -> hotels.category.eq("B02010700");
+            default -> null;
+        };
     }
 
     private BooleanExpression keywordCondition(String keyword) {
@@ -178,40 +250,20 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
 
         for (String key : freebies.keySet()) {
             if (Boolean.TRUE.equals(freebies.get(key))) {
-                switch (key) {
-                    case "욕실":
-                        builder.and(rooms.roombathfacility.eq("Y"));
-                        break;
-                    case "욕조":
-                        builder.and(rooms.roombath.eq("Y"));
-                        break;
-                    case "세면도구제공":
-                        builder.and(rooms.roomtoiletries.eq("Y"));
-                        break;
-                    case "홈시어터":
-                        builder.and(rooms.roomhometheater.eq("Y"));
-                        break;
-                    case "에어컨":
-                        builder.and(rooms.roomaircondition.eq("Y"));
-                        break;
-                    case "Tv":
-                        builder.and(rooms.roomtv.eq("Y"));
-                        break;
-                    case "Pc":
-                        builder.and(rooms.roompc.eq("Y"));
-                        break;
-                    case "Wifi":
-                        builder.and(rooms.roominternet.eq("Y"));
-                        break;
-                    case "냉장고":
-                        builder.and(rooms.roomrefrigerator.eq("Y"));
-                        break;
-                    case "취사가능":
-                        builder.and(rooms.roomcook.eq("Y"));
-                        break;   
-                    default:
-                        break;
-                }
+                StringPath path = switch (key) {
+                case "욕실" -> rooms.roombathfacility;
+                case "욕조" -> rooms.roombath;
+                case "세면도구제공" -> rooms.roomtoiletries;
+                case "홈시어터" -> rooms.roomhometheater;
+                case "에어컨" -> rooms.roomaircondition;
+                case "Tv" -> rooms.roomtv;
+                case "Pc" -> rooms.roompc;
+                case "Wifi" -> rooms.roominternet;
+                case "냉장고" -> rooms.roomrefrigerator;
+                case "취사가능" -> rooms.roomcook;
+                default -> null;
+                };
+                if(path != null) builder.and(path.eq("Y"));
             }
         }
 

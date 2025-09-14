@@ -43,6 +43,7 @@ public class HotelsService {
                     dto.setTel(item.path("tel").asText(""));
                     dto.setFirstimage(item.path("firstimage").asText(""));
                     dto.setAreaCode(item.path("areacode").asText(""));
+                    dto.setCategory(item.path("cat3").asText(""));
                     dto.setContentid(item.path("contentid").asText(""));
                     dto.setMapx(item.path("mapx").asText(""));
                     dto.setMapy(item.path("mapy").asText(""));
