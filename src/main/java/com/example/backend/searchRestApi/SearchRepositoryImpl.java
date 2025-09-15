@@ -2,11 +2,11 @@ package com.example.backend.searchRestApi;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.NumberExpression;
+import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -20,12 +20,12 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class SearchRepositoryImpl implements SearchRepositoryCustom {
-
 
     private final JPAQueryFactory queryFactory;
     private final QHotels hotels = QHotels.hotels;
@@ -51,6 +51,10 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
                                      .toLocalDate();
         BooleanBuilder commonCondition = getCommonConditions(searchRequest, checkInDate, checkOutDate);
         
+        NumberPath<Long> countAlias = Expressions.numberPath(Long.class, "count");
+        List<OrderSpecifier<?>> orderSpecifiers = new ArrayList<>();
+        orderSpecifiers.add(orderCondition(searchRequest.getOrder(), countAlias));
+        
         //카드에 표시될 내용에 대한 쿼리
         List<SearchCardDto> card = queryFactory
             .select(Projections.fields(SearchCardDto.class,
@@ -58,15 +62,20 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
                     hotels.title.as("title"),
                     hotels.firstimage.as("image"),
                     rooms.roomoffseasonminfee1.min().as("price"),
-                    hotels.addr1.as("address")
+                    hotels.addr1.as("address"),
+                    reservation.hotel.contentid.countDistinct().as(countAlias)
                 )
             )
             .distinct()
             .from(hotels)
-            .join(rooms).on(hotels.contentid.eq(rooms.contentid))
-            .join(intro).on(hotels.contentid.eq(intro.contentid))
-            .groupBy(hotels.contentid)
+            .leftJoin(rooms).on(hotels.contentid.eq(rooms.contentid))
+            .leftJoin(intro).on(hotels.contentid.eq(intro.contentid)) 
+            .leftJoin(reservation).on(reservation.hotel.contentid.eq(hotels.contentid))
             .where(commonCondition, categorySelectCondition(searchRequest.getCategory()))
+            .groupBy(hotels.contentid, hotels.title, hotels.firstimage, hotels.addr1)
+            .orderBy(orderSpecifiers.stream()
+                .filter(Objects::nonNull)
+                .toArray(OrderSpecifier[]::new))
             .fetch();
 
         //카테고리별 개수 반환 쿼리
@@ -142,6 +151,7 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
 
             return builder;
     }
+
     private BooleanExpression categorySelectCondition(String category) {
         return switch (category) {
             case "Hotels" -> hotels.category.eq("B02010100");
@@ -268,6 +278,16 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
         }
 
         return builder;
+    }
+
+    private OrderSpecifier<?> orderCondition(String order, NumberPath<Long> countAlias) {
+        return switch (order) {
+            case "인기 순" -> countAlias.desc();
+            case "낮은 가격 순" -> rooms.roomoffseasonminfee1.min().asc();
+            case "높은 가격 순" -> rooms.roomoffseasonminfee1.min().desc();
+            case "평점 높은 순" -> null;
+            default -> null;
+        };
     }
     
 }
