@@ -12,4 +12,6 @@ public class SearchCardDto {
     private double rating;
     private int totalAminities;
     private int totalReviews;
+    private String mapX;
+    private String mapY;
 }

@@ -63,7 +63,9 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
                     hotels.firstimage.as("image"),
                     rooms.roomoffseasonminfee1.min().as("price"),
                     hotels.addr1.as("address"),
-                    reservation.hotel.contentid.countDistinct().as(countAlias)
+                    reservation.hotel.contentid.countDistinct().as(countAlias),
+                    hotels.mapx.as("mapX"),
+                    hotels.mapy.as("mapY")
                 )
             )
             .distinct()
