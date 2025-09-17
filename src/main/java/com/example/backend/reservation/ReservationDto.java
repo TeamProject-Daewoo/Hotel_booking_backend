@@ -23,13 +23,14 @@ public class ReservationDto {
         this.status = reservation.getStatus();
         this.checkInDate = reservation.getCheckInDate();
         this.checkOutDate = reservation.getCheckOutDate();
+        
+        // 회원/비회원 모두 예약 시 입력한 이름을 사용하도록 변경
+        this.customerName = reservation.getReservName(); 
 
         if (reservation.getUser() != null) {
             this.userId = reservation.getUser().getUsername();
-            this.customerName = reservation.getUser().getName();
         } else {
-            this.userId = null;
-            this.customerName = "비회원";
+            this.userId = null; // 비회원은 userId가 없음
         }
 
         if (reservation.getHotel() != null) {
