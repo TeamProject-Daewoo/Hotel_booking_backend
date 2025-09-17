@@ -52,6 +52,12 @@ public class Reservation {
 
     @Column(name = "total_price")
     private Integer totalPrice;
+    
+    @Column(name = "reserv_name")
+    private String reservName;
+    
+    @Column(name = "reserv_phone")
+    private String reservPhone;
 
     @Column(name = "reservation_date", insertable = false, updatable = false)
     private LocalDateTime reservationDate;

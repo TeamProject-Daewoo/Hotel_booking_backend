@@ -89,6 +89,7 @@ public class PaymentController {
             return responseEntity;
 
         } catch (Exception e) {
+        	reservation.setStatus("FAIL");
             throw new RuntimeException("결제 승인 중 오류가 발생했습니다: " + e.getMessage(), e);
         }
     }

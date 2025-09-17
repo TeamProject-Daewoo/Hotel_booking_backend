@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 public class ReservationController {
 
     private final ReservationService reservationService;
+    private final ReservationRepository reservationRepository;
 
     @PostMapping
     public ResponseEntity<Reservation> createReservation(
@@ -40,7 +41,23 @@ public class ReservationController {
         
         return ResponseEntity.ok(dto);
     }
+    
+    @DeleteMapping("/pending/{reservationId}")
+    public ResponseEntity<Void> cancelPendingReservation(@PathVariable Long reservationId, Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
 
-    // ReservationRepository를 직접 주입받아 사용하기 위해 추가
-    private final ReservationRepository reservationRepository;
+        String username = authentication.getName();
+        Reservation reservation = reservationRepository.findById(reservationId)
+            .orElseThrow(() -> new IllegalArgumentException("해당 예약을 찾을 수 없습니다."));
+
+        // 본인의 예약이 맞는지, PENDING 상태가 맞는지 확인 후 삭제
+        if (reservation.getUser().getUsername().equals(username) && "PENDING".equals(reservation.getStatus())) {
+            reservationRepository.delete(reservation);
+            return ResponseEntity.ok().build();
+        }
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+    }
 }
