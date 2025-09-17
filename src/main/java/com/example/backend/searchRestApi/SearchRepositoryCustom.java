@@ -1,5 +1,8 @@
 package com.example.backend.searchRestApi;
 
+import java.util.List;
+
 public interface SearchRepositoryCustom {
-    SearchResponseDto findBySearchElements(SearchRequestDto searchRequestDTO);
+    SearchResponseDto findBySearchElements(SearchRequestDto searchRequest);
+    List<String> findByRecommendElements(String keyword);
 }

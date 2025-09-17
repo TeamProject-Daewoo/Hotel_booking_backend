@@ -21,9 +21,11 @@ import com.example.backend.reservation.QReservation;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import java.util.Set;
 
 import org.springframework.stereotype.Repository;
 
@@ -37,7 +39,7 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
     private final QReservation reservation = QReservation.reservation;
     
     private final static int CATEGORY_COUNT = 4;
-    private final String RESERVATION_COUNT_ALIAS = "reservationCount";
+    private final static String RESERVATION_COUNT_ALIAS = "reservationCount";
 
     public SearchRepositoryImpl(JPAQueryFactory queryFactory) {
         this.queryFactory = queryFactory;
@@ -45,34 +47,7 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
 
     @Override
     public SearchResponseDto findBySearchElements(SearchRequestDto searchRequest) {
-
-
-        String specificContentId = "137913";
-
-        Tuple result = queryFactory
-            .select(
-                hotels.title,
-                intro.subfacility, // [확인 1] DB에 저장된 subfacility 원본 문자열
                 
-                getIntroAmenitiesCount().min().as("hotelAmenitiesCalculated"), // [확인 2] 호텔 편의시설 계산 결과
-                
-                getRoomAmenitiesCount().sum().as("roomAmenitiesCalculated"), // [확인 3] 객실 편의시설 합산 결과
-                
-                getIntroAmenitiesCount().min()
-                    .add(getRoomAmenitiesCount().sum())
-                    .as("totalCalculated") // [확인 4] 최종 합계
-            )
-            .from(hotels)
-            .leftJoin(rooms).on(hotels.contentid.eq(rooms.contentid))
-            .leftJoin(intro).on(hotels.contentid.eq(intro.contentid))
-            .where(hotels.contentid.eq(specificContentId)) // 특정 호텔 하나만 조회
-            .groupBy(hotels.contentid, hotels.title, intro.subfacility)
-            .fetchOne();
-
-        // 조회된 결과를 출력해서 확인
-        System.out.println("Result for Hotel ID " + specificContentId + ": " + result);
-
-        
         // DTO에서 Date를 받아서 LocalDate로 변환
         LocalDate checkInDate = searchRequest.getCheckInDate().toInstant()
                                     .atZone(ZoneId.systemDefault())
@@ -394,6 +369,36 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
             roomAmenitiesCount = roomAmenitiesCount.add(currentPathCount);
         }
         return roomAmenitiesCount;
+    }
+
+    @Override
+    public List<String> findByRecommendElements(String keyword) {
+        List<String> suggestionsFromTitle = queryFactory
+            .select(hotels.title)
+            .from(hotels)
+            .where(hotels.title.like("%" + keyword + "%"))
+            .limit(10)
+            .fetch();
+
+
+        StringExpression regionExpression = Expressions.stringTemplate(
+            "SUBSTRING_INDEX({0}, ' ', 1)",
+            hotels.addr1
+        );
+
+        List<String> suggestionsFromAddr = queryFactory
+            .select(regionExpression).distinct()
+            .from(hotels)
+            .where(hotels.addr1.like(keyword + "%"))
+            .limit(5)
+            .fetch();
+
+        //중복 제거
+        Set<String> combinedSuggestions = new HashSet<>(suggestionsFromAddr); // 지역을 먼저 추가
+        combinedSuggestions.addAll(suggestionsFromTitle); // 그 다음 호텔명을 추가
+
+        // Set을 다시 List로 변환하여 반환
+        return new ArrayList<>(combinedSuggestions);
     }
     
 }
