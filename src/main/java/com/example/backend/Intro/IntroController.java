@@ -25,4 +25,11 @@ public class IntroController {
         }
         return ResponseEntity.ok(dto);
     }
+
+    @GetMapping("/intro/db/{contentId}")
+    public ResponseEntity<Intro> getIntroFromDb(@PathVariable String contentId) {
+        return introService.getFromDb(contentId)
+            .map(ResponseEntity::ok)
+            .orElse(ResponseEntity.notFound().build());
+    }
 }
