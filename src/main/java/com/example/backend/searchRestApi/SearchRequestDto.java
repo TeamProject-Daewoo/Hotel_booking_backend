@@ -18,5 +18,5 @@ public class SearchRequestDto {
     private Map<String, Boolean> freebies;
     private Map<String, Boolean> amenities;
     private String order;
-    private String place;
+    private String category;
 }
