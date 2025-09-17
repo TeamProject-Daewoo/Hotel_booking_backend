@@ -49,12 +49,16 @@ public class JwtTokenProvider {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
         long now = (new Date()).getTime();
+        
+        com.example.backend.authentication.User user = (com.example.backend.authentication.User) authentication.getPrincipal();
+        String realName = user.getName();
 
         // Access Token 생성 (사용자 정보와 권한 포함)
         Date accessTokenExpiresIn = new Date(now + this.accessTokenExpirationMillis);
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim("auth", authorities)
+                .claim("name", realName)
                 .setExpiration(accessTokenExpiresIn)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();

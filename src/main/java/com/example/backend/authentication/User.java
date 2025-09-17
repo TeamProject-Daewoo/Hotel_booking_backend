@@ -29,9 +29,6 @@ public class User implements UserDetails {
     @Column(name = "user_name", updatable = false, unique = true, nullable = false)
     private String username;
 
-    @Column(name = "email", nullable = false, unique = true)
-    private String email;
-
     @Column(name = "password_hash", nullable = false)
     private String password;
 
@@ -51,11 +48,16 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     @Column(name = "approval_status", nullable = false)
     private ApprovalStatus approvalStatus;
+    
+    @Column(name = "login_type")
+    private String loginType;
+    
+    @Column(name = "uuid")
+    private String uuid;
 
     @Builder
     public User(String username, String email, String password, String name, String phoneNumber, Role role) {
         this.username = username;
-        this.email = email;
         this.password = password;
         this.name = name;
         this.phoneNumber = phoneNumber;

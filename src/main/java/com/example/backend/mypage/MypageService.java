@@ -28,7 +28,6 @@ public class MypageService {
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
         return ProfileResponseDto.builder()
                 .name(user.getName())
-                .email(user.getEmail())
                 .phoneNumber(user.getPhoneNumber())
                 .build();
     }
