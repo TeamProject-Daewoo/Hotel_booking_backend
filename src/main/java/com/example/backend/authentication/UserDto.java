@@ -13,7 +13,6 @@ public class UserDto {
     @Builder
     public static class SignUp {
         private String username;
-        private String email;
         private String password;
         private String name;
         private String phoneNumber;
@@ -23,7 +22,6 @@ public class UserDto {
         public User toEntity(String encodedPassword) {
             return User.builder()
                     .username(this.username)
-                    .email(this.email)
                     .password(encodedPassword) // 암호화된 비밀번호 사용
                     .name(this.name)
                     .phoneNumber(this.phoneNumber)
@@ -46,7 +44,6 @@ public class UserDto {
     @Builder
     public static class Info {
         private String username;
-        private String email;
         private String name;
         private String phoneNumber;
         private Role role;
@@ -55,7 +52,6 @@ public class UserDto {
         public static Info from(User user) {
             return Info.builder()
                     .username(user.getUsername())
-                    .email(user.getEmail())
                     .name(user.getName())
                     .phoneNumber(user.getPhoneNumber())
                     .role(user.getRole())

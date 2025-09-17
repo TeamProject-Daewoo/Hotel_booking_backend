@@ -11,7 +11,6 @@ public class ReservationDto {
     private final String userId;
     private final String hotelName;
     private final String customerName;
-    private final String customerEmail;
     private final Integer totalPrice;
     private final String status;
     private final LocalDate checkInDate;
@@ -28,11 +27,9 @@ public class ReservationDto {
         if (reservation.getUser() != null) {
             this.userId = reservation.getUser().getUsername();
             this.customerName = reservation.getUser().getName();
-            this.customerEmail = reservation.getUser().getEmail();
         } else {
             this.userId = null;
             this.customerName = "비회원";
-            this.customerEmail = null;
         }
 
         if (reservation.getHotel() != null) {
