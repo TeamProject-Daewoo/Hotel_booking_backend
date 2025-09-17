@@ -6,8 +6,11 @@ import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.core.types.dsl.NumberPath;
+import com.querydsl.core.types.dsl.StringExpression;
 import com.querydsl.core.types.dsl.StringPath;
+import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.example.backend.Intro.QIntro;
@@ -34,6 +37,7 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
     private final QReservation reservation = QReservation.reservation;
     
     private final static int CATEGORY_COUNT = 4;
+    private final String RESERVATION_COUNT_ALIAS = "reservationCount";
 
     public SearchRepositoryImpl(JPAQueryFactory queryFactory) {
         this.queryFactory = queryFactory;
@@ -41,6 +45,33 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
 
     @Override
     public SearchResponseDto findBySearchElements(SearchRequestDto searchRequest) {
+
+
+        String specificContentId = "137913";
+
+        Tuple result = queryFactory
+            .select(
+                hotels.title,
+                intro.subfacility, // [확인 1] DB에 저장된 subfacility 원본 문자열
+                
+                getIntroAmenitiesCount().min().as("hotelAmenitiesCalculated"), // [확인 2] 호텔 편의시설 계산 결과
+                
+                getRoomAmenitiesCount().sum().as("roomAmenitiesCalculated"), // [확인 3] 객실 편의시설 합산 결과
+                
+                getIntroAmenitiesCount().min()
+                    .add(getRoomAmenitiesCount().sum())
+                    .as("totalCalculated") // [확인 4] 최종 합계
+            )
+            .from(hotels)
+            .leftJoin(rooms).on(hotels.contentid.eq(rooms.contentid))
+            .leftJoin(intro).on(hotels.contentid.eq(intro.contentid))
+            .where(hotels.contentid.eq(specificContentId)) // 특정 호텔 하나만 조회
+            .groupBy(hotels.contentid, hotels.title, intro.subfacility)
+            .fetchOne();
+
+        // 조회된 결과를 출력해서 확인
+        System.out.println("Result for Hotel ID " + specificContentId + ": " + result);
+
         
         // DTO에서 Date를 받아서 LocalDate로 변환
         LocalDate checkInDate = searchRequest.getCheckInDate().toInstant()
@@ -50,11 +81,8 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
                                      .atZone(ZoneId.systemDefault())
                                      .toLocalDate();
         BooleanBuilder commonCondition = getCommonConditions(searchRequest, checkInDate, checkOutDate);
-        
-        NumberPath<Long> countAlias = Expressions.numberPath(Long.class, "count");
-        List<OrderSpecifier<?>> orderSpecifiers = new ArrayList<>();
-        orderSpecifiers.add(orderCondition(searchRequest.getOrder(), countAlias));
-        
+   
+        QReservation reservationSub = new QReservation("reservationSub");
         //카드에 표시될 내용에 대한 쿼리
         List<SearchCardDto> card = queryFactory
             .select(Projections.fields(SearchCardDto.class,
@@ -63,21 +91,27 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
                     hotels.firstimage.as("image"),
                     rooms.roomoffseasonminfee1.min().as("price"),
                     hotels.addr1.as("address"),
-                    reservation.hotel.contentid.countDistinct().as(countAlias),
+                    Expressions.as(
+                        JPAExpressions
+                            .select(Wildcard.count)
+                            .from(reservationSub)
+                            .where(reservationSub.hotel.contentid.eq(hotels.contentid)),
+                            RESERVATION_COUNT_ALIAS
+                    ),
                     hotels.mapx.as("mapX"),
-                    hotels.mapy.as("mapY")
+                    hotels.mapy.as("mapY"),
+                    getIntroAmenitiesCount().min()
+                        .add(getRoomAmenitiesCount().sum())
+                        .as("totalAminities") 
                 )
             )
-            .distinct()
             .from(hotels)
             .leftJoin(rooms).on(hotels.contentid.eq(rooms.contentid))
             .leftJoin(intro).on(hotels.contentid.eq(intro.contentid)) 
-            .leftJoin(reservation).on(reservation.hotel.contentid.eq(hotels.contentid))
+            // .leftJoin(reservation).on(reservation.hotel.contentid.eq(hotels.contentid))
             .where(commonCondition, categorySelectCondition(searchRequest.getCategory()))
             .groupBy(hotels.contentid, hotels.title, hotels.firstimage, hotels.addr1)
-            .orderBy(orderSpecifiers.stream()
-                .filter(Objects::nonNull)
-                .toArray(OrderSpecifier[]::new))
+            .orderBy(orderCondition(searchRequest.getOrder(), RESERVATION_COUNT_ALIAS)) // 2. orderBy 부분에도 상수 전달
             .fetch();
 
         //카테고리별 개수 반환 쿼리
@@ -282,14 +316,84 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
         return builder;
     }
 
-    private OrderSpecifier<?> orderCondition(String order, NumberPath<Long> countAlias) {
-        return switch (order) {
-            case "인기 순" -> countAlias.desc();
+    private OrderSpecifier<?>[] orderCondition(String order, String countAlias) {
+        List<OrderSpecifier<?>> specifiers = new ArrayList<>();
+    
+        NumberPath<Long> countPath = Expressions.numberPath(Long.class, countAlias);
+
+        OrderSpecifier<?> orderSpecifier = switch (order) {
+            case "인기 순" -> countPath.desc();
             case "낮은 가격 순" -> rooms.roomoffseasonminfee1.min().asc();
             case "높은 가격 순" -> rooms.roomoffseasonminfee1.min().desc();
-            case "평점 높은 순" -> null;
             default -> null;
         };
+        
+        if (orderSpecifier != null) {
+            specifiers.add(orderSpecifier);
+        }
+        
+        return specifiers.toArray(new OrderSpecifier[0]);
+    }
+    private NumberExpression<Integer> getIntroAmenitiesCount() {
+        StringExpression subfacilityReplaced = Expressions.stringTemplate(
+        "REPLACE({0}, {1}, {2})",
+        intro.subfacility, " / ", ", "
+    );
+    // 통일된 구분자 ", "를 모두 제거
+    StringExpression commaDeleted = Expressions.stringTemplate(
+        "REPLACE({0}, {1}, {2})",
+        subfacilityReplaced, ", ", ""
+    );
+
+    // 원본 길이에서 제거된 후의 길이를 빼서, 구분자들이 차지했던 총 길이를 구함
+    NumberExpression<Integer> totalSeparatorLength = subfacilityReplaced.length()
+        .subtract(commaDeleted.length());
+
+    // ", "는 2글자이므로, 총 길이 차이를 2로 나누어 구분자의 '개수'를 구함
+    NumberExpression<Integer> separatorCount = totalSeparatorLength.divide(2);
+
+    // 아이템 총 개수 = 구분자 개수 + 1
+    NumberExpression<Integer> subfacilityCount = Expressions.cases()
+        .when(intro.subfacility.isNull().or(intro.subfacility.isEmpty())).then(0)
+        .otherwise(separatorCount.add(1));
+
+
+    // --- 2. paths 배열 중복 제거 및 계산 ---
+    
+    // parkinglodging 중복 제거
+    StringPath[] paths = {
+        intro.parkinglodging, intro.publicbath, 
+        intro.seminar, intro.sports, intro.barbecue, intro.campfire,
+        intro.sauna, intro.fitness
+    };
+    
+    NumberExpression<Integer> counts = Expressions.asNumber(0);
+    for (StringPath path : paths) {
+        NumberExpression<Integer> currentPathCount = Expressions.cases()
+            .when(path.eq("1").or(path.equalsIgnoreCase("Y"))).then(1) // Y/N도 처리 가능하도록 수정
+            .otherwise(0);
+        counts = counts.add(currentPathCount);
+    }
+    
+    // 최종적으로 subfacility 개수와 나머지 개수를 더해서 반환
+    return subfacilityCount.add(counts);
+    }
+    private NumberExpression<Integer> getRoomAmenitiesCount() {
+        NumberExpression<Integer> roomAmenitiesCount = Expressions.asNumber(0);
+        // rooms 테이블의 편의시설 컬럼만 포함
+        StringPath[] paths = { 
+            rooms.roombath, rooms.roomtv, rooms.roomaircondition, rooms.roomcook, 
+            rooms.roominternet, rooms.roomrefrigerator, rooms.roomtoiletries, 
+            rooms.roomhometheater, rooms.roompc 
+        };
+
+        for (StringPath path : paths) {
+            NumberExpression<Integer> currentPathCount = Expressions.cases()
+                .when(path.eq("Y")).then(1)
+                .otherwise(0);
+            roomAmenitiesCount = roomAmenitiesCount.add(currentPathCount);
+        }
+        return roomAmenitiesCount;
     }
     
 }
