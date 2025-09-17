@@ -2,8 +2,6 @@ package com.example.backend.searchRestApi;
 
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,7 +17,7 @@ public class SearchController {
     SearchService searchService;
 
     @PostMapping("search")
-    public ResponseEntity<List<SearchResponseDto>> search(@RequestBody SearchRequestDto request) {
+    public ResponseEntity<SearchResponseDto> search(@RequestBody SearchRequestDto request) {
         return ResponseEntity.ok(searchService.findBySearchElements(request));
     }
   

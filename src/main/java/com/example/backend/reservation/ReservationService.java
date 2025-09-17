@@ -1,7 +1,7 @@
 package com.example.backend.reservation;
 
-import com.example.backend.api.Accommodation;
-import com.example.backend.api.AccommodationRepa;
+import com.example.backend.api.Hotels;
+import com.example.backend.api.HotelsRepa;
 import com.example.backend.authentication.User;
 import com.example.backend.authentication.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,14 +14,14 @@ public class ReservationService {
 
     private final ReservationRepository reservationRepository;
     private final UserRepository userRepository;
-    private final AccommodationRepa accommodationRepository;
+    private final HotelsRepa accommodationRepository;
 
     @Transactional
     public Reservation createReservation(ReservationRequestDto requestDto, String username) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
-        Accommodation hotel = accommodationRepository.findById(requestDto.getContentid())
+        Hotels hotel = accommodationRepository.findByContentid(requestDto.getContentid())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 숙소입니다."));
 
         Reservation newReservation = Reservation.builder()
