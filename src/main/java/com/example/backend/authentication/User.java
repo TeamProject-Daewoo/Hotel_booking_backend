@@ -92,7 +92,7 @@ public class User implements UserDetails {
     // --- Spring Security UserDetails 인터페이스 구현 ---
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
+        return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
     }
 
     @Override
