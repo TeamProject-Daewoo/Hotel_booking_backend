@@ -1,6 +1,9 @@
 package com.example.backend.authentication;
 
+import java.util.Map;
+
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -8,6 +11,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.example.backend.mail.MailService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -17,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 public class AuthController {
 
     private final UserService userService;
+    private final MailService mailService;
 
     @PostMapping("/sign-up")
     public ResponseEntity<String> signUp(@RequestBody UserDto.SignUp signUpDto) {
@@ -64,5 +70,23 @@ public class AuthController {
         String newAccessToken = userService.reissueAccessToken(refreshToken);
         UserDto.AccessTokenResponse accessTokenResponse = new UserDto.AccessTokenResponse(newAccessToken);
         return ResponseEntity.ok(accessTokenResponse);
+    }
+    
+ // 이메일 인증 코드 발송 API
+    @PostMapping("/send-verification")
+    public ResponseEntity<String> sendVerificationCode(@RequestBody Map<String, String> payload) {
+        mailService.sendVerificationCode(payload.get("email"));
+        return ResponseEntity.ok("인증 코드가 발송되었습니다.");
+    }
+
+    // 이메일 인증 코드 확인 API
+    @PostMapping("/verify-code")
+    public ResponseEntity<String> verifyCode(@RequestBody Map<String, String> payload) {
+        boolean isVerified = mailService.verifyCode(payload.get("email"), payload.get("code"));
+        if (isVerified) {
+            return ResponseEntity.ok("인증이 완료되었습니다.");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("인증 코드가 올바르지 않습니다.");
+        }
     }
 }

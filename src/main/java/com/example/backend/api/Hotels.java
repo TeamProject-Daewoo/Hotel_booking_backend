@@ -16,8 +16,8 @@ import lombok.NoArgsConstructor;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Table(name = "HOTELS")
 public class Hotels {
-    
-    private Long id; 
+
+    private Long id;
     
     @Id
     private String contentid;
@@ -31,4 +31,5 @@ public class Hotels {
     private String category;
     private String mapx;
     private String mapy;
+    private String business_registration_number;
 }
