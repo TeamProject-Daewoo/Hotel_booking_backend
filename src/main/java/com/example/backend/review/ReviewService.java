@@ -75,15 +75,22 @@ public class ReviewService {
     }
     
     private ReviewResponseDto convertToDto(Review review) {
+        long visitCount = reviewRepository.countReservationsByUserAndHotelBeforeDate(
+            review.getUser().getUsername(),
+            review.getHotel().getContentid(),
+            review.getReservation().getCheckInDate()
+        );
+
         return ReviewResponseDto.builder()
                 .reviewId(review.getReviewId())
                 .hotelId(review.getHotel().getContentid())
                 .hotelName(review.getHotel().getTitle())
-                .userName(review.getUser().getName()) // 사용자 이름 추가
+                .userName(review.getUser().getName())
                 .reviewText(review.getContent())
                 .rating(review.getRating())
                 .reviewDate(review.getCreatedAt())
-                .imageUrl(review.getImageUrl()) // 이미지 URL 추가
+                .imageUrl(review.getImageUrl())
+                .visitCount(visitCount) // 계산된 방문 횟수 추가
                 .build();
     }
 }

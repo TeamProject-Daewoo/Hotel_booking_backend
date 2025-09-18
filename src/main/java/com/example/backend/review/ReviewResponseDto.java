@@ -16,4 +16,5 @@ public class ReviewResponseDto {
     private int rating;
     private LocalDateTime reviewDate;
     private String imageUrl;
+    private long visitCount;
 }
