@@ -5,6 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import com.example.backend.wish.WishRequestDto;
+
 import java.util.List;
 
 @RestController
@@ -50,10 +52,16 @@ public class MypageController {
 //    }
 //
    @GetMapping("/likes")
-   public ResponseEntity<List<LikeResponseDto>> getMyLikes(Authentication authentication) {
+   public ResponseEntity<List<LikeResponseDto>> getMyWishList(Authentication authentication) {
        String currentMemberId = authentication.getName();
-       List<LikeResponseDto> likes = mypageService.getLikeList(currentMemberId);
+       List<LikeResponseDto> likes = mypageService.getMyWishList(currentMemberId);
        return ResponseEntity.ok(likes);
+   }
+   @GetMapping("/savewish")
+   public ResponseEntity<Void> saveWishList(Authentication authentication, int hotelId) {
+        String currentMemberId = authentication.getName();
+        mypageService.saveWishList(new WishRequestDto(hotelId, currentMemberId));
+        return ResponseEntity.noContent().build();
    }
 //
 //    @GetMapping("/payment-methods")

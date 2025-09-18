@@ -1,19 +1,14 @@
 package com.example.backend.mypage;
 
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
-@Builder
+@AllArgsConstructor
 public class LikeResponseDto {
-    private String hotelId;
     private String hotelName;
+    // private double rating;
+    // private String reviewCount;
     private String address;
     private String imageUrl;
-    public LikeResponseDto(String hotelId, String hotelName, String address, String imageUrl) {
-        this.hotelId = hotelId;
-        this.hotelName = hotelName;
-        this.address = address;
-        this.imageUrl = imageUrl;
-    }
 }

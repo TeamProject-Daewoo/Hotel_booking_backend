@@ -7,6 +7,7 @@ import com.example.backend.common.TourApi;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ public class HotelsService {
     @Autowired
     private IntroService introService; 
 
+    @Async  //서버 바로 실행하고, 백그라운드에서 동기화 작업 
     public List<Hotels> getAccommodations(String uri) throws Exception {
         String response = restTemplate.getForObject(uri, String.class);
         JsonNode root = mapper.readTree(response);
@@ -32,6 +34,7 @@ public class HotelsService {
         // API 구조에 맞게 path 설정
         JsonNode items = root.path("response").path("body").path("items").path("item");
         List<Hotels> result = new ArrayList<>();
+        TourApi api = new TourApi();
 
         if (items.isArray()) {
             for (JsonNode item : items) {
@@ -51,7 +54,6 @@ public class HotelsService {
                     dto.setMapx(item.path("mapx").asText(""));
                     dto.setMapy(item.path("mapy").asText(""));
                     
-                    TourApi api = new TourApi();
                     String detailUri = api.getDetailUri( "1", "10", dto.getContentid());
                     String introUri = api.getIntroUri("1", "10", dto.getContentid());
                     //상세 정보와 소개가 존재할 때만 추가
