@@ -14,4 +14,6 @@ public class ReservationRequestDto {
     private Integer numAdults;
     private Integer numChildren;
     private Integer totalPrice;
+    private String guestName;
+    private String phone;
 }

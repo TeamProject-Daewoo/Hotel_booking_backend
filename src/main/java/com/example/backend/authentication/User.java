@@ -54,6 +54,9 @@ public class User implements UserDetails {
     
     @Column(name = "uuid")
     private String uuid;
+    
+    @Column(name = "business_registration_number")
+    private String business_registration_number;
 
     @Builder
     public User(String username, String email, String password, String name, String phoneNumber, Role role) {

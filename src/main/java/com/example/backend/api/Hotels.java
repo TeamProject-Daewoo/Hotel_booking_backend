@@ -3,8 +3,6 @@ package com.example.backend.api;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -32,4 +30,5 @@ public class Hotels {
     private String category;
     private String mapx;
     private String mapy;
+    private String business_registration_number;
 }
