@@ -18,14 +18,19 @@ public class ReservationService {
 
     @Transactional
     public Reservation createReservation(ReservationRequestDto requestDto, String username) {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+        
+        User user = null;
+        // username이 null이 아닌 경우(로그인한 경우)에만 사용자 정보를 조회합니다.
+        if (username != null) {
+            user = userRepository.findByUsername(username)
+                    .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+        }
 
         Hotels hotel = accommodationRepository.findByContentid(requestDto.getContentid())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 숙소입니다."));
 
         Reservation newReservation = Reservation.builder()
-                .user(user)
+                .user(user) // 비회원인 경우 이 값은 null이 됩니다.
                 .hotel(hotel)
                 .roomcode(requestDto.getRoomcode())
                 .checkInDate(requestDto.getCheckInDate())
@@ -33,6 +38,8 @@ public class ReservationService {
                 .numAdults(requestDto.getNumAdults())
                 .numChildren(requestDto.getNumChildren())
                 .totalPrice(requestDto.getTotalPrice()) 
+                .reservName(requestDto.getGuestName())
+                .reservPhone(requestDto.getPhone())  
                 .status("PENDING")
                 .build();
         

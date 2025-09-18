@@ -31,6 +31,7 @@ public class PaymentController {
     private final ReservationRepository reservationRepository;
     private final PaymentRepository paymentRepository;
     private final ObjectMapper objectMapper;
+    private final EmailService emailService; // EmailService 주입
 
     @Value("${toss.widget-secret-key}")
     private String widgetSecretKey;
@@ -42,7 +43,6 @@ public class PaymentController {
         Reservation reservation = reservationRepository.findByIdWithDetails(paymentDto.getReservationId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 예약입니다. ID: " + paymentDto.getReservationId()));
 
-        // (이하 코드는 기존과 동일합니다)
         Integer amountFromClient = paymentDto.getAmount();
         
         if (!Objects.equals(reservation.getTotalPrice(), amountFromClient)) {
@@ -75,21 +75,29 @@ public class PaymentController {
                 reservation.setStatus("PAID");
                 reservationRepository.save(reservation);
 
+                String userNameForPayment = (reservation.getUser() != null) 
+                    ? reservation.getUser().getUsername() 
+                    : reservation.getReservName();
+
                 Payment newPayment = Payment.builder()
                         .reservation(reservation)
-                        .userName(reservation.getUser().getUsername())
+                        .userName(userNameForPayment)
                         .paymentKey(successPayload.path("paymentKey").asText())
                         .paymentAmount(successPayload.path("totalAmount").asInt())
                         .paymentMethod(successPayload.path("method").asText())
                         .paymentStatus(successPayload.path("status").asText())
                         .build();
                 paymentRepository.save(newPayment);
+
+                // 이메일 발송 서비스 호출
+                emailService.sendReservationConfirmationEmail(reservation);
             }
             
             return responseEntity;
 
         } catch (Exception e) {
         	reservation.setStatus("FAIL");
+            reservationRepository.save(reservation);
             throw new RuntimeException("결제 승인 중 오류가 발생했습니다: " + e.getMessage(), e);
         }
     }
