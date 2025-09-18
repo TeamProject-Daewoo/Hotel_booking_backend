@@ -26,8 +26,8 @@ public class Hotels {
     private String addr1;
     private String tel;
     private String firstimage;
-    private String areaCode;
-    private String sigunguCode;
+    private Integer areaCode;
+    private Integer sigunguCode;
     private String category;
     private String mapx;
     private String mapy;

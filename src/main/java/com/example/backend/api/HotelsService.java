@@ -42,7 +42,10 @@ public class HotelsService {
                     dto.setAddr1(item.path("addr1").asText(""));
                     dto.setTel(item.path("tel").asText(""));
                     dto.setFirstimage(item.path("firstimage").asText(""));
-                    dto.setAreaCode(item.path("areacode").asText(""));
+                    String areaCodeStr = item.path("areacode").asText();
+                    String sigunguCodeStr = item.path("sigungucode").asText();
+                    dto.setAreaCode((areaCodeStr != null && !areaCodeStr.isEmpty()) ? Integer.parseInt(areaCodeStr) : 0);
+                    dto.setSigunguCode((sigunguCodeStr != null && !sigunguCodeStr.isEmpty()) ? Integer.parseInt(sigunguCodeStr) : 0);
                     dto.setCategory(item.path("cat3").asText(""));
                     dto.setContentid(item.path("contentid").asText(""));
                     dto.setMapx(item.path("mapx").asText(""));

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 
@@ -23,7 +24,7 @@ public class SearchController {
         return ResponseEntity.ok(searchService.findBySearchElements(request));
     }
 
-    @PostMapping("recommend")
+    @GetMapping("recommend")
     public ResponseEntity<List<String>> recommend(String keyword) {
         return ResponseEntity.ok(searchService.findByRecommendElements(keyword));
     }

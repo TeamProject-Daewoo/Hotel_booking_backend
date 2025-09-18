@@ -16,6 +16,8 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.example.backend.Intro.QIntro;
 import com.example.backend.api.QHotels;
 import com.example.backend.api2.QDetail;
+import com.example.backend.common.HangulUtils;
+import com.example.backend.region.QRegion;
 import com.example.backend.reservation.QReservation;
 
 import java.time.LocalDate;
@@ -26,6 +28,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Repository;
 
@@ -37,6 +40,7 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
     private final QDetail rooms = QDetail.detail;
     private final QIntro intro = QIntro.intro;
     private final QReservation reservation = QReservation.reservation;
+    private final QRegion region = QRegion.region;
     
     private final static int CATEGORY_COUNT = 4;
     private final static String RESERVATION_COUNT_ALIAS = "reservationCount";
@@ -141,19 +145,19 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
     private BooleanBuilder getCommonConditions(SearchRequestDto searchRequest, LocalDate checkInDate, LocalDate checkOutDate) {
             BooleanBuilder builder = new BooleanBuilder();
             //키워드 검색
-            BooleanExpression keywordExpr = keywordCondition(searchRequest.getKeyword());
+            BooleanBuilder keywordExpr = keywordCondition(searchRequest.getKeyword());
             if (keywordExpr != null) {
                 builder.and(keywordExpr);
             }
             //비용 0 제외
             builder.and(rooms.roomoffseasonminfee1.ne(0));
             //이미지 없는 목록 제외
-            builder.and(hotels.firstimage.isNotEmpty());
+            // builder.and(hotels.firstimage.isNotEmpty());
             //체크인, 체크아웃 기간에 예약 일정 없는지 체크
             builder.and(availableDateCondition(checkInDate, checkOutDate));
             //객실과 인원 수 숙박 충분한지 체크
-            builder.and(rooms.roomcount.goe(searchRequest.getRoomCount()));
-            builder.and(rooms.roommaxcount.goe(searchRequest.getGuestCount()));
+            // builder.and(rooms.roomcount.goe(searchRequest.getRoomCount()));
+            // builder.and(rooms.roommaxcount.goe(searchRequest.getGuestCount()));
             //비용 필터
             builder.and(rooms.roomoffseasonminfee1.between(searchRequest.getMinPrice(), searchRequest.getMaxPrice()));
             //필터링
@@ -172,12 +176,28 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
         };
     }
 
-    private BooleanExpression keywordCondition(String keyword) {
+    private BooleanBuilder keywordCondition(String keyword) {
         if (keyword == null || keyword.isEmpty()) {
             return null;
         }
-        return hotels.addr1.containsIgnoreCase(keyword)
-            .or(hotels.title.containsIgnoreCase(keyword));
+
+        BooleanBuilder builder = new BooleanBuilder();
+        builder.or(hotels.title.containsIgnoreCase(keyword));
+        builder.or(hotels.addr1.containsIgnoreCase(keyword));
+
+        List<String> chosungMatchRegionNames = queryFactory
+                .select(region.name)
+                .from(region)
+                .where(region.nameChosung.like(keyword + "%"))
+                .fetch();
+
+        if (!chosungMatchRegionNames.isEmpty()) {
+            for (String name : chosungMatchRegionNames) {
+                builder.or(hotels.addr1.containsIgnoreCase(name));
+            }
+        }
+
+        return builder;
     }
 
     private BooleanExpression availableDateCondition(LocalDate checkInDate, LocalDate checkOutDate) {
@@ -373,32 +393,25 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
 
     @Override
     public List<String> findByRecommendElements(String keyword) {
-        List<String> suggestionsFromTitle = queryFactory
-            .select(hotels.title)
-            .from(hotels)
-            .where(hotels.title.like("%" + keyword + "%"))
+        String keywordChosung = HangulUtils.getChosung(keyword);
+        
+        //지역명 검색
+        List<String> candidatesFromRegions = queryFactory
+            .select(region.name).distinct()
+            .from(region)
+            .where(
+                region.name.like(keyword + "%")
+                .or(region.nameChosung.like(keywordChosung + "%"))
+            )
+            .limit(20)
+            .fetch();
+
+        List<String> finalSuggestions = candidatesFromRegions.stream()
+            .filter(candidate -> HangulUtils.isMixedMatch(candidate, keyword))
             .limit(10)
-            .fetch();
+            .collect(Collectors.toList());
 
-
-        StringExpression regionExpression = Expressions.stringTemplate(
-            "SUBSTRING_INDEX({0}, ' ', 1)",
-            hotels.addr1
-        );
-
-        List<String> suggestionsFromAddr = queryFactory
-            .select(regionExpression).distinct()
-            .from(hotels)
-            .where(hotels.addr1.like(keyword + "%"))
-            .limit(5)
-            .fetch();
-
-        //중복 제거
-        Set<String> combinedSuggestions = new HashSet<>(suggestionsFromAddr); // 지역을 먼저 추가
-        combinedSuggestions.addAll(suggestionsFromTitle); // 그 다음 호텔명을 추가
-
-        // Set을 다시 List로 변환하여 반환
-        return new ArrayList<>(combinedSuggestions);
+        return new ArrayList<>(finalSuggestions);
     }
     
 }
