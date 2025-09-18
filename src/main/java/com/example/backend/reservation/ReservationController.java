@@ -1,10 +1,16 @@
 package com.example.backend.reservation;
 
+import com.example.backend.mypage.BookingResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -19,11 +25,11 @@ public class ReservationController {
             @RequestBody ReservationRequestDto requestDto,
             Authentication authentication) {
 
-        if (authentication == null || !authentication.isAuthenticated()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        String username = null;
+        if (authentication != null && authentication.isAuthenticated()) {
+            username = authentication.getName();
         }
         
-        String username = authentication.getName();
         Reservation createdReservation = reservationService.createReservation(requestDto, username);
         
         return ResponseEntity.status(HttpStatus.CREATED).body(createdReservation);
@@ -31,7 +37,6 @@ public class ReservationController {
 
     @GetMapping("/{reservationId}")
     public ResponseEntity<ReservationDto> getReservationDetails(@PathVariable Long reservationId) {
-        // 이 API는 인증된 사용자만 자신의 예약 정보를 볼 수 있도록 추가 보안 로직이 필요할 수 있습니다.
         Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 예약을 찾을 수 없습니다. ID: " + reservationId));
         
@@ -40,6 +45,39 @@ public class ReservationController {
                                 .build();
         
         return ResponseEntity.ok(dto);
+    }
+
+    @GetMapping("/lookup")
+    public ResponseEntity<List<BookingResponseDto>> getNonMemberReservations(
+            @RequestParam(required = false) Long reservationId,
+            @RequestParam(required = false) String reservName,
+            @RequestParam(required = false) String reservPhone) {
+
+        List<Reservation> reservations = new ArrayList<>();
+        if (reservationId != null) {
+            reservationRepository.findByIdAndUserIsNull(reservationId)
+                .ifPresent(reservations::add);
+        } else if (reservName != null && !reservName.isEmpty() && reservPhone != null && !reservPhone.isEmpty()) {
+            reservations = reservationRepository.findByReservNameAndReservPhoneAndUserIsNull(reservName, reservPhone);
+        } else {
+            return ResponseEntity.badRequest().body(Collections.emptyList());
+        }
+
+        List<BookingResponseDto> bookingDtos = reservations.stream()
+                .map(reservation -> BookingResponseDto.builder()
+                        .reservationId(reservation.getReservationId())
+                        .hotelId(reservation.getHotel().getContentid())
+                        .hotelName(reservation.getHotel().getTitle())
+                        .checkInDate(reservation.getCheckInDate())
+                        .checkOutDate(reservation.getCheckOutDate())
+                        .status(reservation.getStatus())
+                        .totalPrice(reservation.getTotalPrice())
+                        .numAdults(reservation.getNumAdults())
+                        .numChildren(reservation.getNumChildren())
+                        .build())
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(bookingDtos);
     }
     
     @DeleteMapping("/pending/{reservationId}")
@@ -52,8 +90,7 @@ public class ReservationController {
         Reservation reservation = reservationRepository.findById(reservationId)
             .orElseThrow(() -> new IllegalArgumentException("해당 예약을 찾을 수 없습니다."));
 
-        // 본인의 예약이 맞는지, PENDING 상태가 맞는지 확인 후 삭제
-        if (reservation.getUser().getUsername().equals(username) && "PENDING".equals(reservation.getStatus())) {
+        if (reservation.getUser() != null && reservation.getUser().getUsername().equals(username) && "PENDING".equals(reservation.getStatus())) {
             reservationRepository.delete(reservation);
             return ResponseEntity.ok().build();
         }

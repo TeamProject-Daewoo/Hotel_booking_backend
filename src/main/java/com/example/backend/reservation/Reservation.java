@@ -1,6 +1,6 @@
 package com.example.backend.reservation;
 
-import com.example.backend.api.Hotels; // import 변경
+import com.example.backend.api.Hotels;
 import com.example.backend.authentication.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp; // 추가
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -59,6 +60,7 @@ public class Reservation {
     @Column(name = "reserv_phone")
     private String reservPhone;
 
-    @Column(name = "reservation_date", insertable = false, updatable = false)
+    @CreationTimestamp // 추가
+    @Column(name = "reservation_date", updatable = false) // insertable=false 제거
     private LocalDateTime reservationDate;
 }
