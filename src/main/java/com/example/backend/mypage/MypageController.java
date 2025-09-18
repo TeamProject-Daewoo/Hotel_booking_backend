@@ -49,12 +49,12 @@ public class MypageController {
 //        return ResponseEntity.ok(reviews);
 //    }
 //
-//    @GetMapping("/likes")
-//    public ResponseEntity<List<LikeResponseDto>> getMyLikes(Authentication authentication) {
-//        String currentMemberId = authentication.getName();
-//        List<LikeResponseDto> likes = mypageService.getLikeList(currentMemberId);
-//        return ResponseEntity.ok(likes);
-//    }
+   @GetMapping("/likes")
+   public ResponseEntity<List<LikeResponseDto>> getMyLikes(Authentication authentication) {
+       String currentMemberId = authentication.getName();
+       List<LikeResponseDto> likes = mypageService.getLikeList(currentMemberId);
+       return ResponseEntity.ok(likes);
+   }
 //
 //    @GetMapping("/payment-methods")
 //    public ResponseEntity<List<CardResponseDto>> getMyPaymentMethods(Authentication authentication) {

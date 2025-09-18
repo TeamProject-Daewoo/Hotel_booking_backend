@@ -1,8 +1,10 @@
 package com.example.backend.mypage;
 
 import com.example.backend.api.Hotels;
+import com.example.backend.api.HotelsRepa;
 import com.example.backend.authentication.User;
 import com.example.backend.authentication.UserRepository;
+import com.example.backend.like.WishlistRepository;
 import com.example.backend.reservation.Reservation;
 import com.example.backend.reservation.ReservationRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,7 @@ public class MypageService {
     private final UserRepository userRepository;
     private final ReservationRepository reservationRepository;
     private final PasswordEncoder passwordEncoder;
+    private final WishlistRepository wishlistRepository;
 
     @Transactional(readOnly = true)
     public ProfileResponseDto getMemberProfile(String memberId) {
@@ -77,5 +80,8 @@ public class MypageService {
                         .build();
                 })
                 .collect(Collectors.toList());
+    }
+    public List<LikeResponseDto> getLikeList(String memberId) {
+        return wishlistRepository.findLikedHotelsByMemberId(memberId);
     }
 }
