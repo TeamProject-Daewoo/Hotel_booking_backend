@@ -44,4 +44,13 @@ public class TourApi {
     public String getIntroUri(String pageNo, String pageCount, String contentId) throws Exception  {
         return getUri("detailIntro2", pageNo, pageCount)+"&contentId="+contentId;
     }
+    public String getRegionUri(String pageNo, String pageCount) throws Exception  {
+        return "http://apis.data.go.kr/B551011/KorService2/areaCode2"
+        + "?ServiceKey="+ URLEncoder.encode(KEY, "UTF-8")
+        + "&pageNo=" + pageNo
+        + "&numOfRows="+ pageCount
+        + "&_type=json"
+        + "&MobileOS=ETC"
+        + "&MobileApp=AppTest";    
+    }
 }

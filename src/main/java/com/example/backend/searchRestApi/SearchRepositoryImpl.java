@@ -6,21 +6,29 @@ import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.core.types.dsl.NumberPath;
+import com.querydsl.core.types.dsl.StringExpression;
 import com.querydsl.core.types.dsl.StringPath;
+import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.example.backend.Intro.QIntro;
 import com.example.backend.api.QHotels;
 import com.example.backend.api2.QDetail;
+import com.example.backend.common.HangulUtils;
+import com.example.backend.region.QRegion;
 import com.example.backend.reservation.QReservation;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Repository;
 
@@ -32,8 +40,10 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
     private final QDetail rooms = QDetail.detail;
     private final QIntro intro = QIntro.intro;
     private final QReservation reservation = QReservation.reservation;
+    private final QRegion region = QRegion.region;
     
     private final static int CATEGORY_COUNT = 4;
+    private final static String RESERVATION_COUNT_ALIAS = "reservationCount";
 
     public SearchRepositoryImpl(JPAQueryFactory queryFactory) {
         this.queryFactory = queryFactory;
@@ -41,7 +51,7 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
 
     @Override
     public SearchResponseDto findBySearchElements(SearchRequestDto searchRequest) {
-        
+                
         // DTO에서 Date를 받아서 LocalDate로 변환
         LocalDate checkInDate = searchRequest.getCheckInDate().toInstant()
                                     .atZone(ZoneId.systemDefault())
@@ -50,11 +60,8 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
                                      .atZone(ZoneId.systemDefault())
                                      .toLocalDate();
         BooleanBuilder commonCondition = getCommonConditions(searchRequest, checkInDate, checkOutDate);
-        
-        NumberPath<Long> countAlias = Expressions.numberPath(Long.class, "count");
-        List<OrderSpecifier<?>> orderSpecifiers = new ArrayList<>();
-        orderSpecifiers.add(orderCondition(searchRequest.getOrder(), countAlias));
-        
+   
+        QReservation reservationSub = new QReservation("reservationSub");
         //카드에 표시될 내용에 대한 쿼리
         List<SearchCardDto> card = queryFactory
             .select(Projections.fields(SearchCardDto.class,
@@ -63,21 +70,27 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
                     hotels.firstimage.as("image"),
                     rooms.roomoffseasonminfee1.min().as("price"),
                     hotels.addr1.as("address"),
-                    reservation.hotel.contentid.countDistinct().as(countAlias),
+                    Expressions.as(
+                        JPAExpressions
+                            .select(Wildcard.count)
+                            .from(reservationSub)
+                            .where(reservationSub.hotel.contentid.eq(hotels.contentid)),
+                            RESERVATION_COUNT_ALIAS
+                    ),
                     hotels.mapx.as("mapX"),
-                    hotels.mapy.as("mapY")
+                    hotels.mapy.as("mapY"),
+                    getIntroAmenitiesCount().min()
+                        .add(getRoomAmenitiesCount().sum())
+                        .as("totalAminities") 
                 )
             )
-            .distinct()
             .from(hotels)
             .leftJoin(rooms).on(hotels.contentid.eq(rooms.contentid))
             .leftJoin(intro).on(hotels.contentid.eq(intro.contentid)) 
-            .leftJoin(reservation).on(reservation.hotel.contentid.eq(hotels.contentid))
+            // .leftJoin(reservation).on(reservation.hotel.contentid.eq(hotels.contentid))
             .where(commonCondition, categorySelectCondition(searchRequest.getCategory()))
             .groupBy(hotels.contentid, hotels.title, hotels.firstimage, hotels.addr1)
-            .orderBy(orderSpecifiers.stream()
-                .filter(Objects::nonNull)
-                .toArray(OrderSpecifier[]::new))
+            .orderBy(orderCondition(searchRequest.getOrder(), RESERVATION_COUNT_ALIAS)) // 2. orderBy 부분에도 상수 전달
             .fetch();
 
         //카테고리별 개수 반환 쿼리
@@ -132,19 +145,19 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
     private BooleanBuilder getCommonConditions(SearchRequestDto searchRequest, LocalDate checkInDate, LocalDate checkOutDate) {
             BooleanBuilder builder = new BooleanBuilder();
             //키워드 검색
-            BooleanExpression keywordExpr = keywordCondition(searchRequest.getKeyword());
+            BooleanBuilder keywordExpr = keywordCondition(searchRequest.getKeyword());
             if (keywordExpr != null) {
                 builder.and(keywordExpr);
             }
             //비용 0 제외
             builder.and(rooms.roomoffseasonminfee1.ne(0));
             //이미지 없는 목록 제외
-            builder.and(hotels.firstimage.isNotEmpty());
+            // builder.and(hotels.firstimage.isNotEmpty());
             //체크인, 체크아웃 기간에 예약 일정 없는지 체크
             builder.and(availableDateCondition(checkInDate, checkOutDate));
             //객실과 인원 수 숙박 충분한지 체크
-            builder.and(rooms.roomcount.goe(searchRequest.getRoomCount()));
-            builder.and(rooms.roommaxcount.goe(searchRequest.getGuestCount()));
+            // builder.and(rooms.roomcount.goe(searchRequest.getRoomCount()));
+            // builder.and(rooms.roommaxcount.goe(searchRequest.getGuestCount()));
             //비용 필터
             builder.and(rooms.roomoffseasonminfee1.between(searchRequest.getMinPrice(), searchRequest.getMaxPrice()));
             //필터링
@@ -163,12 +176,28 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
         };
     }
 
-    private BooleanExpression keywordCondition(String keyword) {
+    private BooleanBuilder keywordCondition(String keyword) {
         if (keyword == null || keyword.isEmpty()) {
             return null;
         }
-        return hotels.addr1.containsIgnoreCase(keyword)
-            .or(hotels.title.containsIgnoreCase(keyword));
+
+        BooleanBuilder builder = new BooleanBuilder();
+        builder.or(hotels.title.containsIgnoreCase(keyword));
+        builder.or(hotels.addr1.containsIgnoreCase(keyword));
+
+        List<String> chosungMatchRegionNames = queryFactory
+                .select(region.name)
+                .from(region)
+                .where(region.nameChosung.like(keyword + "%"))
+                .fetch();
+
+        if (!chosungMatchRegionNames.isEmpty()) {
+            for (String name : chosungMatchRegionNames) {
+                builder.or(hotels.addr1.containsIgnoreCase(name));
+            }
+        }
+
+        return builder;
     }
 
     private BooleanExpression availableDateCondition(LocalDate checkInDate, LocalDate checkOutDate) {
@@ -282,14 +311,107 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
         return builder;
     }
 
-    private OrderSpecifier<?> orderCondition(String order, NumberPath<Long> countAlias) {
-        return switch (order) {
-            case "인기 순" -> countAlias.desc();
+    private OrderSpecifier<?>[] orderCondition(String order, String countAlias) {
+        List<OrderSpecifier<?>> specifiers = new ArrayList<>();
+    
+        NumberPath<Long> countPath = Expressions.numberPath(Long.class, countAlias);
+
+        OrderSpecifier<?> orderSpecifier = switch (order) {
+            case "인기 순" -> countPath.desc();
             case "낮은 가격 순" -> rooms.roomoffseasonminfee1.min().asc();
             case "높은 가격 순" -> rooms.roomoffseasonminfee1.min().desc();
-            case "평점 높은 순" -> null;
             default -> null;
         };
+        
+        if (orderSpecifier != null) {
+            specifiers.add(orderSpecifier);
+        }
+        
+        return specifiers.toArray(new OrderSpecifier[0]);
+    }
+    private NumberExpression<Integer> getIntroAmenitiesCount() {
+        StringExpression subfacilityReplaced = Expressions.stringTemplate(
+        "REPLACE({0}, {1}, {2})",
+        intro.subfacility, " / ", ", "
+    );
+    // 통일된 구분자 ", "를 모두 제거
+    StringExpression commaDeleted = Expressions.stringTemplate(
+        "REPLACE({0}, {1}, {2})",
+        subfacilityReplaced, ", ", ""
+    );
+
+    // 원본 길이에서 제거된 후의 길이를 빼서, 구분자들이 차지했던 총 길이를 구함
+    NumberExpression<Integer> totalSeparatorLength = subfacilityReplaced.length()
+        .subtract(commaDeleted.length());
+
+    // ", "는 2글자이므로, 총 길이 차이를 2로 나누어 구분자의 '개수'를 구함
+    NumberExpression<Integer> separatorCount = totalSeparatorLength.divide(2);
+
+    // 아이템 총 개수 = 구분자 개수 + 1
+    NumberExpression<Integer> subfacilityCount = Expressions.cases()
+        .when(intro.subfacility.isNull().or(intro.subfacility.isEmpty())).then(0)
+        .otherwise(separatorCount.add(1));
+
+
+    // --- 2. paths 배열 중복 제거 및 계산 ---
+    
+    // parkinglodging 중복 제거
+    StringPath[] paths = {
+        intro.parkinglodging, intro.publicbath, 
+        intro.seminar, intro.sports, intro.barbecue, intro.campfire,
+        intro.sauna, intro.fitness
+    };
+    
+    NumberExpression<Integer> counts = Expressions.asNumber(0);
+    for (StringPath path : paths) {
+        NumberExpression<Integer> currentPathCount = Expressions.cases()
+            .when(path.eq("1").or(path.equalsIgnoreCase("Y"))).then(1) // Y/N도 처리 가능하도록 수정
+            .otherwise(0);
+        counts = counts.add(currentPathCount);
+    }
+    
+    // 최종적으로 subfacility 개수와 나머지 개수를 더해서 반환
+    return subfacilityCount.add(counts);
+    }
+    private NumberExpression<Integer> getRoomAmenitiesCount() {
+        NumberExpression<Integer> roomAmenitiesCount = Expressions.asNumber(0);
+        // rooms 테이블의 편의시설 컬럼만 포함
+        StringPath[] paths = { 
+            rooms.roombath, rooms.roomtv, rooms.roomaircondition, rooms.roomcook, 
+            rooms.roominternet, rooms.roomrefrigerator, rooms.roomtoiletries, 
+            rooms.roomhometheater, rooms.roompc 
+        };
+
+        for (StringPath path : paths) {
+            NumberExpression<Integer> currentPathCount = Expressions.cases()
+                .when(path.eq("Y")).then(1)
+                .otherwise(0);
+            roomAmenitiesCount = roomAmenitiesCount.add(currentPathCount);
+        }
+        return roomAmenitiesCount;
+    }
+
+    @Override
+    public List<String> findByRecommendElements(String keyword) {
+        String keywordChosung = HangulUtils.getChosung(keyword);
+        
+        //지역명 검색
+        List<String> candidatesFromRegions = queryFactory
+            .select(region.name).distinct()
+            .from(region)
+            .where(
+                region.name.like(keyword + "%")
+                .or(region.nameChosung.like(keywordChosung + "%"))
+            )
+            .limit(20)
+            .fetch();
+
+        List<String> finalSuggestions = candidatesFromRegions.stream()
+            .filter(candidate -> HangulUtils.isMixedMatch(candidate, keyword))
+            .limit(10)
+            .collect(Collectors.toList());
+
+        return new ArrayList<>(finalSuggestions);
     }
     
 }

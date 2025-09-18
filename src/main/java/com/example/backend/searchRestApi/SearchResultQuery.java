@@ -9,7 +9,8 @@ public class SearchResultQuery {
     private String image;
     private Integer price;
     private String address;
-    private Long reservationCount;
+    // private Long reservationCount;
     private String mapX;
     private String mapY;
+    // private int totalAminities;
 }
