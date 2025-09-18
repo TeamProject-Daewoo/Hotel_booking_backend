@@ -1,5 +1,7 @@
 package com.example.backend.authentication;
 
+import java.util.UUID;
+
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -11,6 +13,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -21,6 +25,7 @@ public class UserService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final KakaoService kakaoService;
 
     /**
      * 회원가입
@@ -97,5 +102,33 @@ public class UserService implements UserDetailsService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("해당 아이디를 찾을 수 없습니다."));
         return UserDto.Info.from(user);
+    }
+    
+    public TokenInfo kakaoLogin(String kakaoAccessToken) {
+    	
+        // 1. 카카오 액세스 토큰으로 사용자 정보 가져오기
+        JsonNode userInfo = kakaoService.getUserInfo(kakaoAccessToken);
+        String kakaoId = userInfo.get("id").asText();
+        System.out.println(userInfo);
+        String nickname = userInfo.get("properties").get("nickname").asText();
+        
+        
+        // 2. DB에 해당 사용자가 없으면 새로 가입 처리
+        User user = userRepository.findByUuid(kakaoId).orElse(null);
+        if (user == null) {
+            user = User.builder()
+                    .username(nickname + "_" + kakaoId) // 임시 username
+                    .name(nickname)
+                    .password(passwordEncoder.encode(UUID.randomUUID().toString())) // 임시 비밀번호
+                    .uuid(kakaoId)
+                    .loginType("KAKAO")
+                    .role(Role.USER) // 기본 역할
+                    .build();
+            userRepository.save(user);
+        }
+
+        // 3. 우리 서비스의 JWT 토큰 발급
+        Authentication authentication = new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword(), user.getAuthorities());
+        return jwtTokenProvider.generateToken(authentication);
     }
 }
