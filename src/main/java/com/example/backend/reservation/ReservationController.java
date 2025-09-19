@@ -7,9 +7,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -96,5 +98,11 @@ public class ReservationController {
         }
 
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+    }
+
+    @PostMapping("/availability")
+    public ResponseEntity<AvailabilityResponseDto> checkAvailability(@RequestBody AvailabilityRequestDto requestDto) {
+        Map<LocalDate, Map<Long, Integer>> availability = reservationService.getRoomAvailability(requestDto);
+        return ResponseEntity.ok(new AvailabilityResponseDto(availability));
     }
 }
