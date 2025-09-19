@@ -34,3 +34,4 @@ build/
 
 # .gitignore
 /src/main/resources/config.properties
+/src/main/resources/application.properties
