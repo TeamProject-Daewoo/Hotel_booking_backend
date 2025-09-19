@@ -19,6 +19,7 @@ import com.example.backend.api2.QDetail;
 import com.example.backend.common.HangulUtils;
 import com.example.backend.region.QRegion;
 import com.example.backend.reservation.QReservation;
+import com.example.backend.review.QReview;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -41,6 +42,7 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
     private final QIntro intro = QIntro.intro;
     private final QReservation reservation = QReservation.reservation;
     private final QRegion region = QRegion.region;
+    private final QReview review = QReview.review;
     
     private final static int CATEGORY_COUNT = 4;
     private final static String RESERVATION_COUNT_ALIAS = "reservationCount";
@@ -70,6 +72,8 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
                     hotels.firstimage.as("image"),
                     rooms.roomoffseasonminfee1.min().as("price"),
                     hotels.addr1.as("address"),
+                    review.rating.avg().as("rating"),
+                    rooms.roomcount.sum().as("roomCount"),
                     Expressions.as(
                         JPAExpressions
                             .select(Wildcard.count)
@@ -77,6 +81,7 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
                             .where(reservationSub.hotel.contentid.eq(hotels.contentid)),
                             RESERVATION_COUNT_ALIAS
                     ),
+                    review.reviewId.countDistinct().as("totalReviews"),
                     hotels.mapx.as("mapX"),
                     hotels.mapy.as("mapY"),
                     getIntroAmenitiesCount().min()
@@ -87,51 +92,66 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
             .from(hotels)
             .leftJoin(rooms).on(hotels.contentid.eq(rooms.contentid))
             .leftJoin(intro).on(hotels.contentid.eq(intro.contentid)) 
+            .leftJoin(review).on(review.hotel.contentid.eq(hotels.contentid))
             // .leftJoin(reservation).on(reservation.hotel.contentid.eq(hotels.contentid))
             .where(commonCondition, categorySelectCondition(searchRequest.getCategory()))
-            .groupBy(hotels.contentid, hotels.title, hotels.firstimage, hotels.addr1)
-            .orderBy(orderCondition(searchRequest.getOrder(), RESERVATION_COUNT_ALIAS)) // 2. orderBy 부분에도 상수 전달
+            .groupBy(hotels.contentid, hotels.title, hotels.firstimage, hotels.addr1, hotels.mapx, hotels.mapy)
+            .having(ratingGoe(searchRequest.getRating())) 
+            .orderBy(orderCondition(searchRequest.getOrder(), RESERVATION_COUNT_ALIAS))
             .fetch();
 
         //카테고리별 개수 반환 쿼리
         List<Tuple> counts = queryFactory
-            .select(
-                hotels.contentid.countDistinct(),
-                hotels.category
-            )
+            .select(hotels.contentid, hotels.category)
             .from(hotels)
             .join(rooms).on(hotels.contentid.eq(rooms.contentid))
             .join(intro).on(hotels.contentid.eq(intro.contentid))
+            .leftJoin(review).on(review.hotel.contentid.eq(hotels.contentid))
             .where(commonCondition)
-            .groupBy(hotels.category)
+            .groupBy(hotels.contentid, hotels.category) // 호텔별 + 카테고리별 그룹화
+            .having(ratingGoe(searchRequest.getRating()))
             .fetch();
 
         //전체 합계 반환 쿼리
         long totalCount = queryFactory
-            .select(hotels.contentid.countDistinct())
+            .select(hotels.contentid)
             .from(hotels)
             .join(rooms).on(hotels.contentid.eq(rooms.contentid))
             .join(intro).on(hotels.contentid.eq(intro.contentid))
+            .leftJoin(review).on(review.hotel.contentid.eq(hotels.contentid))
             .where(commonCondition)
-            .fetchOne();
+            .groupBy(hotels.contentid)
+            .having(ratingGoe(searchRequest.getRating()))
+            .fetch()
+            .size();
 
         SearchResponseDto responseDto = new SearchResponseDto();
         if (card != null)
             responseDto.setSearchCards(card);
 
+        Map<String, Long> categoryCountsMap = counts.stream()
+            .collect(Collectors.groupingBy(
+                tuple -> tuple.get(hotels.category),
+                Collectors.counting()
+            ));
+            
         int[] countArr = new int[CATEGORY_COUNT];
-        for (Tuple t : counts) {
-            String category = t.get(hotels.category);
-            Long count = t.get(hotels.contentid.countDistinct());
-            //카테고리중 세 가지만 구분
+        for (Map.Entry<String, Long> entry : categoryCountsMap.entrySet()) {
+            String category = entry.getKey();
+            Long count = entry.getValue();
+
             int idx = switch (category) {
                 case "B02010100" -> 1;  //호텔
                 case "B02010900" -> 2;  //모텔
                 case "B02010700" -> 3;  //펜션
                 default -> -1;
             };
-            if(idx != -1) countArr[idx] = count.intValue();
+
+            if (idx != -1) {
+                countArr[idx] = count.intValue();
+            }
         }
+
         //프론트에 표시될 순서 보장 + LinkedHashMap
         String[] categorys = {"All", "Hotels", "Motels", "Cottages"};
         countArr[0] = (int)totalCount;
@@ -157,7 +177,7 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
             builder.and(availableDateCondition(checkInDate, checkOutDate));
             //객실과 인원 수 숙박 충분한지 체크
             // builder.and(rooms.roomcount.goe(searchRequest.getRoomCount()));
-            // builder.and(rooms.roommaxcount.goe(searchRequest.getGuestCount()));
+            builder.and(rooms.roommaxcount.goe(searchRequest.getGuestCount()));
             //비용 필터
             builder.and(rooms.roomoffseasonminfee1.between(searchRequest.getMinPrice(), searchRequest.getMaxPrice()));
             //필터링
@@ -165,6 +185,14 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
             builder.and(filterFreebiesCondition(searchRequest.getFreebies()));
 
             return builder;
+    }
+
+    private BooleanExpression ratingGoe(int rating) {
+        if (rating == 0) {
+            return null;
+        }
+        // 0보다 큰 값이 들어오면, avg() >= rating 조건을 생성하여 반환
+        return review.rating.avg().goe(rating);
     }
 
     private BooleanExpression categorySelectCondition(String category) {
@@ -320,6 +348,7 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
             case "인기 순" -> countPath.desc();
             case "낮은 가격 순" -> rooms.roomoffseasonminfee1.min().asc();
             case "높은 가격 순" -> rooms.roomoffseasonminfee1.min().desc();
+            case "평점 높은 순" -> review.rating.avg().desc();
             default -> null;
         };
         
