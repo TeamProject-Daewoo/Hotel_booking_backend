@@ -59,13 +59,15 @@ public class User implements UserDetails {
     private String business_registration_number;
 
     @Builder
-    public User(String username, String email, String password, String name, String phoneNumber, Role role) {
+    public User(String username, String email, String password, String name, String phoneNumber, Role role, String loginType, String uuid) {
         this.username = username;
         this.password = password;
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.joinDate = LocalDateTime.now();
         this.role = role;
+        this.loginType = loginType;
+        this.uuid = uuid;
 
         if (role == Role.ADMIN || role == Role.BUSINESS) {
             this.approvalStatus = ApprovalStatus.PENDING;
