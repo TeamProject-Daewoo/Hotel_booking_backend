@@ -1,6 +1,8 @@
 package com.example.backend.mypage;
 
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +12,8 @@ import com.example.backend.review.ReviewResponseDto;
 import com.example.backend.review.ReviewService;
 
 import java.io.IOException;
+import com.example.backend.wish.WishRequestDto;
+
 import java.util.List;
 
 @RestController
@@ -68,13 +72,27 @@ public class MypageController {
         List<ReviewResponseDto> reviews = reviewService.getReviewsByUser(currentMemberId);
         return ResponseEntity.ok(reviews);
     }
-    @GetMapping("/likes")
-    public ResponseEntity<List<LikeResponseDto>> getMyLikes(Authentication authentication) {
-        String currentMemberId = authentication.getName();
-        List<LikeResponseDto> likes = mypageService.getLikeList(currentMemberId);
-        return ResponseEntity.ok(likes);
+
+   @GetMapping("/wishs")
+   public ResponseEntity<List<LikeResponseDto>> getMyWishList(Authentication authentication) {
+       String currentMemberId = authentication.getName();
+       List<LikeResponseDto> likes = mypageService.getMyWishList(currentMemberId);
+       return ResponseEntity.ok(likes);
    }
-//
+
+   @PostMapping("/savewish")
+   public ResponseEntity<Void> saveWishList(Authentication authentication, @RequestBody WishRequestDto request) {
+        String currentMemberId = authentication.getName();
+        mypageService.saveWishList(request.getHotelId(), currentMemberId);
+        return ResponseEntity.noContent().build();
+   }
+   @DeleteMapping("/deletewish")
+   public ResponseEntity<Void> deleteWishList(Authentication authentication, @RequestBody WishRequestDto request) {
+        String currentMemberId = authentication.getName();
+        mypageService.deleteWishList(request.getHotelId(), currentMemberId);
+        return ResponseEntity.noContent().build();
+   }
+
 //    @GetMapping("/payment-methods")
 //    public ResponseEntity<List<CardResponseDto>> getMyPaymentMethods(Authentication authentication) {
 //        String currentMemberId = authentication.getName();

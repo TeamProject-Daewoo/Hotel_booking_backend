@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
-import com.example.backend.common.TourApi;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @RestController
@@ -17,13 +16,6 @@ public class DetailTourController {
 
     @Autowired
     private DetailTourService detailTourService;
-
-    @GetMapping("/detail/{id}")
-    public DetailResponseDto getTourDetail(@PathVariable Long id) throws Exception {
-        TourApi api = new TourApi();
-        
-        return detailTourService.getDetailInfo(api.getDetailUri("1", "10", String.valueOf(id)));
-    }
 
     // ✅ DB에서 contentid로만 조회
     @GetMapping("/detail/db/content/{contentid}")
