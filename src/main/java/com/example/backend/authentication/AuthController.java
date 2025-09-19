@@ -27,6 +27,7 @@ public class AuthController {
 
     @PostMapping("/sign-up")
     public ResponseEntity<String> signUp(@RequestBody UserDto.SignUp signUpDto) {
+    	System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" + signUpDto);
         userService.signUp(signUpDto);
         return ResponseEntity.ok("회원가입이 성공적으로 완료되었습니다.");
     }

@@ -1,5 +1,6 @@
 package com.example.backend.authentication;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.security.authentication.LockedException;
@@ -124,6 +125,16 @@ public class UserService implements UserDetailsService {
         String email = userInfo.path("kakao_account").path("email").asText(null);
         
         phone_number = formatPhoneNumber(phone_number);
+        
+        Optional<User> existingUserByEmail = userRepository.findByUsername(email);
+        if (existingUserByEmail.isPresent()) {
+            // 이미 이메일로 가입된 계정이 있으면, UserAlreadyExistsException 발생
+            User user = existingUserByEmail.get();
+            throw new UserAlreadyExistsException(
+                "이미 가입된 이메일입니다.", 
+                user.getLoginType() == null ? "이메일" : user.getLoginType()
+            );
+        }
 
         // 2. DB에 해당 사용자가 없으면 새로 가입 처리
         User user = userRepository.findByUuid(kakaoId).orElse(null);

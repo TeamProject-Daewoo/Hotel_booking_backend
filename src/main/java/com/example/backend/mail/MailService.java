@@ -23,7 +23,7 @@ public class MailService {
 
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(email);
-        message.setSubject("[호텔 예약] 이메일 인증 번호 안내");
+        message.setSubject("[Hotel Hub] 이메일 인증 번호 안내");
         message.setText("인증 번호: " + verificationCode);
         mailSender.send(message);
 
