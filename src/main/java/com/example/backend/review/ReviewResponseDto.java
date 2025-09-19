@@ -1,4 +1,4 @@
-package com.example.backend.mypage;
+package com.example.backend.review;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -11,7 +11,10 @@ public class ReviewResponseDto {
     private Long reviewId;
     private String hotelId;
     private String hotelName;
+    private String userName;
     private String reviewText;
     private int rating;
     private LocalDateTime reviewDate;
+    private String imageUrl;
+    private long visitCount;
 }
