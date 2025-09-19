@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.backend.exception.UserAlreadyExistsException;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import lombok.RequiredArgsConstructor;
@@ -32,9 +33,13 @@ public class UserService implements UserDetailsService {
      */
     @Transactional
     public void signUp(UserDto.SignUp signUpDto) {
-        if (userRepository.findByUsername(signUpDto.getUsername()).isPresent()) {
-            throw new IllegalArgumentException("이미 사용 중인 아이디입니다.");
-        }
+    	userRepository.findByUsername(signUpDto.getUsername()).ifPresent(existingUser -> {
+            // 사용자가 이미 존재하면, 로그인 타입을 담아 예외를 발생시킴
+            throw new UserAlreadyExistsException(
+                "이미 가입된 이메일입니다.", 
+                existingUser.getLoginType() == null ? "이메일" : existingUser.getLoginType()
+            );
+        });
         // 비밀번호 암호화
         String encodedPassword = passwordEncoder.encode(signUpDto.getPassword());
         User user = signUpDto.toEntity(encodedPassword);
