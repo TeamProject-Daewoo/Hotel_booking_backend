@@ -19,4 +19,5 @@ public class BookingResponseDto {
     private Integer totalPrice;
     private Integer numAdults;
     private Integer numChildren;
+    private boolean hasReview;
 }

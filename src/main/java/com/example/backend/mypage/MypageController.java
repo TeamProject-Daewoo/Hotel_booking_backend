@@ -1,9 +1,19 @@
 package com.example.backend.mypage;
 
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.example.backend.review.ReviewResponseDto;
+import com.example.backend.review.ReviewService;
+
+import java.io.IOException;
+import com.example.backend.wish.WishRequestDto;
+import com.example.backend.wish.WishResponseDto;
 
 import java.util.List;
 
@@ -13,6 +23,7 @@ import java.util.List;
 public class MypageController {
 
     private final MypageService mypageService;
+    private final ReviewService reviewService;
 
     @GetMapping("/profile")
     public ResponseEntity<ProfileResponseDto> getMyProfile(Authentication authentication) {
@@ -42,20 +53,47 @@ public class MypageController {
         return ResponseEntity.ok(bookings);
     }
 
-//    @GetMapping("/reviews")
-//    public ResponseEntity<List<ReviewResponseDto>> getMyReviews(Authentication authentication) {
-//        String currentMemberId = authentication.getName();
-//        List<ReviewResponseDto> reviews = mypageService.getReviewList(currentMemberId);
-//        return ResponseEntity.ok(reviews);
-//    }
-//
-   @GetMapping("/likes")
-   public ResponseEntity<List<LikeResponseDto>> getMyLikes(Authentication authentication) {
+    @PostMapping("/reviews")
+    public ResponseEntity<Void> createReview(
+            @RequestParam("reservationId") Long reservationId,
+            @RequestParam("rating") int rating,
+            @RequestParam("content") String content,
+            @RequestParam(value = "photo", required = false) MultipartFile photo,
+            Authentication authentication) throws IOException {
+
+        String username = authentication.getName();
+        reviewService.createReview(reservationId, username, rating, content, photo);
+        
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/reviews")
+    public ResponseEntity<List<ReviewResponseDto>> getMyReviews(Authentication authentication) {
+        String currentMemberId = authentication.getName();
+        List<ReviewResponseDto> reviews = reviewService.getReviewsByUser(currentMemberId);
+        return ResponseEntity.ok(reviews);
+    }
+
+   @GetMapping("/wishs")
+   public ResponseEntity<List<WishResponseDto>> getMyWishList(Authentication authentication) {
        String currentMemberId = authentication.getName();
-       List<LikeResponseDto> likes = mypageService.getLikeList(currentMemberId);
+       List<WishResponseDto> likes = mypageService.getMyWishList(currentMemberId);
        return ResponseEntity.ok(likes);
    }
-//
+
+   @PostMapping("/savewish")
+   public ResponseEntity<Void> saveWishList(Authentication authentication, @RequestBody WishRequestDto request) {
+        String currentMemberId = authentication.getName();
+        mypageService.saveWishList(request.getHotelId(), currentMemberId);
+        return ResponseEntity.noContent().build();
+   }
+   @DeleteMapping("/deletewish")
+   public ResponseEntity<Void> deleteWishList(Authentication authentication, @RequestBody WishRequestDto request) {
+        String currentMemberId = authentication.getName();
+        mypageService.deleteWishList(request.getHotelId(), currentMemberId);
+        return ResponseEntity.noContent().build();
+   }
+
 //    @GetMapping("/payment-methods")
 //    public ResponseEntity<List<CardResponseDto>> getMyPaymentMethods(Authentication authentication) {
 //        String currentMemberId = authentication.getName();

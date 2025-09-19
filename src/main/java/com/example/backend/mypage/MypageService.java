@@ -4,9 +4,15 @@ import com.example.backend.api.Hotels;
 import com.example.backend.api.HotelsRepa;
 import com.example.backend.authentication.User;
 import com.example.backend.authentication.UserRepository;
-import com.example.backend.like.WishlistRepository;
 import com.example.backend.reservation.Reservation;
 import com.example.backend.reservation.ReservationRepository;
+import com.example.backend.review.ReviewRepository;
+import com.example.backend.wish.WishResponseDto;
+import com.example.backend.wish.WishRequestDto;
+import com.example.backend.wish.Wishlist;
+import com.example.backend.wish.WishlistRepository;
+
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -24,6 +30,8 @@ public class MypageService {
     private final ReservationRepository reservationRepository;
     private final PasswordEncoder passwordEncoder;
     private final WishlistRepository wishlistRepository;
+    private final ReviewRepository reviewRepository;
+    private final HotelsRepa hotelsRepository;
 
     @Transactional(readOnly = true)
     public ProfileResponseDto getMemberProfile(String memberId) {
@@ -67,6 +75,9 @@ public class MypageService {
         return reservations.stream()
                 .map(reservation -> {
                     Hotels hotel = reservation.getHotel();
+                    // 해당 예약에 대한 리뷰가 존재하는지 확인
+                    boolean hasReview = reviewRepository.existsByReservationReservationId(reservation.getReservationId());
+                    
                     return BookingResponseDto.builder()
                         .reservationId(reservation.getReservationId())
                         .hotelId(hotel.getContentid())
@@ -77,11 +88,32 @@ public class MypageService {
                         .totalPrice(reservation.getTotalPrice())
                         .numAdults(reservation.getNumAdults())
                         .numChildren(reservation.getNumChildren())
+                        .hasReview(hasReview) // DTO에 리뷰 작성 여부 추가
                         .build();
                 })
                 .collect(Collectors.toList());
     }
-    public List<LikeResponseDto> getLikeList(String memberId) {
-        return wishlistRepository.findLikedHotelsByMemberId(memberId);
+
+    public List<WishResponseDto> getMyWishList(String username) {
+        return wishlistRepository.findLikedHotelsByMemberId(username);
+    }
+    @Transactional
+    public Wishlist saveWishList(String hotelId, String username) {
+        WishRequestDto requestDto = new WishRequestDto(hotelId, username);
+
+        User user = userRepository.findByUsername(requestDto.getUsername())
+                .orElseThrow(() -> new EntityNotFoundException("해당 사용자를 찾을 수 없습니다."));
+        Hotels hotel = hotelsRepository.findById(requestDto.getHotelId())
+                .orElseThrow(() -> new EntityNotFoundException("해당 호텔을 찾을 수 없습니다."));
+
+        boolean alreadyExists = wishlistRepository.existsByUserAndHotel(user, hotel);
+        if (alreadyExists) throw new IllegalStateException("이미 찜한 호텔입니다.");
+
+        return wishlistRepository.save(new Wishlist(user, hotel));
+    }
+
+    @Transactional
+    public void deleteWishList(String hotelId, String username) {
+        wishlistRepository.deleteByUser_UsernameAndHotel_Contentid(username, hotelId);
     }
 }
