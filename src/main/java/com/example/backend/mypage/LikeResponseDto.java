@@ -6,6 +6,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class LikeResponseDto {
+    private String contentId;
     private String hotelName;
     // private double rating;
     // private String reviewCount;

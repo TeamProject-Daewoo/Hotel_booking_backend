@@ -89,16 +89,23 @@ public class MypageService {
     public List<LikeResponseDto> getMyWishList(String username) {
         return wishlistRepository.findLikedHotelsByMemberId(username);
     }
-    public Wishlist saveWishList(WishRequestDto requestDto) {
+    @Transactional
+    public Wishlist saveWishList(String hotelId, String username) {
+        WishRequestDto requestDto = new WishRequestDto(hotelId, username);
+
         User user = userRepository.findByUsername(requestDto.getUsername())
                 .orElseThrow(() -> new EntityNotFoundException("해당 사용자를 찾을 수 없습니다."));
-        Hotels hotel = hotelsRepository.findById(String.valueOf(requestDto.getHotelId())) // hotelId가 String 타입이라고 가정
+        Hotels hotel = hotelsRepository.findById(requestDto.getHotelId())
                 .orElseThrow(() -> new EntityNotFoundException("해당 호텔을 찾을 수 없습니다."));
 
         boolean alreadyExists = wishlistRepository.existsByUserAndHotel(user, hotel);
         if (alreadyExists) throw new IllegalStateException("이미 찜한 호텔입니다.");
 
-        // 2. 존재하지 않을 때만 "새로 저장" (INSERT 쿼리 실행)
         return wishlistRepository.save(new Wishlist(user, hotel));
+    }
+
+    @Transactional
+    public void deleteWishList(String hotelId, String username) {
+        wishlistRepository.deleteByUser_UsernameAndHotel_Contentid(username, hotelId);
     }
 }

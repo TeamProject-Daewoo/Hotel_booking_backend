@@ -1,6 +1,8 @@
 package com.example.backend.mypage;
 
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -51,19 +53,25 @@ public class MypageController {
 //        return ResponseEntity.ok(reviews);
 //    }
 //
-   @GetMapping("/likes")
+   @GetMapping("/wishs")
    public ResponseEntity<List<LikeResponseDto>> getMyWishList(Authentication authentication) {
        String currentMemberId = authentication.getName();
        List<LikeResponseDto> likes = mypageService.getMyWishList(currentMemberId);
        return ResponseEntity.ok(likes);
    }
-   @GetMapping("/savewish")
-   public ResponseEntity<Void> saveWishList(Authentication authentication, int hotelId) {
+   @PostMapping("/savewish")
+   public ResponseEntity<Void> saveWishList(Authentication authentication, @RequestBody WishRequestDto request) {
         String currentMemberId = authentication.getName();
-        mypageService.saveWishList(new WishRequestDto(hotelId, currentMemberId));
+        mypageService.saveWishList(request.getHotelId(), currentMemberId);
         return ResponseEntity.noContent().build();
    }
-//
+   @DeleteMapping("/deletewish")
+   public ResponseEntity<Void> deleteWishList(Authentication authentication, @RequestBody WishRequestDto request) {
+        String currentMemberId = authentication.getName();
+        mypageService.deleteWishList(request.getHotelId(), currentMemberId);
+        return ResponseEntity.noContent().build();
+   }
+
 //    @GetMapping("/payment-methods")
 //    public ResponseEntity<List<CardResponseDto>> getMyPaymentMethods(Authentication authentication) {
 //        String currentMemberId = authentication.getName();
