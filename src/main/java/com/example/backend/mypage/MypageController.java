@@ -13,6 +13,7 @@ import com.example.backend.review.ReviewService;
 
 import java.io.IOException;
 import com.example.backend.wish.WishRequestDto;
+import com.example.backend.wish.WishResponseDto;
 
 import java.util.List;
 
@@ -74,9 +75,9 @@ public class MypageController {
     }
 
    @GetMapping("/wishs")
-   public ResponseEntity<List<LikeResponseDto>> getMyWishList(Authentication authentication) {
+   public ResponseEntity<List<WishResponseDto>> getMyWishList(Authentication authentication) {
        String currentMemberId = authentication.getName();
-       List<LikeResponseDto> likes = mypageService.getMyWishList(currentMemberId);
+       List<WishResponseDto> likes = mypageService.getMyWishList(currentMemberId);
        return ResponseEntity.ok(likes);
    }
 
