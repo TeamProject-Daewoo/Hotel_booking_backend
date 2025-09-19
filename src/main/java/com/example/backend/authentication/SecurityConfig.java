@@ -45,7 +45,8 @@ public class SecurityConfig {
                 .requestMatchers("/accommodations").permitAll()
                 .requestMatchers("/tour/detail/**").permitAll()
                 .requestMatchers("/uploads/**").permitAll()
-                // 그 외 모든 요청은 인증 필요
+                .requestMatchers("/api/reviews/hotel/**").permitAll()
+                    // 그 외 모든 요청은 인증 필요
 						.anyRequest().permitAll()/* .authenticated() */)
             
             // 이전에 만든 JwtAuthenticationFilter를 UsernamePasswordAuthenticationFilter 앞에 추가
