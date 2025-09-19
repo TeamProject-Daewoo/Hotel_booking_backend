@@ -23,6 +23,7 @@ public class AuthController {
 
     private final UserService userService;
     private final MailService mailService;
+    private final KakaoService kakaoService;
 
     @PostMapping("/sign-up")
     public ResponseEntity<String> signUp(@RequestBody UserDto.SignUp signUpDto) {
@@ -89,4 +90,25 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("인증 코드가 올바르지 않습니다.");
         }
     }
+    
+    @PostMapping("/kakao-login")
+    public ResponseEntity<?> kakaoLogin(@RequestBody Map<String, String> payload) {
+        String authorizationCode = payload.get("code");
+        
+        // 1. 인가 코드로 카카오 액세스 토큰 받기
+        String kakaoAccessToken = kakaoService.getKakaoAccessToken(authorizationCode);
+
+        // 2. 카카오 로그인 처리 및 우리 서비스 JWT 발급
+        TokenInfo tokenInfo = userService.kakaoLogin(kakaoAccessToken);
+
+        // 3. 응답 생성 (Refresh Token은 쿠키, Access Token은 Body)
+        ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", tokenInfo.getRefreshToken())
+                .httpOnly(true).secure(true).path("/").maxAge(60 * 60 * 24 * 7).build();
+        UserDto.AccessTokenResponse accessTokenResponse = new UserDto.AccessTokenResponse(tokenInfo.getAccessToken());
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
+                .body(accessTokenResponse);
+    }
+    
 }

@@ -1,5 +1,7 @@
 package com.example.backend.authentication;
 
+import java.util.UUID;
+
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -11,6 +13,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -21,6 +25,7 @@ public class UserService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final KakaoService kakaoService;
 
     /**
      * 회원가입
@@ -97,5 +102,52 @@ public class UserService implements UserDetailsService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("해당 아이디를 찾을 수 없습니다."));
         return UserDto.Info.from(user);
+    }
+    
+    public TokenInfo kakaoLogin(String kakaoAccessToken) {
+    	
+        // 1. 카카오 액세스 토큰으로 사용자 정보 가져오기
+        JsonNode userInfo = kakaoService.getUserInfo(kakaoAccessToken);
+        String kakaoId = userInfo.path("id").asText(null);
+        System.out.println(userInfo);
+        String nickname = userInfo
+                .path("kakao_account")
+                .path("profile")
+                .path("nickname")
+                .asText(null);
+        String phone_number = userInfo.path("kakao_account").path("phone_number").asText(null);
+        String email = userInfo.path("kakao_account").path("email").asText(null);
+        
+        phone_number = formatPhoneNumber(phone_number);
+
+        // 2. DB에 해당 사용자가 없으면 새로 가입 처리
+        User user = userRepository.findByUuid(kakaoId).orElse(null);
+        if (user == null) {
+            user = User.builder()
+                    .username(email) // 임시 username
+                    .name(nickname)
+                    .password(passwordEncoder.encode(UUID.randomUUID().toString())) // 임시 비밀번호
+                    .uuid(kakaoId)
+                    .phoneNumber(phone_number)
+                    .loginType("KAKAO")
+                    .role(Role.USER) // 기본 역할
+                    .build();
+            userRepository.save(user);
+        }
+        
+        UserDetails userDetails = loadUserByUsername(email);
+
+        // 3. 우리 서비스의 JWT 토큰 발급
+        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, user.getPassword(), user.getAuthorities());
+        TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication);
+        return tokenInfo;
+    }
+    
+    public String formatPhoneNumber(String phoneNumber) {
+        // 국가 코드 "+82"을 "010"으로 변환
+        if (phoneNumber.startsWith("+82")) {
+            return "010" + phoneNumber.substring(6);  // "+82"를 제거하고 "010"으로 대체
+        }
+        return phoneNumber;  // 이미 "010"이면 그대로 반환
     }
 }
