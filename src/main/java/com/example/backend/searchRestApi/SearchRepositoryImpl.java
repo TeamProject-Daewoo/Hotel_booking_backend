@@ -209,15 +209,20 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
             return null;
         }
 
+        //초성+환성 한글 조합일 때 처리
+        String processedKeyword = keyword.replaceAll("[ㄱ-ㅎㅏ-ㅣ]$", "");
+
         BooleanBuilder builder = new BooleanBuilder();
-        builder.or(hotels.title.containsIgnoreCase(keyword));
-        builder.or(hotels.addr1.containsIgnoreCase(keyword));
+        if (!processedKeyword.isEmpty()) {
+            builder.or(hotels.title.containsIgnoreCase(processedKeyword));
+            builder.or(hotels.addr1.containsIgnoreCase(processedKeyword));
+        }
 
         List<String> chosungMatchRegionNames = queryFactory
-                .select(region.name)
-                .from(region)
-                .where(region.nameChosung.like(keyword + "%"))
-                .fetch();
+            .select(region.name)
+            .from(region)
+            .where(region.nameChosung.like(keyword + "%")) // 여기는 원본 keyword 사용
+            .fetch();
 
         if (!chosungMatchRegionNames.isEmpty()) {
             for (String name : chosungMatchRegionNames) {
