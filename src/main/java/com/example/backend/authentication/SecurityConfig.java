@@ -45,7 +45,8 @@ public class SecurityConfig {
                 .requestMatchers("/accommodations").permitAll()
                 .requestMatchers("/tour/detail/**").permitAll()
                 .requestMatchers("/uploads/**").permitAll()
-                // 그 외 모든 요청은 인증 필요
+                .requestMatchers("/api/reviews/hotel/**").permitAll()
+                    // 그 외 모든 요청은 인증 필요
 						.anyRequest().permitAll()/* .authenticated() */)
             
             // 이전에 만든 JwtAuthenticationFilter를 UsernamePasswordAuthenticationFilter 앞에 추가
@@ -59,7 +60,13 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         
         config.setAllowCredentials(true);
-        config.setAllowedOrigins(List.of("http://172.31.30.148:5173", "http://localhost:5173/", "http://localhost:5174/"));
+        config.setAllowedOrigins(List.of(
+        		"http://172.31.30.148:5173", 
+        		"http://localhost:5173/", 
+        		"http://localhost:5174/",
+        		"http://localhost:6500/",
+        		"http://localhost:7000/"
+        		));
         config.addAllowedOriginPattern("http://172.29.*.*");
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
