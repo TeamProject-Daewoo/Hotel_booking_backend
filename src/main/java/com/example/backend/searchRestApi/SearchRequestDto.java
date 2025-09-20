@@ -14,7 +14,7 @@ public class SearchRequestDto {
     private int guestCount;
     private int minPrice;
     private int maxPrice;
-    private int rating;
+    private double rating;
     private Map<String, Boolean> freebies;
     private Map<String, Boolean> amenities;
     private String order;

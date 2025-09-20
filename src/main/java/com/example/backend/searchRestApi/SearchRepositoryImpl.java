@@ -187,8 +187,8 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
             return builder;
     }
 
-    private BooleanExpression ratingGoe(int rating) {
-        if (rating == 0) {
+    private BooleanExpression ratingGoe(double rating) {
+        if (rating <= 0) {
             return null;
         }
         // 0보다 큰 값이 들어오면, avg() >= rating 조건을 생성하여 반환
