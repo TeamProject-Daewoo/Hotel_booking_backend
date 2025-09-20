@@ -10,6 +10,8 @@ import org.springframework.data.jpa.repository.Query;
 public interface DetailRepa extends JpaRepository<Detail, Long> {
     Optional<Detail> findByRoomcode(String roomcode);
 
+    List<Detail> findByContentid(String contentid);
+
     // contentid 기준으로 객실 이름(roomtitle) 중복 제거해서 조회
     @Query("""
         SELECT d FROM Detail d

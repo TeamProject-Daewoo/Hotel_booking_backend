@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -25,4 +26,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     @Query("SELECT r FROM Reservation r JOIN FETCH r.hotel WHERE r.reservationId = :reservationId AND r.user IS NULL")
     Optional<Reservation> findByIdAndUserIsNull(@Param("reservationId") Long reservationId);
+
+    @Query("SELECT r FROM Reservation r WHERE r.hotel.contentid = :contentId AND r.status = 'PAID' AND r.checkInDate < :endDate AND r.checkOutDate > :startDate")
+    List<Reservation> findPaidReservationsForDateRange(@Param("contentId") String contentId, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 }

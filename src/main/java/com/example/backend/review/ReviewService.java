@@ -8,10 +8,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.beans.factory.annotation.Value;
+
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -24,7 +25,8 @@ public class ReviewService {
     private final ReservationRepository reservationRepository;
     private final UserRepository userRepository;
 
-    private final String uploadDir = Paths.get(System.getProperty("user.dir"), "uploads").toString();
+    @Value("${file.upload-dir-default}")
+    private String uploadDir;
 
     @Transactional
     public Review createReview(Long reservationId, String username, int rating, String content, MultipartFile photo) throws IOException {
