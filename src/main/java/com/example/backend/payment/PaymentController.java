@@ -32,6 +32,7 @@ public class PaymentController {
     private final PaymentRepository paymentRepository;
     private final ObjectMapper objectMapper;
     private final EmailService emailService; // EmailService 주입
+    private final PaymentService paymentService;
 
     @Value("${toss.widget-secret-key}")
     private String widgetSecretKey;
@@ -44,7 +45,7 @@ public class PaymentController {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 예약입니다. ID: " + paymentDto.getReservationId()));
 
         Integer amountFromClient = paymentDto.getAmount();
-        
+
         if (!Objects.equals(reservation.getTotalPrice(), amountFromClient)) {
             System.out.println("경고: 클라이언트 요청 금액과 DB 저장 금액이 일치하지 않습니다.");
         }
@@ -75,8 +76,8 @@ public class PaymentController {
                 reservation.setStatus("PAID");
                 reservationRepository.save(reservation);
 
-                String userNameForPayment = (reservation.getUser() != null) 
-                    ? reservation.getUser().getUsername() 
+                String userNameForPayment = (reservation.getUser() != null)
+                    ? reservation.getUser().getUsername()
                     : reservation.getReservName();
 
                 Payment newPayment = Payment.builder()
@@ -92,13 +93,26 @@ public class PaymentController {
                 // 이메일 발송 서비스 호출
                 emailService.sendReservationConfirmationEmail(reservation);
             }
-            
+
             return responseEntity;
 
         } catch (Exception e) {
         	reservation.setStatus("FAIL");
             reservationRepository.save(reservation);
             throw new RuntimeException("결제 승인 중 오류가 발생했습니다: " + e.getMessage(), e);
+        }
+
+    }
+
+    @PostMapping("/cancel")
+    public ResponseEntity<String> cancelPayment(@RequestBody Map<String, Object> payload) {
+        try {
+            Long reservationId = Long.parseLong(payload.get("reservationId").toString());
+            String cancelReason = payload.get("cancelReason").toString();
+            String resultMessage = paymentService.cancelPayment(reservationId, cancelReason);
+            return ResponseEntity.ok(resultMessage);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 }
