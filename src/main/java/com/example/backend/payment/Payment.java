@@ -2,16 +2,14 @@ package com.example.backend.payment;
 
 import com.example.backend.reservation.Reservation;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -30,10 +28,8 @@ public class Payment {
     @Column(name = "user_name")
     private String userName;
 
-    // ▼▼▼▼▼ 이 필드를 추가해주세요 ▼▼▼▼▼
     @Column(name = "payment_key", unique = true) // 결제 키는 고유해야 합니다.
     private String paymentKey;
-    // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
 
     @Column(name = "payment_amount")
     private Integer paymentAmount;
