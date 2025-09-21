@@ -1,5 +1,21 @@
 package com.example.backend.searchRestApi;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Repository;
+
+import com.example.backend.Intro.QIntro;
+import com.example.backend.api.QHotels;
+import com.example.backend.api2.QDetail;
+import com.example.backend.common.HangulUtils;
+import com.example.backend.region.QRegion;
+import com.example.backend.reservation.QReservation;
+import com.example.backend.room_price_override.QRoomPriceOverride;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.OrderSpecifier;
@@ -13,24 +29,6 @@ import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.example.backend.Intro.QIntro;
-import com.example.backend.api.QHotels;
-import com.example.backend.api2.QDetail;
-import com.example.backend.common.HangulUtils;
-import com.example.backend.region.QRegion;
-import com.example.backend.reservation.QReservation;
-
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import org.springframework.stereotype.Repository;
 
 @Repository
 public class SearchRepositoryImpl implements SearchRepositoryCustom {
@@ -41,6 +39,7 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
     private final QIntro intro = QIntro.intro;
     private final QReservation reservation = QReservation.reservation;
     private final QRegion region = QRegion.region;
+    
     
     private final static int CATEGORY_COUNT = 4;
     private final static String RESERVATION_COUNT_ALIAS = "reservationCount";
@@ -62,13 +61,26 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
         BooleanBuilder commonCondition = getCommonConditions(searchRequest, checkInDate, checkOutDate);
    
         QReservation reservationSub = new QReservation("reservationSub");
+        
         //카드에 표시될 내용에 대한 쿼리
+  
+        NumberExpression<Integer> priceForEachRoom = Expressions.numberTemplate(
+        	    Integer.class,
+        	    "coalesce((select max(p.price) from RoomPriceOverride p " +
+        	    "where p.room.id = {0} and p.startDate <= {1} and p.endDate >= {2}), {3})",
+        	    rooms.id,
+        	    checkOutDate,
+        	    checkInDate,
+        	    rooms.roomoffseasonminfee1
+        	);
+
+        
         List<SearchCardDto> card = queryFactory
             .select(Projections.fields(SearchCardDto.class,
                     hotels.contentid.as("contentId"),
                     hotels.title.as("title"),
                     hotels.firstimage.as("image"),
-                    rooms.roomoffseasonminfee1.min().as("price"),
+                    priceForEachRoom.min().as("price"), 
                     hotels.addr1.as("address"),
                     Expressions.as(
                         JPAExpressions
