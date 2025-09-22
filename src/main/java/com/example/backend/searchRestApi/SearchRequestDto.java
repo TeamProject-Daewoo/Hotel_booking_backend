@@ -1,6 +1,6 @@
 package com.example.backend.searchRestApi;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.Map;
 
 import lombok.Data;
@@ -8,8 +8,8 @@ import lombok.Data;
 @Data
 public class SearchRequestDto {
     private String keyword;
-    private Date checkInDate;
-    private Date checkOutDate;
+    private LocalDate checkInDate;
+    private LocalDate checkOutDate;
     private int roomCount;
     private int guestCount;
     private int minPrice;

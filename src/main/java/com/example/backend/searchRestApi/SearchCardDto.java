@@ -15,4 +15,5 @@ public class SearchCardDto {
     private Long totalReviews;
     private String mapX;
     private String mapY;
+    private String status;
 }

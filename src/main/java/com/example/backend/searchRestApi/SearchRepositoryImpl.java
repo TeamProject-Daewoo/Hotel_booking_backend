@@ -12,6 +12,7 @@ import com.querydsl.core.types.dsl.StringExpression;
 import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.example.backend.Intro.QIntro;
 import com.example.backend.api.QHotels;
@@ -22,8 +23,8 @@ import com.example.backend.reservation.QReservation;
 import com.example.backend.review.QReview;
 
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -41,7 +42,7 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
     private final QRegion region = QRegion.region;
     private final QReview review = QReview.review;
     
-    private final static int CATEGORY_COUNT = 4;
+
     private final static String RESERVATION_COUNT_ALIAS = "reservationCount";
 
     public SearchRepositoryImpl(JPAQueryFactory queryFactory) {
@@ -50,112 +51,138 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
 
     @Override
     public SearchResponseDto findBySearchElements(SearchRequestDto searchRequest) {
-                
-        // DTO에서 Date를 받아서 LocalDate로 변환
-        LocalDate checkInDate = searchRequest.getCheckInDate().toInstant()
-                                    .atZone(ZoneId.systemDefault())
-                                    .toLocalDate();
-        LocalDate checkOutDate = searchRequest.getCheckOutDate().toInstant()
-                                     .atZone(ZoneId.systemDefault())
-                                     .toLocalDate();
-        BooleanBuilder commonCondition = getCommonConditions(searchRequest, checkInDate, checkOutDate);
-   
-        QReservation reservationSub = new QReservation("reservationSub");
-        //카드에 표시될 내용에 대한 쿼리
-        List<SearchCardDto> card = queryFactory
-            .select(Projections.fields(SearchCardDto.class,
-                    hotels.contentid.as("contentId"),
-                    hotels.title.as("title"),
-                    hotels.firstimage.as("image"),
-                    rooms.roomoffseasonminfee1.min().as("price"),
-                    hotels.addr1.as("address"),
-                    review.rating.avg().as("rating"),
-                    rooms.roomcount.sum().as("roomCount"),
-                    Expressions.as(
-                        JPAExpressions
-                            .select(Wildcard.count)
-                            .from(reservationSub)
-                            .where(reservationSub.hotel.contentid.eq(hotels.contentid)),
-                            RESERVATION_COUNT_ALIAS
-                    ),
-                    review.reviewId.countDistinct().as("totalReviews"),
-                    hotels.mapx.as("mapX"),
-                    hotels.mapy.as("mapY"),
-                    getIntroAmenitiesCount().min()
-                        .add(getRoomAmenitiesCount().sum())
-                        .as("totalAminities") 
-                )
-            )
+        JPAQuery<?> baseQuery = createBaseQuery(searchRequest);
+
+        List<SearchCardDto> cards = fetchSearchCards(baseQuery.clone(), searchRequest);
+        Map<String, Integer> counts = fetchCategoryCounts(baseQuery.clone());
+        
+        SearchResponseDto responseDto = new SearchResponseDto();
+        responseDto.setSearchCards(cards);
+        responseDto.setCounts(counts);
+        
+        return responseDto;
+    }
+    
+    // 검색 조건에 맞는 호텔을 조회하는 공통 BaseQuery를 생성
+    @Override
+    public JPAQuery<?> createBaseQuery(SearchRequestDto searchRequest) {
+        BooleanBuilder commonCondition = getCommonConditions(searchRequest, searchRequest.getCheckInDate(), searchRequest.getCheckOutDate());
+        BooleanExpression availabilityCondition = createAvailabilityCondition(searchRequest);
+
+        return queryFactory
             .from(hotels)
             .leftJoin(rooms).on(hotels.contentid.eq(rooms.contentid))
-            .leftJoin(intro).on(hotels.contentid.eq(intro.contentid)) 
+            .leftJoin(intro).on(hotels.contentid.eq(intro.contentid))
             .leftJoin(review).on(review.hotel.contentid.eq(hotels.contentid))
-            // .leftJoin(reservation).on(reservation.hotel.contentid.eq(hotels.contentid))
-            .where(commonCondition, categorySelectCondition(searchRequest.getCategory()))
+            .where(
+                commonCondition
+                    .and(availabilityCondition) // 예약 가능 조건
+                    .and(categorySelectCondition(searchRequest.getCategory())) // 카테고리 선택 조건 O
+            )
+            .having(ratingGoe(searchRequest.getRating()));
+    }
+
+    @Override
+    public JPAQuery<?> createCountBaseQuery(SearchRequestDto searchRequest) {
+        BooleanBuilder commonCondition = getCommonConditions(searchRequest, searchRequest.getCheckInDate(), searchRequest.getCheckOutDate());
+        BooleanExpression availabilityCondition = createAvailabilityCondition(searchRequest);
+
+        return queryFactory
+            .from(hotels)
+            .leftJoin(rooms).on(hotels.contentid.eq(rooms.contentid))
+            .leftJoin(intro).on(hotels.contentid.eq(intro.contentid))
+            .leftJoin(review).on(review.hotel.contentid.eq(hotels.contentid))
+            .where(
+                commonCondition.and(availabilityCondition)
+                // 카테고리 선택 조건 X
+            )
+            .having(ratingGoe(searchRequest.getRating()));
+    }
+
+    // 실제 카드 목록만 받아오는 쿼리
+    @Override
+    public List<SearchCardDto> fetchSearchCards(JPAQuery<?> baseQuery, SearchRequestDto searchRequest) {
+        QReservation reservationSub = new QReservation("reservationSub");
+
+        return baseQuery
+            .select(Projections.fields(SearchCardDto.class,
+                hotels.contentid.as("contentId"),
+                hotels.title.as("title"),
+                hotels.firstimage.as("image"),
+                rooms.roomoffseasonminfee1.min().as("price"),
+                hotels.addr1.as("address"),
+                review.rating.avg().as("rating"),
+                rooms.roomcount.sum().as("roomCount"),
+                Expressions.as(
+                    JPAExpressions
+                        .select(Wildcard.count)
+                        .from(reservationSub)
+                        .where(reservationSub.hotel.contentid.eq(hotels.contentid)),
+                    RESERVATION_COUNT_ALIAS
+                ),
+                review.reviewId.countDistinct().as("totalReviews"),
+                hotels.mapx.as("mapX"),
+                hotels.mapy.as("mapY"),
+                getIntroAmenitiesCount().min()
+                    .add(getRoomAmenitiesCount().sum())
+                    .as("totalAminities"))
+            )
             .groupBy(hotels.contentid, hotels.title, hotels.firstimage, hotels.addr1, hotels.mapx, hotels.mapy)
-            .having(ratingGoe(searchRequest.getRating())) 
             .orderBy(orderCondition(searchRequest.getOrder(), RESERVATION_COUNT_ALIAS))
             .fetch();
+    }
+    private BooleanExpression createAvailabilityCondition(SearchRequestDto searchRequest) {
+        return rooms.id.notIn(
+            JPAExpressions
+                .select(Expressions.numberTemplate(Long.class, "CAST({0} as long)", reservation.roomcode))
+                .from(reservation)
+                .where(reservation.hotel.contentid.eq(hotels.contentid),
+                    reservation.status.eq("PAID"),
+                    reservation.checkInDate.goe(searchRequest.getCheckInDate()),
+                    reservation.checkOutDate.loe(searchRequest.getCheckOutDate()))
+        );
+    }
 
-        //카테고리별 개수 반환 쿼리
-        List<Tuple> counts = queryFactory
-            .select(hotels.contentid, hotels.category)
-            .from(hotels)
-            .join(rooms).on(hotels.contentid.eq(rooms.contentid))
-            .join(intro).on(hotels.contentid.eq(intro.contentid))
-            .leftJoin(review).on(review.hotel.contentid.eq(hotels.contentid))
-            .where(commonCondition)
-            .groupBy(hotels.contentid, hotels.category) // 호텔별 + 카테고리별 그룹화
-            .having(ratingGoe(searchRequest.getRating()))
-            .fetch();
-
-        //전체 합계 반환 쿼리
-        long totalCount = queryFactory
-            .select(hotels.contentid)
-            .from(hotels)
-            .join(rooms).on(hotels.contentid.eq(rooms.contentid))
-            .join(intro).on(hotels.contentid.eq(intro.contentid))
-            .leftJoin(review).on(review.hotel.contentid.eq(hotels.contentid))
-            .where(commonCondition)
-            .groupBy(hotels.contentid)
-            .having(ratingGoe(searchRequest.getRating()))
+    // 카테고리 카운트 받아오는 쿼리
+    public Map<String, Integer> fetchCategoryCounts(JPAQuery<?> baseQuery) {
+        List<Tuple> countsResult = baseQuery
+            .groupBy(hotels.contentid, hotels.category)
+            .select(hotels.category, hotels.contentid)
             .fetch()
-            .size();
+            .stream()
+            .distinct()
+            .collect(Collectors.toList());
 
-        SearchResponseDto responseDto = new SearchResponseDto();
-        if (card != null)
-            responseDto.setSearchCards(card);
-
-        Map<String, Long> categoryCountsMap = counts.stream()
+        Map<String, Long> categoryCountsMap = countsResult.stream()
             .collect(Collectors.groupingBy(
                 tuple -> tuple.get(hotels.category),
                 Collectors.counting()
             ));
-            
-        int[] countArr = new int[CATEGORY_COUNT];
-        for (Map.Entry<String, Long> entry : categoryCountsMap.entrySet()) {
-            String category = entry.getKey();
-            Long count = entry.getValue();
 
-            int idx = switch (category) {
-                case "B02010100" -> 1;  //호텔
-                case "B02010900" -> 2;  //모텔
-                case "B02010700" -> 3;  //펜션
+        Map<String, Integer> finalCounts = new LinkedHashMap<>();
+        int totalCount = countsResult.size();
+        
+        int[] countArr = new int[4]; // 0:All, 1:Hotels, 2:Motels, 3:Cottages
+        countArr[0] = totalCount;
+
+        for (Map.Entry<String, Long> entry : categoryCountsMap.entrySet()) {
+            int idx = switch (entry.getKey()) {
+                case "B02010100" -> 1;
+                case "B02010900" -> 2;
+                case "B02010700" -> 3;
                 default -> -1;
             };
-
             if (idx != -1) {
-                countArr[idx] = count.intValue();
+                countArr[idx] = entry.getValue().intValue();
             }
         }
 
-        //프론트에 표시될 순서 보장 + LinkedHashMap
-        String[] categorys = {"All", "Hotels", "Motels", "Cottages"};
-        countArr[0] = (int)totalCount;
-        for (int i = 0; i < CATEGORY_COUNT; i++)
-            responseDto.getCounts().put(categorys[i], countArr[i]);
+        String[] categoryNames = {"All", "Hotels", "Motels", "Cottages"};
+        for (int i = 0; i < categoryNames.length; i++) {
+            finalCounts.put(categoryNames[i], countArr[i]);
+        }
         
-        return responseDto;
+        return finalCounts;
     }
 
     //검색+필터링 조건
@@ -172,8 +199,7 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
             // builder.and(hotels.firstimage.isNotEmpty());
             //체크인, 체크아웃 기간에 예약 일정 없는지 체크
             builder.and(availableDateCondition(checkInDate, checkOutDate));
-            //객실과 인원 수 숙박 충분한지 체크
-            // builder.and(rooms.roomcount.goe(searchRequest.getRoomCount()));
+            //인원 수 충분한지 체크
             builder.and(rooms.roommaxcount.goe(searchRequest.getGuestCount()));
             //비용 필터
             builder.and(rooms.roomoffseasonminfee1.between(searchRequest.getMinPrice(), searchRequest.getMaxPrice()));
