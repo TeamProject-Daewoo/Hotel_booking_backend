@@ -13,6 +13,7 @@ import com.example.backend.File.InquiryFile;
 import com.example.backend.authentication.User;
 import com.example.backend.authentication.UserRepository;
 import com.example.backend.File.InquiryFileRepository;
+import org.springframework.data.domain.Sort;
 
 @Service
 @RequiredArgsConstructor
@@ -42,7 +43,10 @@ public class InquiryService {
 
     @Transactional(readOnly = true)
 public List<InquiryResponseDto> getInquiriesByUser(String username) {
-    List<Inquiry> inquiries = inquiryRepository.findByUser_Username(username);
+     List<Inquiry> inquiries = inquiryRepository.findByUser_Username(
+        username,
+        Sort.by(Sort.Direction.DESC, "createdAt")  // 생성일(createdAt) 기준 오름차순 정렬
+    );
     return inquiries.stream()
             .map(InquiryResponseDto::fromEntity)
             .collect(Collectors.toList());
