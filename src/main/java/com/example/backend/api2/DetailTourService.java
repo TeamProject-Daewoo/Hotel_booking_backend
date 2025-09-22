@@ -21,6 +21,8 @@ public class DetailTourService {
     private final DetailRepa detailRepa;
     
     private final RoomPriceOverrideRepository overrideRepository;
+    
+    private final PriceService priceService;
 
     public DetailResponseDto getDetailInfo(String uri) {
         try{
@@ -47,20 +49,16 @@ public class DetailTourService {
     @Transactional(readOnly = true)
     public List<RoomDetailDTO> getDistinctByContentidWithDynamicPricing(String contentid, LocalDate checkInDate, LocalDate checkOutDate) {
         
-        List<Detail> rooms = detailRepa.findDistinctRoomsByContentid(contentid);
+    	List<Detail> rooms = detailRepa.findDistinctRoomsByContentid(contentid);
 
         return rooms.stream().map(room -> {
-            // 1. 적용 가능한 특별가를 조회합니다.
-            Optional<RoomPriceOverride> override = overrideRepository
-                .findApplicableOverride(room.getId(), checkInDate, checkOutDate);
+            // 👇 각 객실의 '총합 가격'을 계산합니다.
+            int totalPrice = priceService.calculateTotalPrice(
+                new PriceCalculationRequestDto(room.getId(), checkInDate, checkOutDate)
+            );
 
-            // 2. DTO를 생성하고, 특별가가 있을 경우에만 finalPrice를 설정합니다.
-            RoomDetailDTO dto = RoomDetailDTO.fromEntity(room, null); // finalPrice를 일단 null로 생성
-            override.ifPresent(o -> dto.setFinalPrice(o.getPrice())); // 특별가가 존재하면(ifPresent) dto의 finalPrice 설정
-            
-            System.out.println("############" + dto);
-            
-            return dto;
+            // 👇 DTO의 finalPrice에 '총합 가격'을 담아 반환합니다.
+            return RoomDetailDTO.fromEntity(room, totalPrice);
 
         }).toList();
     }

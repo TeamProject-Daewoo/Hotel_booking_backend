@@ -1,6 +1,7 @@
 package com.example.backend.api2;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -21,5 +22,9 @@ public interface RoomPriceOverrideRepository extends JpaRepository<RoomPriceOver
             "LIMIT 1")
      Optional<RoomPriceOverride> findApplicableOverride(@Param("roomId") Long roomId, @Param("checkInDate") LocalDate checkInDate, @Param("checkOutDate") LocalDate checkOutDate
      );
+    
+ // RoomPriceOverrideRepository.java
+    @Query("SELECT p FROM RoomPriceOverride p WHERE p.room.id = :roomId AND p.startDate < :checkOut AND p.endDate > :checkIn")
+    List<RoomPriceOverride> findAllOverlaps(@Param("roomId") Long roomId, @Param("checkIn") LocalDate checkIn, @Param("checkOut") LocalDate checkOut);
 
 }
