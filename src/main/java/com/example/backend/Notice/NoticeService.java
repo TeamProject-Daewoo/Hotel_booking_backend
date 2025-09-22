@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,11 +18,11 @@ public class NoticeService {
 
     private final NoticeRepository noticeRepository;
 
-      public Page<NoticeDTO> getNoticesWithPaging(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        return noticeRepository.findAll(pageable)
-                .map(this::convertToDTO);
-    }
+     public Page<NoticeDTO> getNoticesWithPaging(int page, int size) {
+    Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt")); // 내림차순 정렬 추가
+    return noticeRepository.findAll(pageable)
+            .map(this::convertToDTO);
+}
 
     public List<NoticeDTO> getAllNotices() {
         return noticeRepository.findAll().stream()

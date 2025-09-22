@@ -59,6 +59,7 @@ public class ReservationService {
         String contentId = requestDto.getContentId();
         LocalDate startDate = requestDto.getStartDate();
         LocalDate endDate = requestDto.getEndDate();
+        
 
         List<Detail> roomDetails = detailRepa.findByContentid(contentId);
         Map<Long, Integer> totalRoomCounts = roomDetails.stream()
@@ -66,6 +67,8 @@ public class ReservationService {
 
         List<Reservation> reservations = reservationRepository.findPaidReservationsForDateRange(contentId, startDate, endDate);
 
+        
+        
         Map<LocalDate, Map<Long, Integer>> usage = new HashMap<>();
         for (Reservation r : reservations) {
             try {

@@ -1,5 +1,21 @@
 package com.example.backend.searchRestApi;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Repository;
+
+import com.example.backend.Intro.QIntro;
+import com.example.backend.api.QHotels;
+import com.example.backend.api2.QDetail;
+import com.example.backend.common.HangulUtils;
+import com.example.backend.region.QRegion;
+import com.example.backend.reservation.QReservation;
+import com.example.backend.review.QReview;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.OrderSpecifier;
@@ -14,6 +30,7 @@ import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+
 import com.example.backend.Intro.QIntro;
 import com.example.backend.api.QHotels;
 import com.example.backend.api2.QDetail;
@@ -42,7 +59,6 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
     private final QRegion region = QRegion.region;
     private final QReview review = QReview.review;
     
-
     private final static String RESERVATION_COUNT_ALIAS = "reservationCount";
 
     public SearchRepositoryImpl(JPAQueryFactory queryFactory) {

@@ -21,6 +21,7 @@ public class SearchController {
 
     @PostMapping("search")
     public ResponseEntity<SearchResponseDto> search(@RequestBody SearchRequestDto request) {
+    	System.out.println(request);
         return ResponseEntity.ok(searchService.findBySearchElements(request));
     }
 
