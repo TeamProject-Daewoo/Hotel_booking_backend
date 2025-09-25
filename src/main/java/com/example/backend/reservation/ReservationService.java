@@ -25,6 +25,17 @@ public class ReservationService {
     private final HotelsRepa accommodationRepository;
     private final DetailRepa detailRepa;
 
+    @Transactional(readOnly = true)
+    public ReservationDto findReservationById(Long reservationId) {
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new IllegalArgumentException("예약을 찾을 수 없습니다. ID: " + reservationId));
+
+        Detail roomDetail = detailRepa.findById(Long.parseLong(reservation.getRoomcode()))
+                .orElseThrow(() -> new IllegalArgumentException("객실 정보를 찾을 수 없습니다. RoomCode: " + reservation.getRoomcode()));
+
+        return ReservationDto.from(reservation, roomDetail);
+    }
+
     @Transactional
     public Reservation createReservation(ReservationRequestDto requestDto, String username) {
 
