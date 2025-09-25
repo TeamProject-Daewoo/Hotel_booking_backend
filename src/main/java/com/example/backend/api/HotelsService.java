@@ -26,7 +26,6 @@ public class HotelsService {
     @Autowired
     private IntroService introService; 
 
-    @Async  //서버 바로 실행하고, 백그라운드에서 동기화 작업 
     public List<Hotels> getAccommodations(String uri) throws Exception {
         String response = restTemplate.getForObject(uri, String.class);
         JsonNode root = mapper.readTree(response);

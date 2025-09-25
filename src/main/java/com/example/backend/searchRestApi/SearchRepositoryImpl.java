@@ -31,22 +31,7 @@ import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
-import com.example.backend.Intro.QIntro;
-import com.example.backend.api.QHotels;
-import com.example.backend.api2.QDetail;
-import com.example.backend.common.HangulUtils;
-import com.example.backend.region.QRegion;
-import com.example.backend.reservation.QReservation;
-import com.example.backend.review.QReview;
-
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import org.springframework.stereotype.Repository;
 
 @Repository
 public class SearchRepositoryImpl implements SearchRepositoryCustom {
@@ -60,6 +45,7 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
     private final QReview review = QReview.review;
     
     private final static String RESERVATION_COUNT_ALIAS = "reservationCount";
+    public final static List<String> UNMODIFIABLE_GREETINGS = List.of("호텔", "모텔", "펜션");
 
     public SearchRepositoryImpl(JPAQueryFactory queryFactory) {
         this.queryFactory = queryFactory;
@@ -128,7 +114,6 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
                 rooms.roomoffseasonminfee1.min().as("price"),
                 hotels.addr1.as("address"),
                 review.rating.avg().as("rating"),
-                rooms.roomcount.sum().as("roomCount"),
                 Expressions.as(
                     JPAExpressions
                         .select(Wildcard.count)
@@ -193,9 +178,9 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
             }
         }
 
-        String[] categoryNames = {"All", "Hotels", "Motels", "Cottages"};
-        for (int i = 0; i < categoryNames.length; i++) {
-            finalCounts.put(categoryNames[i], countArr[i]);
+        String[] category_names = {"모두", "호텔", "모텔", "펜션"};
+        for (int i = 0; i < category_names.length; i++) {
+            finalCounts.put(category_names[i], countArr[i]);
         }
         
         return finalCounts;
@@ -236,9 +221,9 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
 
     private BooleanExpression categorySelectCondition(String category) {
         return switch (category) {
-            case "Hotels" -> hotels.category.eq("B02010100");
-            case "Motels" -> hotels.category.eq("B02010900");
-            case "Cottages" -> hotels.category.eq("B02010700");
+            case "호텔" -> hotels.category.eq("B02010100");
+            case "모텔" -> hotels.category.eq("B02010900");
+            case "펜션" -> hotels.category.eq("B02010700");
             default -> null;
         };
     }
