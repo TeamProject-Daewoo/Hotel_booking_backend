@@ -53,6 +53,12 @@ public class Reservation {
 
     @Column(name = "total_price")
     private Integer totalPrice;
+
+    @Column(name = "base_price")
+    private Integer basePrice;
+
+    @Column(name = "discount_price")
+    private Integer discountPrice;
     
     @Column(name = "reserv_name")
     private String reservName;

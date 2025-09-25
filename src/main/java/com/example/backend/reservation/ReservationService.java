@@ -46,6 +46,8 @@ public class ReservationService {
                 .numAdults(requestDto.getNumAdults())
                 .numChildren(requestDto.getNumChildren())
                 .totalPrice(requestDto.getTotalPrice())
+                .basePrice(requestDto.getBasePrice())
+                .discountPrice(requestDto.getDiscountPrice())
                 .reservName(requestDto.getGuestName())
                 .reservPhone(requestDto.getPhone())
                 .status("PENDING")
