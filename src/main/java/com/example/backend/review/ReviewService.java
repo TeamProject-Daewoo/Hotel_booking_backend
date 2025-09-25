@@ -95,4 +95,18 @@ public class ReviewService {
                 .visitCount(visitCount) // 계산된 방문 횟수 추가
                 .build();
     }
+
+    public List<AdminReviewResponseDto> getReviewList(boolean show) {
+        List<Review> reviews = reviewRepository.findAllViewable(show);
+        return reviews.stream()
+            .map(AdminReviewResponseDto::new)
+            .collect(Collectors.toList());
+    }
+
+    public Integer deleteReviewsById(String id) {
+        return reviewRepository.softDeleteById(id);
+    }
+     public Integer deleteReviewsByIds(List<String> id) {
+        return reviewRepository.softDeleteAllByIds(id);
+    }
 }

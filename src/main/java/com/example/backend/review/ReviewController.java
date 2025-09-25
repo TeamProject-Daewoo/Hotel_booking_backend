@@ -1,10 +1,13 @@
 package com.example.backend.review;
 
 import lombok.RequiredArgsConstructor;
+
+import org.apache.ibatis.annotations.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
 
 @RestController
 @RequestMapping("/api/reviews")
@@ -18,4 +21,21 @@ public class ReviewController {
         List<ReviewResponseDto> reviews = reviewService.getReviewsByHotel(hotelId);
         return ResponseEntity.ok(reviews);
     }
+    @GetMapping("/viewAll")
+    public ResponseEntity<List<AdminReviewResponseDto>> viewAll(@RequestParam boolean deletedShow) {
+        return ResponseEntity.ok(reviewService.getReviewList(deletedShow));
+    }
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Integer> deleteReview(@PathVariable String id) {
+        return ResponseEntity.ok(reviewService.deleteReviewsById(id));
+    }
+    @DeleteMapping("/deleteAll")
+    public ResponseEntity<Integer> deleteReviews(@RequestParam(required = false) List<String> reviews) {
+        if (reviews == null || reviews.isEmpty()) {
+            System.out.println("삭제할 ID 리스트가 비어 있습니다. 쿼리를 실행하지 않습니다.");
+            return null;
+        }
+        return ResponseEntity.ok(reviewService.deleteReviewsByIds(reviews));
+    }
+    
 }
