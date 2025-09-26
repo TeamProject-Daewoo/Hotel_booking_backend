@@ -52,8 +52,10 @@ public class JwtTokenProvider {
         
         com.example.backend.authentication.User user = (com.example.backend.authentication.User) authentication.getPrincipal();
         String realName = user.getName();
-        String loginType = user.getLoginType()
-;
+        String loginType = user.getLoginType();
+        String phoneNumber = user.getPhoneNumber();
+
+        ;
         // Access Token 생성 (사용자 정보와 권한 포함)
         Date accessTokenExpiresIn = new Date(now + this.accessTokenExpirationMillis);
         String accessToken = Jwts.builder()
@@ -61,6 +63,7 @@ public class JwtTokenProvider {
                 .claim("auth", authorities)
                 .claim("name", realName)
                 .claim("loginType", loginType)
+                .claim("phoneNumber", phoneNumber)
                 .setExpiration(accessTokenExpiresIn)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();

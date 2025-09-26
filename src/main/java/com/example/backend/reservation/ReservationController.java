@@ -39,14 +39,8 @@ public class ReservationController {
 
     @GetMapping("/{reservationId}")
     public ResponseEntity<ReservationDto> getReservationDetails(@PathVariable Long reservationId) {
-        Reservation reservation = reservationRepository.findById(reservationId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 예약을 찾을 수 없습니다. ID: " + reservationId));
-        
-        ReservationDto dto = ReservationDto.builder()
-                                .reservation(reservation)
-                                .build();
-        
-        return ResponseEntity.ok(dto);
+        ReservationDto reservationDto = reservationService.findReservationById(reservationId);
+        return ResponseEntity.ok(reservationDto);
     }
 
     @GetMapping("/lookup")
