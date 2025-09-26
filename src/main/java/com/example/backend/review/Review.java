@@ -44,7 +44,7 @@ public class Review {
 
     private String imageUrl;
     
-    @Column(nullable = false, columnDefinition = "TINYINT(1) DEFAULT 0")
+    @Column(name = "is_deleted", nullable = false, columnDefinition = "TINYINT(1) DEFAULT 0")
     private boolean isDeleted;
 
     @CreationTimestamp

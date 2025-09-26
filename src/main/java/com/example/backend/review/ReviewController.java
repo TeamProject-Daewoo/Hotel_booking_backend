@@ -22,8 +22,8 @@ public class ReviewController {
         return ResponseEntity.ok(reviews);
     }
     @GetMapping("/viewAll")
-    public ResponseEntity<List<AdminReviewResponseDto>> viewAll(@RequestParam boolean deletedShow) {
-        return ResponseEntity.ok(reviewService.getReviewList(deletedShow));
+    public ResponseEntity<List<AdminReviewResponseDto>> viewAll(@RequestParam boolean deletedShow, @RequestParam(required = false) String searchTerm) {
+        return ResponseEntity.ok(reviewService.getReviewList(deletedShow, searchTerm));
     }
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Integer> deleteReview(@PathVariable String id) {

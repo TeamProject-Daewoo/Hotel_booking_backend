@@ -71,7 +71,7 @@ public class ReviewService {
 
     @Transactional(readOnly = true)
     public List<ReviewResponseDto> getReviewsByUser(String username) {
-        return reviewRepository.findByUserUsernameOrderByCreatedAtDesc(username).stream()
+        return reviewRepository.findByUserUsernameAndIsDeletedFalseOrderByCreatedAtDesc(username).stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
@@ -96,8 +96,8 @@ public class ReviewService {
                 .build();
     }
 
-    public List<AdminReviewResponseDto> getReviewList(boolean show) {
-        List<Review> reviews = reviewRepository.findAllViewable(show);
+    public List<AdminReviewResponseDto> getReviewList(boolean show, String searchTerm) {
+        List<Review> reviews = reviewRepository.findAllViewable(show, searchTerm);
         return reviews.stream()
             .map(AdminReviewResponseDto::new)
             .collect(Collectors.toList());

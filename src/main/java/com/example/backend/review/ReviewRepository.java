@@ -13,10 +13,10 @@ import jakarta.transaction.Transactional;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 	
-	@Query("SELECT r FROM Review r JOIN FETCH r.user WHERE r.hotel.contentid = :hotelId ORDER BY r.createdAt DESC")
+	@Query("SELECT r FROM Review r JOIN FETCH r.user WHERE r.hotel.contentid = :hotelId AND r.isDeleted = FALSE ORDER BY r.createdAt DESC")
     List<Review> findByHotelContentid(@Param("hotelId") String hotelId);
 
-    List<Review> findByUserUsernameOrderByCreatedAtDesc(String username);
+    List<Review> findByUserUsernameAndIsDeletedFalseOrderByCreatedAtDesc(String username);
 
     @Query("SELECT COUNT(res) FROM Reservation res WHERE res.user.username = :username AND res.hotel.contentid = :hotelId AND res.checkInDate <= :checkInDate")
     long countReservationsByUserAndHotelBeforeDate(@Param("username") String username, @Param("hotelId") String hotelId, @Param("checkInDate") LocalDate checkInDate);
@@ -33,6 +33,9 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     @Query("UPDATE Review r SET r.isDeleted = TRUE WHERE r.reviewId IN :ids")
     int softDeleteAllByIds(@Param("ids") List<String> ids);
 
-    @Query("SELECT r FROM Review r WHERE r.isDeleted = :show")
-    List<Review> findAllViewable(@Param("show") boolean show);
+    @Query("SELECT r FROM Review r " +
+            "WHERE r.isDeleted = :show " +
+            "AND (:#{#searchTerm == null || #searchTerm.isEmpty()} = TRUE OR r.user.name LIKE %:searchTerm% OR r.content LIKE %:searchTerm%) " +
+            "ORDER BY r.createdAt DESC")
+    List<Review> findAllViewable(@Param("show") boolean show, @Param("searchTerm") String searchTerm);
 }
