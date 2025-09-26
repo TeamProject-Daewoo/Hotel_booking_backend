@@ -25,17 +25,52 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     @Modifying
     @Transactional
-    @Query("UPDATE Review r SET r.isDeleted = TRUE WHERE r.reviewId = :id")
-    int softDeleteById(@Param("id") String id);
+    @Query("UPDATE Review r SET r.isDeleted = :isDelete WHERE r.reviewId = :id")
+    int softDeleteById(@Param("id") String id, @Param("isDelete") boolean isDelete);
 
     @Modifying
     @Transactional
-    @Query("UPDATE Review r SET r.isDeleted = TRUE WHERE r.reviewId IN :ids")
-    int softDeleteAllByIds(@Param("ids") List<String> ids);
+    @Query("UPDATE Review r SET r.isDeleted = :isDelete WHERE r.reviewId IN :ids")
+    int softDeleteAllByIds(@Param("ids") List<String> ids, @Param("isDelete") boolean isDelete);
 
     @Query("SELECT r FROM Review r " +
             "WHERE r.isDeleted = :show " +
-            "AND (:#{#searchTerm == null || #searchTerm.isEmpty()} = TRUE OR r.user.name LIKE %:searchTerm% OR r.content LIKE %:searchTerm%) " +
+            "AND (" +
+            ":#{#searchTerm == null || #searchTerm.isEmpty()} = TRUE OR " +     
+            "r.user.name LIKE %:searchTerm% OR r.content LIKE %:searchTerm% OR " +
+            "r.contentChosung LIKE :searchTerm || '%' " + 
+            ") "+ 
             "ORDER BY r.createdAt DESC")
     List<Review> findAllViewable(@Param("show") boolean show, @Param("searchTerm") String searchTerm);
+
+    @Query("SELECT r FROM Review r " +
+            "WHERE r.hotel.contentid = :hotelId " +
+            "AND (" +
+            ":#{#searchTerm == null || #searchTerm.isEmpty()} = TRUE OR " +     
+            "r.user.name LIKE %:searchTerm% OR r.content LIKE %:searchTerm% OR " +
+            "r.contentChosung LIKE :searchTerm || '%' " + 
+            ") "+ 
+            "ORDER BY r.createdAt DESC")
+    List<Review> findByContentIdWithKeyword(@Param("hotelId") String hotelId, @Param("searchTerm") String searchTerm);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE Review r SET r.isReported = :isReported WHERE r.reviewId = :id")
+    int reportById(@Param("id") String id, @Param("isReported") boolean isReported);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE Review r SET r.isReported = :isReported WHERE r.reviewId IN :ids")
+    int reportAllByIds(@Param("ids") List<String> ids, @Param("isReported") boolean isReported);
+
+    @Query("SELECT r FROM Review r " +
+            "WHERE r.isReported = TRUE " +
+            "AND (" +
+            ":#{#searchTerm == null || #searchTerm.isEmpty()} = TRUE OR " +     
+            "r.user.name LIKE %:searchTerm% OR r.content LIKE %:searchTerm% OR " +
+            "r.contentChosung LIKE :searchTerm || '%' " + 
+            ") "+ 
+            "ORDER BY r.createdAt DESC")
+    List<Review> findAllReportedList(@Param("searchTerm") String searchTerm);
+
 }

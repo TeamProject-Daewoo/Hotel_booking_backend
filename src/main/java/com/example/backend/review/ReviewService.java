@@ -2,6 +2,7 @@ package com.example.backend.review;
 
 import com.example.backend.authentication.User;
 import com.example.backend.authentication.UserRepository;
+import com.example.backend.common.HangulUtils;
 import com.example.backend.reservation.Reservation;
 import com.example.backend.reservation.ReservationRepository;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.beans.factory.annotation.Value;
-
+import org.springframework.http.ResponseEntity;
 
 import java.io.File;
 import java.io.IOException;
@@ -58,7 +59,8 @@ public class ReviewService {
                 .content(content)
                 .imageUrl(imageUrl)
                 .build();
-        
+        System.out.println(review);
+        System.out.println(HangulUtils.getChosung(content)+"----------------------------");
         return reviewRepository.save(review);
     }
 
@@ -103,10 +105,30 @@ public class ReviewService {
             .collect(Collectors.toList());
     }
 
-    public Integer deleteReviewsById(String id) {
-        return reviewRepository.softDeleteById(id);
+    public Integer deleteReviewsById(String id, boolean isDelete) {
+        return reviewRepository.softDeleteById(id, isDelete);
     }
-     public Integer deleteReviewsByIds(List<String> id) {
-        return reviewRepository.softDeleteAllByIds(id);
+     public Integer deleteReviewsByIds(List<String> id, boolean isDelete) {
+        return reviewRepository.softDeleteAllByIds(id, isDelete);
     }
+
+     public List<BussinessReviewResponseDto> findByHotelId(String hotelId, String searchTerm) {
+        List<Review> reviews = reviewRepository.findByContentIdWithKeyword(hotelId, searchTerm);
+        return reviews.stream()
+            .map(BussinessReviewResponseDto::new)
+            .collect(Collectors.toList());
+     }
+
+     public Integer reportReviewsById(String id, boolean isReport) {
+        return reviewRepository.reportById(id, isReport);
+     }
+     public Integer reportReviewByIds(List<String> ids, boolean isReport) {
+        return reviewRepository.reportAllByIds(ids, isReport);
+     }
+
+     public List<BussinessReviewResponseDto> getReportedReviewList(String searchTerm) {
+        return reviewRepository.findAllReportedList(searchTerm).stream()
+            .map(BussinessReviewResponseDto::new)
+            .collect(Collectors.toList());
+     }
 }
