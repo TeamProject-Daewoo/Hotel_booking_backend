@@ -126,4 +126,12 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+    public boolean isNewUser() {
+    LocalDateTime now = LocalDateTime.now();
+    return joinDate != null && joinDate.isAfter(LocalDateTime.now().minusDays(7).plusNanos(1));
+
+}
+
+    
 }

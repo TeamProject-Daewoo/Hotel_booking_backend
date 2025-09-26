@@ -2,7 +2,6 @@ package com.example.backend.authentication;
 
 import java.util.Optional;
 import java.util.UUID;
-
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -13,10 +12,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.example.backend.exception.UserAlreadyExistsException;
 import com.fasterxml.jackson.databind.JsonNode;
-
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -34,13 +31,14 @@ public class UserService implements UserDetailsService {
      */
     @Transactional
     public void signUp(UserDto.SignUp signUpDto) {
-    	userRepository.findByUsername(signUpDto.getUsername()).ifPresent(existingUser -> {
+        userRepository.findByUsername(signUpDto.getUsername()).ifPresent(existingUser -> {
             // 사용자가 이미 존재하면, 로그인 타입을 담아 예외를 발생시킴
             throw new UserAlreadyExistsException(
-                "이미 가입된 이메일입니다.", 
-                existingUser.getLoginType() == null ? "이메일" : existingUser.getLoginType()
+                    "이미 가입된 이메일입니다.",
+                    existingUser.getLoginType() == null ? "이메일" : existingUser.getLoginType()
             );
         });
+
         // 비밀번호 암호화
         String encodedPassword = passwordEncoder.encode(signUpDto.getPassword());
         User user = signUpDto.toEntity(encodedPassword);
@@ -53,14 +51,14 @@ public class UserService implements UserDetailsService {
     @Transactional
     public TokenInfo login(UserDto.Login loginDto) {
         // 1. Login ID/PW 를 기반으로 Authentication 객체 생성
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword());
+        UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword());
 
         // 2. 실제 검증 (사용자 비밀번호 체크)이 이루어지는 부분
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
         // 3. 인증 정보를 기반으로 JWT 토큰 생성
         TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication);
-
         return tokenInfo;
     }
 
@@ -84,7 +82,6 @@ public class UserService implements UserDetailsService {
         TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication);
 
         // (선택) DB/Redis에 Refresh Token 업데이트 로직 추가
-        
         return tokenInfo.getAccessToken();
     }
 
@@ -95,7 +92,7 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("해당 아이디를 찾을 수 없습니다."));
-        
+
         // ✨ 로그인 시 승인 상태 검증
         if (!user.isAccountNonLocked()) {
             throw new LockedException("아직 승인되지 않은 계정입니다.");
@@ -109,23 +106,23 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("해당 아이디를 찾을 수 없습니다."));
         return UserDto.Info.from(user);
     }
-    
+
     public TokenInfo kakaoLogin(String kakaoAccessToken) {
-    	
         // 1. 카카오 액세스 토큰으로 사용자 정보 가져오기
         JsonNode userInfo = kakaoService.getUserInfo(kakaoAccessToken);
         String kakaoId = userInfo.path("id").asText(null);
         System.out.println(userInfo);
+
         String nickname = userInfo
                 .path("kakao_account")
                 .path("profile")
                 .path("nickname")
                 .asText(null);
+
         String phone_number = userInfo.path("kakao_account").path("phone_number").asText(null);
         String email = userInfo.path("kakao_account").path("email").asText(null);
-        
         phone_number = formatPhoneNumber(phone_number);
-        
+
         Optional<User> existingUserByEmail = userRepository.findByUsername(email);
      // 👇 이 if문을 수정합니다.
         if (existingUserByEmail.isPresent()) {
@@ -138,6 +135,7 @@ public class UserService implements UserDetailsService {
                     "이메일"
                 );
             }
+
         }
 
         // 2. DB에 해당 사용자가 없으면 새로 가입 처리
@@ -154,20 +152,32 @@ public class UserService implements UserDetailsService {
                     .build();
             userRepository.save(user);
         }
-        
+
         UserDetails userDetails = loadUserByUsername(email);
 
         // 3. 우리 서비스의 JWT 토큰 발급
         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, user.getPassword(), user.getAuthorities());
         TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication);
+
         return tokenInfo;
     }
-    
+
     public String formatPhoneNumber(String phoneNumber) {
         // 국가 코드 "+82"을 "010"으로 변환
         if (phoneNumber.startsWith("+82")) {
-            return "010" + phoneNumber.substring(6);  // "+82"를 제거하고 "010"으로 대체
+            return "010" + phoneNumber.substring(6); // "+82"를 제거하고 "010"으로 대체
         }
-        return phoneNumber;  // 이미 "010"이면 그대로 반환
+        return phoneNumber; // 이미 "010"이면 그대로 반환
+    }
+
+    @Transactional
+    public User saveUser(User user) {
+        // TODO: 중복 체크, 비밀번호 암호화 등 처리
+        return userRepository.save(user); // ✅ User 반환하도록 수정
+    }
+
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found: " + username));
     }
 }
