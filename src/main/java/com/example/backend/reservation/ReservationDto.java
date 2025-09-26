@@ -12,7 +12,7 @@ import java.time.LocalDate;
 public class ReservationDto {
 
     // --- 기존 필드 ---
-    private final Long reservationId;
+    private Long reservationId;  // ✅ 꼭 필요!
     private final String userId;
     private final String hotelName;
     private final String customerName;
