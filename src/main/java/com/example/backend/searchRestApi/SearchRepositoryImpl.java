@@ -31,22 +31,7 @@ import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
-import com.example.backend.Intro.QIntro;
-import com.example.backend.api.QHotels;
-import com.example.backend.api2.QDetail;
-import com.example.backend.common.HangulUtils;
-import com.example.backend.region.QRegion;
-import com.example.backend.reservation.QReservation;
-import com.example.backend.review.QReview;
-
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import org.springframework.stereotype.Repository;
 
 @Repository
 public class SearchRepositoryImpl implements SearchRepositoryCustom {
@@ -60,6 +45,7 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
     private final QReview review = QReview.review;
     
     private final static String RESERVATION_COUNT_ALIAS = "reservationCount";
+    public final static List<String> UNMODIFIABLE_GREETINGS = List.of("호텔", "모텔", "펜션");
 
     public SearchRepositoryImpl(JPAQueryFactory queryFactory) {
         this.queryFactory = queryFactory;
@@ -128,7 +114,6 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
                 rooms.roomoffseasonminfee1.min().as("price"),
                 hotels.addr1.as("address"),
                 review.rating.avg().as("rating"),
-                rooms.roomcount.sum().as("roomCount"),
                 Expressions.as(
                     JPAExpressions
                         .select(Wildcard.count)
@@ -140,7 +125,7 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
                 hotels.mapx.as("mapX"),
                 hotels.mapy.as("mapY"),
                 getIntroAmenitiesCount().min()
-                    .add(getRoomAmenitiesCount().sum())
+                    .add(getRoomAmenitiesCount().max())
                     .as("totalAminities"))
             )
             .groupBy(hotels.contentid, hotels.title, hotels.firstimage, hotels.addr1, hotels.mapx, hotels.mapy)
@@ -193,9 +178,9 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
             }
         }
 
-        String[] categoryNames = {"All", "Hotels", "Motels", "Cottages"};
-        for (int i = 0; i < categoryNames.length; i++) {
-            finalCounts.put(categoryNames[i], countArr[i]);
+        String[] category_names = {"모두", "호텔", "모텔", "펜션"};
+        for (int i = 0; i < category_names.length; i++) {
+            finalCounts.put(category_names[i], countArr[i]);
         }
         
         return finalCounts;
@@ -214,7 +199,7 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
             //이미지 없는 목록 제외
             // builder.and(hotels.firstimage.isNotEmpty());
             //체크인, 체크아웃 기간에 예약 일정 없는지 체크
-            builder.and(availableDateCondition(checkInDate, checkOutDate));
+            //builder.and(availableDateCondition(checkInDate, checkOutDate));
             //인원 수 충분한지 체크
             builder.and(rooms.roommaxcount.goe(searchRequest.getGuestCount()));
             //비용 필터
@@ -236,9 +221,9 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
 
     private BooleanExpression categorySelectCondition(String category) {
         return switch (category) {
-            case "Hotels" -> hotels.category.eq("B02010100");
-            case "Motels" -> hotels.category.eq("B02010900");
-            case "Cottages" -> hotels.category.eq("B02010700");
+            case "호텔" -> hotels.category.eq("B02010100");
+            case "모텔" -> hotels.category.eq("B02010900");
+            case "펜션" -> hotels.category.eq("B02010700");
             default -> null;
         };
     }
@@ -403,48 +388,48 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
         return specifiers.toArray(new OrderSpecifier[0]);
     }
     private NumberExpression<Integer> getIntroAmenitiesCount() {
-        StringExpression subfacilityReplaced = Expressions.stringTemplate(
-        "REPLACE({0}, {1}, {2})",
-        intro.subfacility, " / ", ", "
-    );
-    // 통일된 구분자 ", "를 모두 제거
-    StringExpression commaDeleted = Expressions.stringTemplate(
-        "REPLACE({0}, {1}, {2})",
-        subfacilityReplaced, ", ", ""
-    );
+            StringExpression subfacilityReplaced = Expressions.stringTemplate(
+            "REPLACE({0}, {1}, {2})",
+            intro.subfacility, " / ", ", "
+        );
+        // 통일된 구분자 ", "를 모두 제거
+        StringExpression commaDeleted = Expressions.stringTemplate(
+            "REPLACE({0}, {1}, {2})",
+            subfacilityReplaced, ", ", ""
+        );
 
-    // 원본 길이에서 제거된 후의 길이를 빼서, 구분자들이 차지했던 총 길이를 구함
-    NumberExpression<Integer> totalSeparatorLength = subfacilityReplaced.length()
-        .subtract(commaDeleted.length());
+        // 원본 길이에서 제거된 후의 길이를 빼서, 구분자들이 차지했던 총 길이를 구함
+        NumberExpression<Integer> totalSeparatorLength = subfacilityReplaced.length()
+            .subtract(commaDeleted.length());
 
-    // ", "는 2글자이므로, 총 길이 차이를 2로 나누어 구분자의 '개수'를 구함
-    NumberExpression<Integer> separatorCount = totalSeparatorLength.divide(2);
+        // ", "는 2글자이므로, 총 길이 차이를 2로 나누어 구분자의 '개수'를 구함
+        NumberExpression<Integer> separatorCount = totalSeparatorLength.divide(2);
 
-    // 아이템 총 개수 = 구분자 개수 + 1
-    NumberExpression<Integer> subfacilityCount = Expressions.cases()
-        .when(intro.subfacility.isNull().or(intro.subfacility.isEmpty())).then(0)
-        .otherwise(separatorCount.add(1));
+        // 아이템 총 개수 = 구분자 개수 + 1
+        NumberExpression<Integer> subfacilityCount = Expressions.cases()
+            .when(intro.subfacility.isNull().or(intro.subfacility.isEmpty())).then(0)
+            .otherwise(separatorCount.add(1));
 
 
-    // --- 2. paths 배열 중복 제거 및 계산 ---
-    
-    // parkinglodging 중복 제거
-    StringPath[] paths = {
-        intro.parkinglodging, intro.publicbath, 
-        intro.seminar, intro.sports, intro.barbecue, intro.campfire,
-        intro.sauna, intro.fitness
-    };
-    
-    NumberExpression<Integer> counts = Expressions.asNumber(0);
-    for (StringPath path : paths) {
-        NumberExpression<Integer> currentPathCount = Expressions.cases()
-            .when(path.eq("1").or(path.equalsIgnoreCase("Y"))).then(1) // Y/N도 처리 가능하도록 수정
-            .otherwise(0);
-        counts = counts.add(currentPathCount);
-    }
-    
-    // 최종적으로 subfacility 개수와 나머지 개수를 더해서 반환
-    return subfacilityCount.add(counts);
+        // --- 2. paths 배열 중복 제거 및 계산 ---
+        
+        // parkinglodging 중복 제거
+        StringPath[] paths = {
+            intro.parkinglodging, intro.publicbath, 
+            intro.seminar, intro.sports, intro.barbecue, intro.campfire,
+            intro.sauna, intro.fitness
+        };
+        
+        NumberExpression<Integer> counts = Expressions.asNumber(0);
+        for (StringPath path : paths) {
+            NumberExpression<Integer> currentPathCount = Expressions.cases()
+                .when(path.eq("1").or(path.equalsIgnoreCase("Y"))).then(1) // Y/N도 처리 가능하도록 수정
+                .otherwise(0);
+            counts = counts.add(currentPathCount);
+        }
+        
+        // 최종적으로 subfacility 개수와 나머지 개수를 더해서 반환
+        return subfacilityCount.add(counts);
     }
     private NumberExpression<Integer> getRoomAmenitiesCount() {
         NumberExpression<Integer> roomAmenitiesCount = Expressions.asNumber(0);

@@ -10,7 +10,6 @@ public class SearchRequestDto {
     private String keyword;
     private LocalDate checkInDate;
     private LocalDate checkOutDate;
-    private int roomCount;
     private int guestCount;
     private int minPrice;
     private int maxPrice;

@@ -26,7 +26,6 @@ public class AuthController {
 
     @PostMapping("/sign-up")
     public ResponseEntity<String> signUp(@RequestBody UserDto.SignUp signUpDto) {
-        System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" + signUpDto);
         userService.signUp(signUpDto);
         return ResponseEntity.ok("회원가입이 성공적으로 완료되었습니다.");
     }
@@ -84,11 +83,23 @@ public class AuthController {
     // 이메일 인증 코드 확인 API
     @PostMapping("/verify-code")
     public ResponseEntity<String> verifyCode(@RequestBody Map<String, String> payload) {
-        boolean isVerified = mailService.verifyCode(payload.get("email"), payload.get("code"));
-        if (isVerified) {
-            return ResponseEntity.ok("인증이 완료되었습니다.");
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("인증 코드가 올바르지 않습니다.");
+        String email = payload.get("email");
+        String code = payload.get("code");
+        
+        // MailService로부터 검증 결과를 받음
+        MailService.VerificationResult result = mailService.verifyCode(email, code);
+
+        // 결과에 따라 다른 응답을 반환
+        switch (result) {
+            case SUCCESS:
+                return ResponseEntity.ok("인증이 완료되었습니다.");
+            
+            case EXPIRED:
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("인증번호가 만료되었습니다.");
+                
+            case FAILED:
+            default:
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("인증번호가 올바르지 않습니다.");
         }
     }
 

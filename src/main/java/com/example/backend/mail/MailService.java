@@ -14,6 +14,12 @@ public class MailService {
 
     private final JavaMailSender mailSender;
     private final CacheManager cacheManager; // Spring의 CacheManager를 주입받음
+    
+    public enum VerificationResult {
+        SUCCESS,
+        EXPIRED,
+        FAILED
+    }
 
     /**
      * 인증번호를 생성하고 이메일로 발송
@@ -37,17 +43,30 @@ public class MailService {
     /**
      * 사용자가 입력한 인증번호를 검증
      */
-    public boolean verifyCode(String email, String code) {
+    public VerificationResult verifyCode(String email, String code) {
         Cache cache = cacheManager.getCache("emailVerificationCodes");
-        if (cache != null && cache.get(email) != null) {
-            String storedCode = cache.get(email, String.class);
-            if (storedCode.equals(code)) {
-                // 인증 성공 시 캐시에서 코드 삭제 (재사용 방지)
-                cache.evict(email);
-                return true;
-            }
+        
+        if (cache == null) {
+            // 캐시 설정이 없는 경우
+            return VerificationResult.FAILED;
         }
-        return false;
+
+        Cache.ValueWrapper valueWrapper = cache.get(email);
+
+        if (valueWrapper == null) {
+            // 캐시에 해당 이메일의 코드가 없음 -> 만료되었거나 발송된 적 없음
+            return VerificationResult.EXPIRED;
+        }
+
+        String storedCode = (String) valueWrapper.get();
+        if (storedCode.equals(code)) {
+            // 코드가 일치하면 -> 성공
+            cache.evict(email);
+            return VerificationResult.SUCCESS;
+        } else {
+            // 코드가 일치하지 않으면 -> 실패
+            return VerificationResult.FAILED;
+        }
     }
     
     /**

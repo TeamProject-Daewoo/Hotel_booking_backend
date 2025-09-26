@@ -40,7 +40,7 @@ public class SearchService {
                 availabilityDto.setEndDate(searchRequest.getCheckOutDate());
 
                 Map<LocalDate, Map<Long, Integer>> availabilityInfo = reservationService.getRoomAvailability(availabilityDto);
-                
+
                 //예약 가능, 예약 마감 등 상태 전달
                 String status = determineStatus(availabilityInfo);
                 hotel.setStatus(status);
@@ -81,23 +81,6 @@ public class SearchService {
         } else {
             return "예약 마감";
         }
-    }
-
-    //이 호텔에 예약 가능한 객실이 있는지 확인
-    private boolean hasAvailableRoom(Map<LocalDate, Map<Long, Integer>> availabilityInfo) {
-        for (Map<Long, Integer> dailyAvailability : availabilityInfo.values()) {
-            boolean availableThisDay = false;
-            for (Integer availableCount : dailyAvailability.values()) {
-                if (availableCount > 0) {
-                    availableThisDay = true;
-                    break; // 이 날은 예약 가능한 방이 있으니 다음 날짜로 넘어감
-                }
-            }
-            if (!availableThisDay) {
-                return false; // 이 날짜에 가능한 방이 없으므로 전체 기간 예약 불가
-            }
-        }
-        return false;
     }
 
     public List<String> findByRecommendElements(String keyword) {

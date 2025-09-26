@@ -124,13 +124,18 @@ public class UserService implements UserDetailsService {
         phone_number = formatPhoneNumber(phone_number);
 
         Optional<User> existingUserByEmail = userRepository.findByUsername(email);
+     // 👇 이 if문을 수정합니다.
         if (existingUserByEmail.isPresent()) {
-            // 이미 이메일로 가입된 계정이 있으면, UserAlreadyExistsException 발생
             User user = existingUserByEmail.get();
-            throw new UserAlreadyExistsException(
-                    "이미 가입된 이메일입니다.",
-                    user.getLoginType() == null ? "이메일" : user.getLoginType()
-            );
+            
+            // 이메일이 중복되면서, 동시에 기존 계정의 loginType이 null(일반 가입)인지 확인
+            if (user.getLoginType() == null || user.getLoginType().equals("NORMAL")) {
+                throw new UserAlreadyExistsException(
+                    "이미 가입된 이메일입니다.", 
+                    "이메일"
+                );
+            }
+
         }
 
         // 2. DB에 해당 사용자가 없으면 새로 가입 처리

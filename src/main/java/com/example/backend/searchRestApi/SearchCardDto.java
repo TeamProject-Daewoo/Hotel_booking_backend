@@ -10,7 +10,6 @@ public class SearchCardDto {
     private int price;
     private String address;
     private double rating;
-    private int roomCount;
     private int totalAminities;
     private Long totalReviews;
     private String mapX;
