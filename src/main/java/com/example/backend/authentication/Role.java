@@ -2,6 +2,8 @@ package com.example.backend.authentication;
 
 public enum Role {
     USER,
+    BUSINESS,
     ADMIN,
-    BUSINESS
+    ADMIN_LEVEL1,
+    ADMIN_LEVEL2
 }
