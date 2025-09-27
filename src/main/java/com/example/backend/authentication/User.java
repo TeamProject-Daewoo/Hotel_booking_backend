@@ -58,6 +58,9 @@ public class User implements UserDetails {
     @Column(name = "business_registration_number")
     private String business_registration_number;
 
+    @Column(name = "points", nullable = false)
+    private Integer point = 0;
+
     @Builder
     public User(String username, String email, String password, String name, String phoneNumber, Role role, String loginType, String uuid) {
         this.username = username;

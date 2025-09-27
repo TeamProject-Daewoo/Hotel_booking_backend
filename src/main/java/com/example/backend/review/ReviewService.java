@@ -98,39 +98,4 @@ public class ReviewService {
                 .build();
     }
 
-    public List<AdminReviewResponseDto> getReviewList(boolean show, String searchTerm) {
-        System.out.println(searchTerm+"------------------");
-        List<Review> reviews = reviewRepository.findAllViewable(show, searchTerm);
-        return reviews.stream()
-            .map(AdminReviewResponseDto::new)
-            .collect(Collectors.toList());
-    }
-
-    public Integer deleteReviewsById(String id, boolean isDelete) {
-        System.out.println(isDelete+"----------------------");
-        return reviewRepository.softDeleteById(id, isDelete);
-    }
-     public Integer deleteReviewsByIds(List<String> id, boolean isDelete) {
-        return reviewRepository.softDeleteAllByIds(id, isDelete);
-    }
-
-     public List<BussinessReviewResponseDto> findByHotelId(String hotelId, String searchTerm) {
-        List<Review> reviews = reviewRepository.findByContentIdWithKeyword(hotelId, searchTerm);
-        return reviews.stream()
-            .map(BussinessReviewResponseDto::new)
-            .collect(Collectors.toList());
-     }
-
-     public Integer reportReviewsById(String id, boolean isReport) {
-        return reviewRepository.reportById(id, isReport);
-     }
-     public Integer reportReviewByIds(List<String> ids, boolean isReport) {
-        return reviewRepository.reportAllByIds(ids, isReport);
-     }
-
-     public List<BussinessReviewResponseDto> getReportedReviewList(String searchTerm) {
-        return reviewRepository.findAllReportedList(searchTerm).stream()
-            .map(BussinessReviewResponseDto::new)
-            .collect(Collectors.toList());
-     }
 }
