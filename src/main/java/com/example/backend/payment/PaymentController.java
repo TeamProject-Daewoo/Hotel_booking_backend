@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
+import com.example.backend.coupon.repository.UserCouponRepository;
+
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -30,9 +32,11 @@ public class PaymentController {
 
     private final ReservationRepository reservationRepository;
     private final PaymentRepository paymentRepository;
+    private final UserCouponRepository userCouponRepository;
     private final ObjectMapper objectMapper;
     private final EmailService emailService; // EmailService 주입
     private final PaymentService paymentService;
+
 
     @Value("${toss.widget-secret-key}")
     private String widgetSecretKey;
@@ -90,8 +94,14 @@ public class PaymentController {
                         .build();
                 paymentRepository.save(newPayment);
 
+                // ✅ 쿠폰 삭제 로직 (프론트에서 보낸 userCouponId 활용)
+                if (paymentDto.getUserCouponId() != null) {
+                    userCouponRepository.deleteById(paymentDto.getUserCouponId());
+                }
+
+                
                 // 이메일 발송 서비스 호출
-                emailService.sendReservationConfirmationEmail(reservation);
+               // emailService.sendReservationConfirmationEmail(reservation);
             }
 
             return responseEntity;
