@@ -36,9 +36,8 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     @Query("SELECT r FROM Review r " +
             "WHERE r.isDeleted = :show " +
             "AND (" +
-            ":#{#searchTerm == null || #searchTerm.isEmpty()} = TRUE OR " +     
-            "r.user.name LIKE %:searchTerm% OR r.content LIKE %:searchTerm% OR " +
-            "r.contentChosung LIKE :searchTerm || '%' " + 
+            ":#{#searchTerm == null || #searchTerm.isEmpty()} = TRUE OR " +
+            "r.contentChosung LIKE CONCAT(:searchTerm, '%') " + 
             ") "+ 
             "ORDER BY r.createdAt DESC")
     List<Review> findAllViewable(@Param("show") boolean show, @Param("searchTerm") String searchTerm);
@@ -46,9 +45,8 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     @Query("SELECT r FROM Review r " +
             "WHERE r.hotel.contentid = :hotelId " +
             "AND (" +
-            ":#{#searchTerm == null || #searchTerm.isEmpty()} = TRUE OR " +     
-            "r.user.name LIKE %:searchTerm% OR r.content LIKE %:searchTerm% OR " +
-            "r.contentChosung LIKE :searchTerm || '%' " + 
+            ":#{#searchTerm == null || #searchTerm.isEmpty()} = TRUE OR " +
+            "r.contentChosung LIKE CONCAT(:searchTerm, '%') " + 
             ") "+ 
             "ORDER BY r.createdAt DESC")
     List<Review> findByContentIdWithKeyword(@Param("hotelId") String hotelId, @Param("searchTerm") String searchTerm);

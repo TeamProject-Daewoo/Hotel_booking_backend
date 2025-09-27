@@ -99,6 +99,7 @@ public class ReviewService {
     }
 
     public List<AdminReviewResponseDto> getReviewList(boolean show, String searchTerm) {
+        System.out.println(searchTerm+"------------------");
         List<Review> reviews = reviewRepository.findAllViewable(show, searchTerm);
         return reviews.stream()
             .map(AdminReviewResponseDto::new)
@@ -106,6 +107,7 @@ public class ReviewService {
     }
 
     public Integer deleteReviewsById(String id, boolean isDelete) {
+        System.out.println(isDelete+"----------------------");
         return reviewRepository.softDeleteById(id, isDelete);
     }
      public Integer deleteReviewsByIds(List<String> id, boolean isDelete) {
