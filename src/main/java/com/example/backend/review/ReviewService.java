@@ -2,6 +2,7 @@ package com.example.backend.review;
 
 import com.example.backend.authentication.User;
 import com.example.backend.authentication.UserRepository;
+import com.example.backend.common.HangulUtils;
 import com.example.backend.reservation.Reservation;
 import com.example.backend.reservation.ReservationRepository;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.beans.factory.annotation.Value;
-
+import org.springframework.http.ResponseEntity;
 
 import java.io.File;
 import java.io.IOException;
@@ -58,7 +59,8 @@ public class ReviewService {
                 .content(content)
                 .imageUrl(imageUrl)
                 .build();
-        
+        System.out.println(review);
+        System.out.println(HangulUtils.getChosung(content)+"----------------------------");
         return reviewRepository.save(review);
     }
 
@@ -71,7 +73,7 @@ public class ReviewService {
 
     @Transactional(readOnly = true)
     public List<ReviewResponseDto> getReviewsByUser(String username) {
-        return reviewRepository.findByUserUsernameOrderByCreatedAtDesc(username).stream()
+        return reviewRepository.findByUserUsernameAndIsDeletedFalseOrderByCreatedAtDesc(username).stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
@@ -95,4 +97,5 @@ public class ReviewService {
                 .visitCount(visitCount) // 계산된 방문 횟수 추가
                 .build();
     }
+
 }
