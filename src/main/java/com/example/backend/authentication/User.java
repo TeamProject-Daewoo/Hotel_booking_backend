@@ -58,6 +58,9 @@ public class User implements UserDetails {
     @Column(name = "business_registration_number")
     private String business_registration_number;
 
+    @Column(name = "points", nullable = false)
+    private Integer point = 0;
+
     @Builder
     public User(String username, String email, String password, String name, String phoneNumber, Role role, String loginType, String uuid) {
         this.username = username;
@@ -68,6 +71,7 @@ public class User implements UserDetails {
         this.role = role;
         this.loginType = loginType;
         this.uuid = uuid;
+        this.point = 0;
 
         if (role == Role.ADMIN || role == Role.BUSINESS) {
             this.approvalStatus = ApprovalStatus.PENDING;
@@ -131,7 +135,15 @@ public class User implements UserDetails {
     LocalDateTime now = LocalDateTime.now();
     return joinDate != null && joinDate.isAfter(LocalDateTime.now().minusDays(7).plusNanos(1));
 
+
 }
+
+    public void usePoints(int pointsToUse) {
+        if (this.point < pointsToUse) {
+            throw new IllegalArgumentException("포인트가 부족합니다.");
+        }
+        this.point -= pointsToUse;
+    }
 
     
 }
