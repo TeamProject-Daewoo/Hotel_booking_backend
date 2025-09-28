@@ -24,7 +24,7 @@ jobs:
       # 2. Amazon ECR에 로그인
       - name: Login to Amazon ECR
         id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
+        uses: aws-actions/amazon-ecr-login@v2
 
       - name: Build backend project with Maven
         run: mvn package -DskipTests
@@ -58,8 +58,8 @@ jobs:
             aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | sudo docker login --username AWS --password-stdin ${{ steps.login-ecr.outputs.registry }}
 
             # 최신 이미지 Pull
-            sudo docker pull ${{ steps.login-ecr.outputs.registry }}/my-app-backend:latest
-            sudo docker pull ${{ steps.login-ecr.outputs.registry }}/my-app-frontend:latest
+            sudo docker pull ${{ steps.login-ecr.outputs.registry }}/hotelhub/backend:latest
+            sudo docker pull ${{ steps.login-ecr.outputs.registry }}/hotelhub/frontend:latest
 
             # DB 접속 정보를 담은 .env 파일 생성
             sudo tee .env <<EOF
