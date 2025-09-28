@@ -49,7 +49,7 @@ jobs:
           script: |
             # 배포 디렉토리로 이동 (없으면 생성하고 git clone)
             if [ ! -d "/home/ubuntu/app" ]; then
-              git clone https://github.com/your-github-username/user-backend.git /home/ubuntu/app # 👈 이 부분
+              git clone https://github.com/TeamProject-Daewoo/Hotel_booking_backend.git /home/ubuntu/app
             fi
             cd /home/ubuntu/app
             git pull origin main # 최신 docker-compose.yml, nginx.conf 업데이트
