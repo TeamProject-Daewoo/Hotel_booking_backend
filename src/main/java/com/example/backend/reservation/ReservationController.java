@@ -251,4 +251,10 @@ public class ReservationController {
                     .body("예약 업데이트 중 오류가 발생했습니다: " + e.getMessage());
         }
     }
+
+    @GetMapping("/user/{username}/points")
+    public ResponseEntity<List<UserPointHistoryDto>> getUserPoints(@PathVariable String username) {
+        return ResponseEntity.ok(reservationService.getUserPointHistory(username));
+    }
+
 }
