@@ -26,7 +26,7 @@ public class HotelsController {
     }
 
     
-    @GetMapping("/accommodations/{contentid}")
+    @GetMapping("/api/accommodations/{contentid}")
     public ResponseEntity<Hotels> getAccommodation(@PathVariable String contentid) {
         return accommodationService.getAccommodation(contentid)
             .map(ResponseEntity::ok)

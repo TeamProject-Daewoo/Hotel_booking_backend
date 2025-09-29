@@ -54,6 +54,7 @@ public class JwtTokenProvider {
         String realName = user.getName();
         String loginType = user.getLoginType();
         String phoneNumber = user.getPhoneNumber();
+        String points = user.getPoint().toString();
 
         ;
         // Access Token 생성 (사용자 정보와 권한 포함)
@@ -64,6 +65,7 @@ public class JwtTokenProvider {
                 .claim("name", realName)
                 .claim("loginType", loginType)
                 .claim("phoneNumber", phoneNumber)
+                .claim("points", points)
                 .setExpiration(accessTokenExpiresIn)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();

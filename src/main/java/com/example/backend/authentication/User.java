@@ -1,5 +1,6 @@
 package com.example.backend.authentication;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
@@ -71,6 +72,7 @@ public class User implements UserDetails {
         this.role = role;
         this.loginType = loginType;
         this.uuid = uuid;
+        this.point = 0;
 
         if (role == Role.ADMIN || role == Role.BUSINESS) {
             this.approvalStatus = ApprovalStatus.PENDING;
@@ -130,11 +132,17 @@ public class User implements UserDetails {
         return true;
     }
 
-    public boolean isNewUser() {
-    LocalDateTime now = LocalDateTime.now();
-    return joinDate != null && joinDate.isAfter(LocalDateTime.now().minusDays(7).plusNanos(1));
-
+  public boolean isNewUser() {
+    return joinDate != null
+           && joinDate.toLocalDate().isEqual(LocalDate.now());
 }
+
+    public void usePoints(int pointsToUse) {
+        if (this.point < pointsToUse) {
+            throw new IllegalArgumentException("포인트가 부족합니다.");
+        }
+        this.point -= pointsToUse;
+    }
 
     
 }

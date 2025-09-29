@@ -20,7 +20,9 @@ public class ReservationDto {
     private final String status;
     private final LocalDate checkInDate;
     private final LocalDate checkOutDate;
+    private final Integer discountPrice;
     private final String phone;
+    private final Integer usedPoints;
 
     // --- RoomDetailView를 위해 추가된 필드 ---
     private final Integer basePrice;
@@ -66,12 +68,14 @@ public class ReservationDto {
                 .userId(reservation.getUser() != null ? reservation.getUser().getUsername() : null)
                 .hotelName(reservation.getHotel().getTitle())
                 .customerName(reservation.getReservName())
+                .discountPrice(reservation.getDiscountPrice())
                 .phone(reservation.getReservPhone())
                 .totalPrice(reservation.getTotalPrice())
                 .status(reservation.getStatus())
                 .checkInDate(reservation.getCheckInDate())
                 .checkOutDate(reservation.getCheckOutDate())
-                .basePrice(reservation.getBasePrice()) // 추가했던 basePrice
+                .basePrice(reservation.getBasePrice())
+                .usedPoints(reservation.getUsedPoints())
                 .hotel(hotelDto)
                 .room(roomDto)
                 .build();
