@@ -59,9 +59,13 @@ public class ReviewService {
                 .content(content)
                 .imageUrl(imageUrl)
                 .build();
-        System.out.println(review);
-        System.out.println(HangulUtils.getChosung(content)+"----------------------------");
-        return reviewRepository.save(review);
+        reviewRepository.save(review);
+
+        // 리뷰 작성 시 500 포인트 지급
+        user.addPoints(500);
+        userRepository.save(user);
+
+        return review;
     }
 
     @Transactional(readOnly = true)
@@ -94,7 +98,7 @@ public class ReviewService {
                 .rating(review.getRating())
                 .reviewDate(review.getCreatedAt())
                 .imageUrl(review.getImageUrl())
-                .visitCount(visitCount) // 계산된 방문 횟수 추가
+                .visitCount(visitCount)
                 .build();
     }
 
