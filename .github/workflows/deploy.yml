@@ -27,7 +27,7 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v2
 
       - name: Build backend project with Maven
-        run: mvn package -DskipTests
+        run: mvn clean package -DskipTests
 
       # 3. 백엔드 Docker 이미지 빌드 및 Push
       - name: Build and push backend image
