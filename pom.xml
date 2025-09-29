@@ -70,6 +70,13 @@
 			<scope>runtime</scope>
 		</dependency>
 
+		  <!-- OpenPDF 라이브러리 -->
+    <dependency>
+        <groupId>com.github.librepdf</groupId>
+        <artifactId>openpdf</artifactId>
+        <version>1.3.30</version>
+    </dependency>
+
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>

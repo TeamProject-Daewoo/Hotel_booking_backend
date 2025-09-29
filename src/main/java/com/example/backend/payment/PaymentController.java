@@ -19,6 +19,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import com.example.backend.coupon.repository.UserCouponRepository;
+// 날짜 관련
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+
+// Map 관련
+import java.util.HashMap;
+
 
 
 import java.nio.charset.StandardCharsets;
@@ -144,4 +151,24 @@ public class PaymentController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+         @PostMapping("/cancel-preview")
+public ResponseEntity<Map<String, Object>> previewCancel(@RequestBody Map<String, Object> payload) {
+    Long reservationId = Long.parseLong(payload.get("reservationId").toString());
+    Reservation reservation = reservationRepository.findById(reservationId)
+            .orElseThrow(() -> new IllegalArgumentException("예약을 찾을 수 없습니다."));
+    Payment payment = paymentRepository.findByReservation(reservation)
+            .orElseThrow(() -> new IllegalArgumentException("결제 정보를 찾을 수 없습니다."));
+
+    LocalDate today = LocalDate.now();
+    long daysBeforeCheckIn = ChronoUnit.DAYS.between(today, reservation.getCheckInDate());
+    int cancelFee = paymentService.calculateCancelFee(payment.getPaymentAmount(), daysBeforeCheckIn);
+    int refundAmount = payment.getPaymentAmount() - cancelFee;
+
+    Map<String, Object> result = new HashMap<>();
+    result.put("refundAmount", refundAmount);
+    result.put("cancelFee", cancelFee);
+
+    return ResponseEntity.ok(result);
+}
 }

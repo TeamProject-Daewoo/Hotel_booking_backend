@@ -20,6 +20,7 @@ public class ReservationDto {
     private final String status;
     private final LocalDate checkInDate;
     private final LocalDate checkOutDate;
+    private final Integer discountPrice;
     private final String phone;
     private final Integer usedPoints;
 
@@ -67,6 +68,7 @@ public class ReservationDto {
                 .userId(reservation.getUser() != null ? reservation.getUser().getUsername() : null)
                 .hotelName(reservation.getHotel().getTitle())
                 .customerName(reservation.getReservName())
+                .discountPrice(reservation.getDiscountPrice())
                 .phone(reservation.getReservPhone())
                 .totalPrice(reservation.getTotalPrice())
                 .status(reservation.getStatus())

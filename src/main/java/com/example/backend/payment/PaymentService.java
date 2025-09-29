@@ -88,7 +88,7 @@ public class PaymentService {
         }
     }
 
-    private int calculateCancelFee(int totalAmount, long daysBeforeCheckIn) {
+    public int calculateCancelFee(int totalAmount, long daysBeforeCheckIn) {
         if (daysBeforeCheckIn >= 3) {
             return 0;
         } else if (daysBeforeCheckIn == 2) {
