@@ -69,8 +69,7 @@ public class PaymentController {
             
             // 기존 결제 정보를 JsonNode로 변환하거나, 프론트와 약속된 성공 DTO를 만들어 반환합니다.
             // 아래는 간단한 예시입니다.
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode successResponse = mapper.valueToTree(existingPayment);
+            JsonNode successResponse = objectMapper.valueToTree(existingPayment);
 
             return ResponseEntity.ok(successResponse); 
         }
