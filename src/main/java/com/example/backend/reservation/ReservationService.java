@@ -113,4 +113,20 @@ public class ReservationService {
 
         return availability;
     }
+
+    @Transactional(readOnly = true)
+    public List<UserPointHistoryDto> getUserPointHistory(String username) {
+        List<Reservation> reservations = reservationRepository.findReservationsWithDetailsByUserName(username);
+
+        return reservations.stream()
+                .filter(r -> r.getUsedPoints() != null && r.getUsedPoints() > 0)
+                .map(r -> UserPointHistoryDto.builder()
+                        .reservationId(r.getReservationId())
+                        .date(r.getCheckInDate())
+                        .hotelName(r.getHotel().getTitle())
+                        .usedPoints(r.getUsedPoints())
+                        .type("used")
+                        .build())
+                .collect(Collectors.toList());
+    }
 }

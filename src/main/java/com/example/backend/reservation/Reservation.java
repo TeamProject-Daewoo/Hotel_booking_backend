@@ -2,6 +2,7 @@ package com.example.backend.reservation;
 
 import com.example.backend.api.Hotels;
 import com.example.backend.authentication.User;
+import com.example.backend.coupon.entity.Coupon;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -65,6 +66,13 @@ public class Reservation {
     
     @Column(name = "reserv_phone")
     private String reservPhone;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "used_coupon_id")
+    private Coupon usedCoupon;
+
+    @Column(name = "used_points")
+    private Integer usedPoints;
 
     @CreationTimestamp // 추가
     @Column(name = "reservation_date", updatable = false) // insertable=false 제거
