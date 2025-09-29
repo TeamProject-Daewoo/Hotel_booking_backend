@@ -66,6 +66,7 @@ jobs:
             DB_URL=${{ secrets.DB_URL }}
             DB_USERNAME=${{ secrets.DB_USERNAME }}
             DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+            SERVER_PORT=8080
             EOF
             
             # Docker Compose로 서비스 실행
