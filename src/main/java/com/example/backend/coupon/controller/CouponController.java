@@ -3,11 +3,14 @@ package com.example.backend.coupon.controller;
 import com.example.backend.coupon.dto.CouponDto;
 import com.example.backend.coupon.dto.UserCouponDto;
 import com.example.backend.coupon.entity.Coupon;
+import com.example.backend.coupon.entity.UserCoupon;
+import com.example.backend.coupon.repository.UserCouponRepository;
 import com.example.backend.coupon.service.CouponService;
 import com.example.backend.authentication.UserRepository;
 import com.example.backend.authentication.User; // ← 엔티티 User
 import lombok.RequiredArgsConstructor;
 
+import java.time.LocalDateTime;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +26,7 @@ public class CouponController {
 
     private final CouponService couponService;
     private final UserRepository userRepository;
+    private final UserCouponRepository userCouponRepository;
 
     // [관리자] 전체 쿠폰 조회
     @GetMapping("/list")
@@ -108,4 +112,36 @@ public ResponseEntity<UserCouponDto> issueCouponByCode(
                 couponService.issueCouponToUser(entityUser, coupon, source)
         );
     }
+
+    @DeleteMapping("/user/{id}")
+public ResponseEntity<Void> deleteUserCoupon(@PathVariable Long id) {
+    userCouponRepository.deleteById(id);
+    return ResponseEntity.ok().build();
+}
+
+@PatchMapping("/user/{id}/use")
+public ResponseEntity<Void> markUserCouponAsUsed(@PathVariable Long id) {
+    UserCoupon userCoupon = userCouponRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("유저 쿠폰을 찾을 수 없습니다. ID: " + id));
+
+    userCoupon.setIsUsed(true);
+    userCoupon.setUsedAt(LocalDateTime.now());
+    userCouponRepository.save(userCoupon);
+
+    return ResponseEntity.ok().build();
+}
+
+@PatchMapping("/user/{id}/cancel")
+public ResponseEntity<Void> markUserCouponAsUnused(@PathVariable Long id) {
+    UserCoupon userCoupon = userCouponRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("유저 쿠폰을 찾을 수 없습니다. ID: " + id));
+
+    userCoupon.setIsUsed(false);
+    userCoupon.setUsedAt(null);
+    userCouponRepository.save(userCoupon);
+
+    return ResponseEntity.ok().build();
+}
+
+
 }

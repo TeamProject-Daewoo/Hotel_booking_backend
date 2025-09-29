@@ -10,4 +10,6 @@ public class PaymentDto {
     private Long reservationId;
     private Integer amount; 
     private String orderId;
+
+    private Long userCouponId;
 }
