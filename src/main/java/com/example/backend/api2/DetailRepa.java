@@ -24,4 +24,6 @@ public interface DetailRepa extends JpaRepository<Detail, Long> {
         ORDER BY d.roomtitle ASC
     """)
     List<Detail> findDistinctRoomsByContentid(@Param("contentid") String contentid);
+
+    List<Detail> findByContentidIn(List<String> contentIds);
 }

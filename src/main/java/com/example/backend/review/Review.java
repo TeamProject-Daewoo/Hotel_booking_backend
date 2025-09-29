@@ -20,9 +20,7 @@ import java.time.LocalDateTime;
 @Builder(toBuilder = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Table(name = "reviews", indexes = { 
-    @Index(name = "idx_content_chosung", columnList = "content_chosung")
- })  
+@Table(name = "reviews")  
 public class Review {
 
     @Id

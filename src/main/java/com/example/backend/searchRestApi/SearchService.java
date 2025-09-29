@@ -32,14 +32,19 @@ public class SearchService {
         JPAQuery<?> countBaseQuery = searchRepository.createCountBaseQuery(searchRequest);
         Map<String, Integer> counts = searchRepository.fetchCategoryCounts(countBaseQuery);
 
-        cards.forEach(hotel -> {
-                // 각 호텔의 contentId를 사용하여 가용성 정보를 조회하기 위한 DTO 생성
-                AvailabilityRequestDto availabilityDto = new AvailabilityRequestDto();
-                availabilityDto.setContentId(hotel.getContentId());
-                availabilityDto.setStartDate(searchRequest.getCheckInDate());
-                availabilityDto.setEndDate(searchRequest.getCheckOutDate());
+        List<String> contentIds = cards.stream()
+            .map(SearchCardDto::getContentId)
+            .collect(Collectors.toList());
+        BulkAvailabilityRequestDto bulkDto = new BulkAvailabilityRequestDto();
+        bulkDto.setContentIds(contentIds);
+        bulkDto.setStartDate(searchRequest.getCheckInDate());
+        bulkDto.setEndDate(searchRequest.getCheckOutDate());
 
-                Map<LocalDate, Map<Long, Integer>> availabilityInfo = reservationService.getRoomAvailability(availabilityDto);
+        Map<String, Map<LocalDate, Map<Long, Integer>>> allAvailabilityInfo = 
+            reservationService.getRoomAvailabilityBulk(bulkDto);
+        
+        cards.forEach(hotel -> {
+                Map<LocalDate, Map<Long, Integer>> availabilityInfo = allAvailabilityInfo.get(hotel.getContentId());
 
                 //예약 가능, 예약 마감 등 상태 전달
                 String status = determineStatus(availabilityInfo);
