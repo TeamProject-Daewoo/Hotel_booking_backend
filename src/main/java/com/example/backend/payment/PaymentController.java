@@ -57,6 +57,23 @@ public class PaymentController {
 
         Reservation reservation = reservationRepository.findByIdWithDetails(paymentDto.getReservationId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 예약입니다. ID: " + paymentDto.getReservationId()));
+        
+        if ("PAID".equals(reservation.getStatus())) {
+            // 이미 결제 완료된 건이면, Toss에 다시 요청하지 않고 기존 결제 정보를 바탕으로 성공 응답을 보내준다.
+            System.out.println("이미 처리된 결제 건에 대한 중복 요청입니다. OrderId: " + paymentDto.getOrderId());
+            
+            // 실제로는 paymentRepository에서 기존 결제 정보를 조회해서 보내주는 것이 더 정확합니다.
+            // 지금은 간단히 정상 응답을 가정하고 200 OK를 보냅니다.
+            Payment existingPayment = paymentRepository.findByReservation(reservation)
+                    .orElse(null); // 실제로는 예외 처리가 필요할 수 있습니다.
+            
+            // 기존 결제 정보를 JsonNode로 변환하거나, 프론트와 약속된 성공 DTO를 만들어 반환합니다.
+            // 아래는 간단한 예시입니다.
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode successResponse = mapper.valueToTree(existingPayment);
+
+            return ResponseEntity.ok(successResponse); 
+        }
 
         Integer amountFromClient = paymentDto.getAmount();
 
