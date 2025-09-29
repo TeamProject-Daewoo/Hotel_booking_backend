@@ -1,5 +1,7 @@
 package com.example.backend.payment;
 
+import com.example.backend.authentication.User;
+import com.example.backend.authentication.UserRepository;
 import com.example.backend.reservation.Reservation;
 import com.example.backend.reservation.ReservationRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,10 +28,11 @@ public class PaymentService {
     private final PaymentRepository paymentRepository;
     private final RestTemplate restTemplate;
     private final EmailService emailService;
+    private final UserRepository userRepository;
 
     @Value("${toss.widget-secret-key}")
     private String tossWidgetSecretKey;
-
+g
     @Transactional
     public String cancelPayment(Long reservationId, String cancelReason) {
         Reservation reservation = reservationRepository.findById(reservationId)
@@ -71,6 +74,24 @@ public class PaymentService {
 
         try {
             restTemplate.postForObject(url, request, Map.class);
+
+            if (reservation.getUsedPoints() != null && reservation.getUsedPoints() > 0) {
+                User user = reservation.getUser();
+                if (user != null) {
+                    System.out.println("=== 포인트 환불 시작 ===");
+                    System.out.println("사용자: " + user.getUsername());
+                    System.out.println("현재 포인트: " + user.getPoint());
+                    System.out.println("환불할 포인트: " + reservation.getUsedPoints());
+
+                    // 포인트 환불
+                    int currentPoints = user.getPoint() != null ? user.getPoint() : 0;
+                    user.addPoints(currentPoints + reservation.getUsedPoints());
+                    userRepository.save(user);
+
+                    System.out.println("환불 후 포인트: " + user.getPoint());
+                    System.out.println("=== 포인트 환불 완료 ===");
+                }
+            }
 
             reservation.setStatus("CANCELLED");
             payment.setPaymentStatus("CANCELED");
