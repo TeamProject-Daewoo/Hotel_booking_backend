@@ -47,6 +47,7 @@ public class UserDto {
         private String name;
         private String phoneNumber;
         private Role role;
+        private Integer point;
 
         // User 엔티티를 Info DTO로 변환하는 정적 메소드
         public static Info from(User user) {
@@ -55,6 +56,7 @@ public class UserDto {
                     .name(user.getName())
                     .phoneNumber(user.getPhoneNumber())
                     .role(user.getRole())
+                    .point(user.getPoint())
                     .build();
         }
     }

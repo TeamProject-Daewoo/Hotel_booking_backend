@@ -1,5 +1,7 @@
 package com.example.backend.payment;
 
+import com.example.backend.authentication.User;
+import com.example.backend.authentication.UserRepository;
 import com.example.backend.reservation.Reservation;
 import com.example.backend.reservation.ReservationRepository;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -43,6 +45,7 @@ public class PaymentController {
     private final ObjectMapper objectMapper;
     private final EmailService emailService; // EmailService 주입
     private final PaymentService paymentService;
+    private final UserRepository userRepository;
 
 
     @Value("${toss.widget-secret-key}")
@@ -83,6 +86,22 @@ public class PaymentController {
 
             if (responseEntity.getStatusCode().is2xxSuccessful()) {
                 JsonNode successPayload = responseEntity.getBody();
+
+                // ✅ 포인트 차감 로직 추가 (디버깅 로그 포함)
+                System.out.println("=== 포인트 차감 시작 ===");
+                System.out.println("예약의 used_points: " + reservation.getUsedPoints());
+
+                if (reservation.getUsedPoints() != null && reservation.getUsedPoints() > 0) {
+                    User user = reservation.getUser();
+                    if (user != null) {
+                        user.usePoints(reservation.getUsedPoints());
+                        userRepository.save(user);
+                    } else {
+                        System.out.println("사용자가 null입니다 (비회원 예약)");
+                    }
+                } else {
+                    System.out.println("사용된 포인트가 0이거나 null입니다");
+                }
 
                 reservation.setStatus("PAID");
                 reservationRepository.save(reservation);

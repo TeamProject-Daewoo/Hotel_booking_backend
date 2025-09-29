@@ -22,4 +22,5 @@ public class ReservationRequestDto {
     private Integer discountPrice;
     private String guestName;
     private String phone;
+    private Integer usedPoints;
 }

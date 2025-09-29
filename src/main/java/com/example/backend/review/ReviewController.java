@@ -1,6 +1,8 @@
 package com.example.backend.review;
 
 import lombok.RequiredArgsConstructor;
+
+import org.apache.ibatis.annotations.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,4 +20,5 @@ public class ReviewController {
         List<ReviewResponseDto> reviews = reviewService.getReviewsByHotel(hotelId);
         return ResponseEntity.ok(reviews);
     }
+    
 }
