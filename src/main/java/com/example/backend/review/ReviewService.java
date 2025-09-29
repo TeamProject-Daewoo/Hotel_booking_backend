@@ -3,6 +3,9 @@ package com.example.backend.review;
 import com.example.backend.authentication.User;
 import com.example.backend.authentication.UserRepository;
 import com.example.backend.common.HangulUtils;
+import com.example.backend.point.PointHistory;
+import com.example.backend.point.PointHistoryRepository;
+import com.example.backend.point.PointTransactionType;
 import com.example.backend.reservation.Reservation;
 import com.example.backend.reservation.ReservationRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +28,7 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final ReservationRepository reservationRepository;
     private final UserRepository userRepository;
+    private final PointHistoryRepository pointHistoryRepository;
 
     @Value("${file.upload-dir-default}")
     private String uploadDir;
@@ -62,8 +66,16 @@ public class ReviewService {
         reviewRepository.save(review);
 
         // 리뷰 작성 시 500 포인트 지급
-        user.addPoints(500);
+        user.addPoints(5000);
         userRepository.save(user);
+
+        PointHistory pointHistory = PointHistory.builder()
+                .user(user)
+                .points(5000)
+                .type(PointTransactionType.EARNED)
+                .description("리뷰 작성 보상")
+                .build();
+        pointHistoryRepository.save(pointHistory);
 
         return review;
     }
