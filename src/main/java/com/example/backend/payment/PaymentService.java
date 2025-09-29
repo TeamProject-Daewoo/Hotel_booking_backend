@@ -32,7 +32,7 @@ public class PaymentService {
 
     @Value("${toss.widget-secret-key}")
     private String tossWidgetSecretKey;
-g
+
     @Transactional
     public String cancelPayment(Long reservationId, String cancelReason) {
         Reservation reservation = reservationRepository.findById(reservationId)
