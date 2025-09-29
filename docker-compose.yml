@@ -11,6 +11,7 @@ services:
       - SPRING_DATASOURCE_URL=${DB_URL}
       - SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
       - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
+       - SERVER_PORT=${SERVER_PORT}
 
   # 프론트엔드 서비스
   frontend:
