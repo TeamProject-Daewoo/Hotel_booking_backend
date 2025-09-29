@@ -39,12 +39,9 @@ public class SecurityConfig {
             .authorizeHttpRequests(authorize -> authorize
                 // '/api/auth/**' 경로의 요청은 모두 허용
                 .requestMatchers("/api/**").permitAll()
-                .requestMatchers("/accommodations/**", "/tour/**").permitAll()
+                .requestMatchers("/api/accommodations/**", "/api/tour/**").permitAll()
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/search/**").permitAll()
-                .requestMatchers("/accommodations").permitAll()
-                .requestMatchers("/tour/detail/**").permitAll()
-                .requestMatchers("/uploads/**").permitAll()
                 .requestMatchers("/api/reviews/hotel/**").permitAll()
                     // 그 외 모든 요청은 인증 필요
 						.anyRequest().permitAll()/* .authenticated() */)
