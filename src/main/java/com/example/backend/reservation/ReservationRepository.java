@@ -29,4 +29,12 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     @Query("SELECT r FROM Reservation r WHERE r.hotel.contentid = :contentId AND r.status = 'PAID' AND r.checkInDate < :endDate AND r.checkOutDate > :startDate")
     List<Reservation> findPaidReservationsForDateRange(@Param("contentId") String contentId, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+
+    
+    @Query("SELECT r FROM Reservation r WHERE r.hotel.contentid IN :contentIds AND r.status = 'PAID' AND r.checkInDate < :endDate AND r.checkOutDate > :startDate")
+    List<Reservation> findPaidReservationsForDateRangeAndContentIds(
+        @Param("contentIds") List<String> contentIds,
+        @Param("startDate") LocalDate startDate,
+        @Param("endDate") LocalDate endDate
+    );
 }

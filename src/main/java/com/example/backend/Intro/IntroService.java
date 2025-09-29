@@ -14,11 +14,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Service
 public class IntroService {
 
-    private final ObjectMapper mapper = new ObjectMapper();
-    private final RestTemplate restTemplate = new RestTemplate();;
-
     @Autowired
     private IntroRepository introRepository;
+    
+    private final ObjectMapper mapper = new ObjectMapper();
+    private final RestTemplate restTemplate = new RestTemplate();
 
     public Intro getIntroDTO(String uri) {
         try {
@@ -37,7 +37,7 @@ public class IntroService {
         }
         
     }
-    
+
     public Optional<Intro> getFromDb(String contentId) {
         return introRepository.findAll().stream()
             .filter(i -> contentId.equals(i.getContentid()))

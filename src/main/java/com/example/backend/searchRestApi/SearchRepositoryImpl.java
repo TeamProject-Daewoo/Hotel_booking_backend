@@ -45,7 +45,6 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
     private final QReview review = QReview.review;
     
     private final static String RESERVATION_COUNT_ALIAS = "reservationCount";
-    public final static List<String> UNMODIFIABLE_GREETINGS = List.of("호텔", "모텔", "펜션");
 
     public SearchRepositoryImpl(JPAQueryFactory queryFactory) {
         this.queryFactory = queryFactory;
@@ -75,7 +74,8 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
             .from(hotels)
             .leftJoin(rooms).on(hotels.contentid.eq(rooms.contentid))
             .leftJoin(intro).on(hotels.contentid.eq(intro.contentid))
-            .leftJoin(review).on(review.hotel.contentid.eq(hotels.contentid))
+            .leftJoin(review).on(review.hotel.contentid.eq(hotels.contentid)
+                .and(review.isDeleted.isFalse()))
             .where(
                 commonCondition
                     .and(availabilityCondition) // 예약 가능 조건
@@ -93,7 +93,8 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
             .from(hotels)
             .leftJoin(rooms).on(hotels.contentid.eq(rooms.contentid))
             .leftJoin(intro).on(hotels.contentid.eq(intro.contentid))
-            .leftJoin(review).on(review.hotel.contentid.eq(hotels.contentid))
+            .leftJoin(review).on(review.hotel.contentid.eq(hotels.contentid)
+                .and(review.isDeleted.isFalse()))
             .where(
                 commonCondition.and(availabilityCondition)
                 // 카테고리 선택 조건 X
@@ -124,7 +125,7 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
                 review.reviewId.countDistinct().as("totalReviews"),
                 hotels.mapx.as("mapX"),
                 hotels.mapy.as("mapY"),
-                getIntroAmenitiesCount().min()
+                getIntroAmenitiesCount().max()
                     .add(getRoomAmenitiesCount().max())
                     .as("totalAminities"))
             )
