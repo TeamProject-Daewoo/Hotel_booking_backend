@@ -58,6 +58,7 @@ public class SecurityConfig {
         
         config.setAllowCredentials(true);
         config.setAllowedOrigins(List.of(
+        		"http://15.165.135.19",
         		"http://172.31.30.148:5173", 
         		"http://localhost:5173/", 
         		"http://localhost:5174/",
