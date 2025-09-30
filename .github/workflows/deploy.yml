@@ -58,8 +58,11 @@ jobs:
             aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | sudo docker login --username AWS --password-stdin ${{ steps.login-ecr.outputs.registry }}
 
             # 최신 이미지 Pull
-            sudo docker pull ${{ steps.login-ecr.outputs.registry }}/hotelhub-backend:latest
-            sudo docker pull ${{ steps.login-ecr.outputs.registry }}/hotelhub-frontend:latest
+            sudo docker pull ${{ steps.login-ecr.outputs.registry }}/user-backend:latest
+            sudo docker pull ${{ steps.login-ecr.outputs.registry }}/management-backend:latest
+            sudo docker pull ${{ steps.login-ecr.outputs.registry }}/user-frontend:latest
+            sudo docker pull ${{ steps.login-ecr.outputs.registry }}/admin-frontend:latest
+            sudo docker pull ${{ steps.login-ecr.outputs.registry }}/bus-frontend:latest
 
             # DB 접속 정보를 담은 .env 파일 생성
             sudo tee .env <<EOF
