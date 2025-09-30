@@ -1,11 +1,9 @@
 package com.example.backend.point;
 
 import com.example.backend.authentication.User;
+import com.example.backend.reservation.Reservation; // Reservation 임포트 추가
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -15,6 +13,8 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
+@Builder
+@AllArgsConstructor
 public class PointHistory {
 
     @Id
@@ -24,6 +24,10 @@ public class PointHistory {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reservation_id", nullable = true)
+    private Reservation reservation;
 
     @Column(nullable = false)
     private int points;
@@ -39,11 +43,4 @@ public class PointHistory {
     @Column(updatable = false)
     private LocalDateTime transactionDate;
 
-    @Builder
-    public PointHistory(User user, int points, PointTransactionType type, String description) {
-        this.user = user;
-        this.points = points;
-        this.type = type;
-        this.description = description;
-    }
 }

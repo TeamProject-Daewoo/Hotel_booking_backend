@@ -101,9 +101,10 @@ public class PaymentController {
 
                         PointHistory usedHistory = PointHistory.builder()
                                 .user(user)
-                                .points(pointsToUse)
+                                .points(pointsToUse * -1)
                                 .type(PointTransactionType.USED)
-                                .description("예약 #" + reservation.getReservationId() + " 결제 시 사용")
+                                .description("예약 결제 시 사용")
+                                .reservation(reservation)
                                 .build();
                         pointHistoryRepository.save(usedHistory);
                     } else {
@@ -129,15 +130,6 @@ public class PaymentController {
                         .paymentStatus(successPayload.path("status").asText())
                         .build();
                 paymentRepository.save(newPayment);
-
-                // ✅ 쿠폰 삭제 로직 (프론트에서 보낸 userCouponId 활용)
-                if (paymentDto.getUserCouponId() != null) {
-                    userCouponRepository.deleteById(paymentDto.getUserCouponId());
-                }
-
-                
-                // 이메일 발송 서비스 호출
-               // emailService.sendReservationConfirmationEmail(reservation);
             }
 
             return responseEntity;

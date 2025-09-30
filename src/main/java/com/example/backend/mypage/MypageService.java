@@ -92,7 +92,9 @@ public class MypageService {
                         .totalPrice(reservation.getTotalPrice())
                         .numAdults(reservation.getNumAdults())
                         .numChildren(reservation.getNumChildren())
-                        .hasReview(hasReview) // DTO에 리뷰 작성 여부 추가
+                        .basePrice(reservation.getBasePrice())
+                        .discountPrice(reservation.getDiscountPrice())
+                        .hasReview(hasReview)
                         .build();
                 })
                 .collect(Collectors.toList());
@@ -103,13 +105,7 @@ public class MypageService {
         List<PointHistory> histories = pointHistoryRepository.findByUser_UsernameOrderByTransactionDateDesc(username);
 
         return histories.stream()
-                .map(history -> PointHistoryDto.builder()
-                        .id(history.getId())
-                        .points(history.getPoints())
-                        .type(history.getType().name()) // Enum을 String으로 변환
-                        .description(history.getDescription())
-                        .transactionDate(history.getTransactionDate())
-                        .build())
+                .map(PointHistoryDto::fromEntity)
                 .collect(Collectors.toList());
     }
 
