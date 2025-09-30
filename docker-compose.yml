@@ -14,7 +14,7 @@ services:
     - SERVER_PORT=${SERVER_PORT}
 
   management-backend: # 2. 관리자/사업자 백엔드
-  image: YOUR_ECR_URI/management-backend:latest # 실제 ECR 이미지 이름으로 변경
+  image: 481961344502.dkr.ecr.ap-northeast-2.amazonaws.com/management-backend:latest
   restart: always
   environment:
     - SPRING_DATASOURCE_URL=${DB_URL}
@@ -28,11 +28,11 @@ services:
     restart: always
     
   admin-frontend: # 2. 관리자 프론트엔드
-    image: 481961344502.dkr.ecr.ap-northeast-2.amazonaws.com/admin-frontend:latest # 실제 ECR 이미지 이름으로 변경
+    image: 481961344502.dkr.ecr.ap-northeast-2.amazonaws.com/admin-frontend:latest 
     restart: always
 
   business-frontend: # 3. 사업자 프론트엔드
-    image: 481961344502.dkr.ecr.ap-northeast-2.amazonaws.com/business-frontend:latest # 실제 ECR 이미지 이름으로 변경
+    image: 481961344502.dkr.ecr.ap-northeast-2.amazonaws.com/business-frontend:latest
     restart: always
 
   # Nginx 리버스 프록시
