@@ -4,7 +4,7 @@ services:
   # 백엔드 서비스
   backend:
     # ECR에 올라간 이미지를 사용할 것이므로 build 대신 image 사용
-    image: 481961344502.dkr.ecr.ap-northeast-2.amazonaws.com/hotelhub-backend:latest
+    image: 481961344502.dkr.ecr.ap-northeast-2.amazonaws.com/user-backend:latest
     restart: always
     environment:
       # GitHub Secrets에 저장된 DB 정보를 컨테이너에 전달
@@ -24,7 +24,7 @@ services:
 
   # 프론트엔드 서비스
   frontend:
-    image: 481961344502.dkr.ecr.ap-northeast-2.amazonaws.com/hotelhub-frontend:latest
+    image: 481961344502.dkr.ecr.ap-northeast-2.amazonaws.com/user-frontend:latest
     restart: always
     
   admin-frontend: # 2. 관리자 프론트엔드
@@ -47,9 +47,9 @@ services:
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
     depends_on:
-      - backend
+      - user-backend
       - management-backend
-      - frontend
+      - user-frontend
       - admin-frontend
       - business-frontend
 
