@@ -15,7 +15,7 @@ services:
 
   management-backend: # 2. 관리자/사업자 백엔드
     image: 481961344502.dkr.ecr.ap-northeast-2.amazonaws.com/management-backend:latest
-    restart: always
+    restart: "no"
     environment:
       - SPRING_DATASOURCE_URL=${DB_URL}
       - SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
