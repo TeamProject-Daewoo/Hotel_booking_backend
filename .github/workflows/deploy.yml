@@ -74,3 +74,5 @@ jobs:
             
             # Docker Compose로 서비스 실행
             sudo docker-compose up -d
+            
+            sudo docker image prune -a -f
