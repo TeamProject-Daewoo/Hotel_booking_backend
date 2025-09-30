@@ -13,9 +13,26 @@ services:
       - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
       - SERVER_PORT=${SERVER_PORT}
 
+    management-backend: # 2. 관리자/사업자 백엔드
+    image: YOUR_ECR_URI/management-backend:latest # 실제 ECR 이미지 이름으로 변경
+    restart: always
+    environment:
+      - SPRING_DATASOURCE_URL=${DB_URL}
+      - SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
+      - SERVER_PORT=${SERVER_PORT}
+
   # 프론트엔드 서비스
   frontend:
     image: 481961344502.dkr.ecr.ap-northeast-2.amazonaws.com/hotelhub-frontend:latest
+    restart: always
+    
+  admin-frontend: # 2. 관리자 프론트엔드
+    image: 481961344502.dkr.ecr.ap-northeast-2.amazonaws.com/admin-frontend:latest # 실제 ECR 이미지 이름으로 변경
+    restart: always
+
+  business-frontend: # 3. 사업자 프론트엔드
+    image: 481961344502.dkr.ecr.ap-northeast-2.amazonaws.com/bus-frontend:latest # 실제 ECR 이미지 이름으로 변경
     restart: always
 
   # Nginx 리버스 프록시
@@ -31,7 +48,10 @@ services:
       - ./certbot/www:/var/www/certbot
     depends_on:
       - backend
+      - management-backend
       - frontend
+      - admin-frontend
+      - business-frontend
 
   # Certbot (SSL 인증서 발급/갱신)
   certbot:
