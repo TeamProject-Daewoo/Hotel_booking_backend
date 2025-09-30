@@ -78,18 +78,10 @@ public class PaymentService {
             if (reservation.getUsedPoints() != null && reservation.getUsedPoints() > 0) {
                 User user = reservation.getUser();
                 if (user != null) {
-                    System.out.println("=== 포인트 환불 시작 ===");
-                    System.out.println("사용자: " + user.getUsername());
-                    System.out.println("현재 포인트: " + user.getPoint());
-                    System.out.println("환불할 포인트: " + reservation.getUsedPoints());
-
                     // 포인트 환불
                     int currentPoints = user.getPoint() != null ? user.getPoint() : 0;
                     user.addPoints(currentPoints + reservation.getUsedPoints());
                     userRepository.save(user);
-
-                    System.out.println("환불 후 포인트: " + user.getPoint());
-                    System.out.println("=== 포인트 환불 완료 ===");
                 }
             }
 
