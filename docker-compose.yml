@@ -4,23 +4,23 @@ services:
   # 백엔드 서비스
   user-backend:
   # ECR에 올라간 이미지를 사용할 것이므로 build 대신 image 사용
-  image: 481961344502.dkr.ecr.ap-northeast-2.amazonaws.com/user-backend:latest
-  restart: always
-  environment:
+    image: 481961344502.dkr.ecr.ap-northeast-2.amazonaws.com/user-backend:latest
+    restart: always
+    environment:
     # GitHub Secrets에 저장된 DB 정보를 컨테이너에 전달
-    - SPRING_DATASOURCE_URL=${DB_URL}
-    - SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
-    - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
-    - SERVER_PORT=${SERVER_PORT}
+      - SPRING_DATASOURCE_URL=${DB_URL}
+      - SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
+      - SERVER_PORT=${SERVER_PORT}
 
   management-backend: # 2. 관리자/사업자 백엔드
-  image: 481961344502.dkr.ecr.ap-northeast-2.amazonaws.com/management-backend:latest
-  restart: always
-  environment:
-    - SPRING_DATASOURCE_URL=${DB_URL}
-    - SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
-    - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
-    - SERVER_PORT=${SERVER_PORT}
+    image: 481961344502.dkr.ecr.ap-northeast-2.amazonaws.com/management-backend:latest
+    restart: always
+    environment:
+      - SPRING_DATASOURCE_URL=${DB_URL}
+      - SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
+      - SERVER_PORT=${SERVER_PORT}
 
   # 프론트엔드 서비스
   user-frontend:
