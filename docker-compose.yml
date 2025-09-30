@@ -32,7 +32,7 @@ services:
     restart: always
 
   business-frontend: # 3. 사업자 프론트엔드
-    image: 481961344502.dkr.ecr.ap-northeast-2.amazonaws.com/bus-frontend:latest # 실제 ECR 이미지 이름으로 변경
+    image: 481961344502.dkr.ecr.ap-northeast-2.amazonaws.com/business-frontend:latest # 실제 ECR 이미지 이름으로 변경
     restart: always
 
   # Nginx 리버스 프록시
