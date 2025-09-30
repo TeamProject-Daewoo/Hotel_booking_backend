@@ -2,6 +2,9 @@ package com.example.backend.payment;
 
 import com.example.backend.authentication.User;
 import com.example.backend.authentication.UserRepository;
+import com.example.backend.point.PointHistory;
+import com.example.backend.point.PointHistoryRepository;
+import com.example.backend.point.PointTransactionType;
 import com.example.backend.reservation.Reservation;
 import com.example.backend.reservation.ReservationRepository;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +32,8 @@ public class PaymentService {
     private final RestTemplate restTemplate;
     private final EmailService emailService;
     private final UserRepository userRepository;
+    private final PointHistoryRepository pointHistoryRepository;
+
 
     @Value("${toss.widget-secret-key}")
     private String tossWidgetSecretKey;
@@ -79,9 +84,18 @@ public class PaymentService {
                 User user = reservation.getUser();
                 if (user != null) {
                     // 포인트 환불
-                    int currentPoints = user.getPoint() != null ? user.getPoint() : 0;
-                    user.addPoints(currentPoints + reservation.getUsedPoints());
+                    int pointsToRefund = reservation.getUsedPoints();
+                    user.addPoints(pointsToRefund);
                     userRepository.save(user);
+
+                    PointHistory refundHistory = PointHistory.builder()
+                            .user(user)
+                            .points(pointsToRefund)
+                            .type(PointTransactionType.EARNED)
+                            .description("예약 취소로 인한 환불")
+                            .reservation(reservation)
+                            .build();
+                    pointHistoryRepository.save(refundHistory);
                 }
             }
 
