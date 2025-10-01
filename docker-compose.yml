@@ -67,7 +67,7 @@ services:
       user-backend:
         condition: service_healthy
       management-backend:
-        condition: service_healthy
+        condition: service_started
       user-frontend:
         condition: service_started
       admin-frontend:
