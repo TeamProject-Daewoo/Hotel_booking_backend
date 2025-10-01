@@ -5,11 +5,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 public interface UserCouponRepository extends JpaRepository<UserCoupon, Long> {
     Page<UserCoupon> findByUserUsername(String username, Pageable pageable);
 
     boolean existsByUserUsernameAndCouponId(String username, Long couponId);
+
+
+
 
   Page<UserCoupon> findByUserUsernameAndIsUsedFalseAndExpireAtAfterAndCoupon_ValidFromBeforeAndCoupon_ValidToAfter(
     String username,
