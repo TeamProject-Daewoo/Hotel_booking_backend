@@ -1,6 +1,8 @@
 # 베이스 이미지로 Java 17 버전을 사용
 FROM openjdk:17-jdk-slim
 
+RUN apt-get update && apt-get install -y curl
+
 # JAR 파일이 위치할 디렉토리 지정 (Maven 기준)
 ARG JAR_FILE=target/*.jar
 
