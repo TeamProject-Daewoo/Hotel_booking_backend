@@ -1,5 +1,5 @@
 # 베이스 이미지로 Java 17 버전을 사용
-FROM openjdk:17-jdk-slim
+FROM openjdk:17.0.9-jdk-slim 
 
 RUN apt-get update && apt-get install -y curl
 
