@@ -10,4 +10,4 @@ ARG JAR_FILE=target/*.jar
 COPY ${JAR_FILE} app.jar
 
 # 컨테이너가 시작될 때 실행할 명령어
-ENTRYPOINT ["java","-jar","/app.jar"]
+ENTRYPOINT ["java", "-Xmx256m", "-jar", "/app.jar"]
