@@ -1,6 +1,7 @@
 package com.example.backend.coupon.entity;
 
 import com.example.backend.authentication.User;
+import com.example.backend.reservation.Reservation;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -48,5 +49,7 @@ public class UserCoupon {
 
     @Column(name = "issued_source")
 private String issuedSource;  // 예: "신규가입 이벤트", "추석 프로모션"
+
+
 
 }
