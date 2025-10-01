@@ -1,5 +1,6 @@
 package com.example.backend.mypage;
 
+import com.example.backend.point.PointHistoryDto;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.repository.query.Param;
@@ -94,31 +95,10 @@ public class MypageController {
         return ResponseEntity.noContent().build();
    }
 
-//    @GetMapping("/payment-methods")
-//    public ResponseEntity<List<CardResponseDto>> getMyPaymentMethods(Authentication authentication) {
-//        String currentMemberId = authentication.getName();
-//        List<CardResponseDto> cards = mypageService.getCardList(currentMemberId);
-//        return ResponseEntity.ok(cards);
-//    }
-//
-//    @PostMapping("/payment-methods/cards")
-//    public ResponseEntity<CardResponseDto> addCard(@RequestBody CardRequestDto cardRequestDto, Authentication authentication) {
-//        String currentMemberId = authentication.getName();
-//        CardResponseDto newCard = mypageService.addCard(currentMemberId, cardRequestDto);
-//        return ResponseEntity.ok(newCard);
-//    }
-//
-//    @PatchMapping("/payment-methods/cards/{cardId}")
-//    public ResponseEntity<Void> updateCard(@PathVariable Long cardId, @RequestBody CardRequestDto cardRequestDto, Authentication authentication) {
-//        String currentMemberId = authentication.getName();
-//        mypageService.updateCard(currentMemberId, cardId, cardRequestDto);
-//        return ResponseEntity.ok().build();
-//    }
-//
-//    @DeleteMapping("/payment-methods/cards/{cardId}")
-//    public ResponseEntity<Void> deleteCard(@PathVariable Long cardId, Authentication authentication) {
-//        String currentMemberId = authentication.getName();
-//        mypageService.deleteCard(currentMemberId, cardId);
-//        return ResponseEntity.ok().build();
-//    }
+    @GetMapping("/points")
+    public ResponseEntity<List<PointHistoryDto>> getMyPointHistory(Authentication authentication) {
+        String currentMemberId = authentication.getName();
+        List<PointHistoryDto> pointHistory = mypageService.getPointHistory(currentMemberId);
+        return ResponseEntity.ok(pointHistory);
+    }
 }

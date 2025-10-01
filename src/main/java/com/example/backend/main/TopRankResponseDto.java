@@ -14,5 +14,5 @@ public class TopRankResponseDto {
     private String image;
     private double rating;
     private long reviewCount;
-    private int price;
+    private Integer price;
 }

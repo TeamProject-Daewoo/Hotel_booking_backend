@@ -147,5 +147,12 @@ public class User implements UserDetails {
         this.point -= pointsToUse;
     }
 
+    public void addPoints(int pointsToAdd) {
+        if (pointsToAdd < 0) {
+            throw new IllegalArgumentException("포인트는 음수일 수 없습니다.");
+        }
+        this.point += pointsToAdd;
+    }
+
     
 }

@@ -2,6 +2,11 @@ package com.example.backend.authentication;
 
 import java.util.Optional;
 import java.util.UUID;
+
+import com.example.backend.point.PointHistory;
+import com.example.backend.point.PointHistoryRepository;
+import com.example.backend.point.PointTransactionType;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -25,6 +30,10 @@ public class UserService implements UserDetailsService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenProvider jwtTokenProvider;
     private final KakaoService kakaoService;
+    private final PointHistoryRepository pointHistoryRepository;
+
+    @Value("${point.welcome.amount:1000}") // 기본값 1000점으로 설정
+    private int welcomePointAmount;
 
     /**
      * 회원가입
@@ -42,7 +51,22 @@ public class UserService implements UserDetailsService {
         // 비밀번호 암호화
         String encodedPassword = passwordEncoder.encode(signUpDto.getPassword());
         User user = signUpDto.toEntity(encodedPassword);
+
+        if (welcomePointAmount > 0) {
+            user.addPoints(welcomePointAmount);
+        }
+
         userRepository.save(user);
+
+        if (welcomePointAmount > 0) {
+            PointHistory welcomePointHistory = PointHistory.builder()
+                    .user(user)
+                    .points(welcomePointAmount)
+                    .type(PointTransactionType.EARNED)
+                    .description("신규 회원가입 축하 포인트")
+                    .build();
+            pointHistoryRepository.save(welcomePointHistory);
+        }
     }
 
     /**

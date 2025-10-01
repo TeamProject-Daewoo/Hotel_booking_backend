@@ -4,6 +4,9 @@ import com.example.backend.api.Hotels;
 import com.example.backend.api.HotelsRepa;
 import com.example.backend.authentication.User;
 import com.example.backend.authentication.UserRepository;
+import com.example.backend.point.PointHistory;
+import com.example.backend.point.PointHistoryDto;
+import com.example.backend.point.PointHistoryRepository;
 import com.example.backend.reservation.Reservation;
 import com.example.backend.reservation.ReservationRepository;
 import com.example.backend.review.ReviewRepository;
@@ -32,6 +35,7 @@ public class MypageService {
     private final WishlistRepository wishlistRepository;
     private final ReviewRepository reviewRepository;
     private final HotelsRepa hotelsRepository;
+    private final PointHistoryRepository pointHistoryRepository; // 1. PointHistoryRepository 주입
 
     @Transactional(readOnly = true)
     public ProfileResponseDto getMemberProfile(String memberId) {
@@ -88,9 +92,20 @@ public class MypageService {
                         .totalPrice(reservation.getTotalPrice())
                         .numAdults(reservation.getNumAdults())
                         .numChildren(reservation.getNumChildren())
-                        .hasReview(hasReview) // DTO에 리뷰 작성 여부 추가
+                        .basePrice(reservation.getBasePrice())
+                        .discountPrice(reservation.getDiscountPrice())
+                        .hasReview(hasReview)
                         .build();
                 })
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<PointHistoryDto> getPointHistory(String username) {
+        List<PointHistory> histories = pointHistoryRepository.findByUser_UsernameOrderByTransactionDateDesc(username);
+
+        return histories.stream()
+                .map(PointHistoryDto::fromEntity)
                 .collect(Collectors.toList());
     }
 

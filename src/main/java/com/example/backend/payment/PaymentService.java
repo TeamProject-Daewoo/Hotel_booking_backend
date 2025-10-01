@@ -1,5 +1,10 @@
 package com.example.backend.payment;
 
+import com.example.backend.authentication.User;
+import com.example.backend.authentication.UserRepository;
+import com.example.backend.point.PointHistory;
+import com.example.backend.point.PointHistoryRepository;
+import com.example.backend.point.PointTransactionType;
 import com.example.backend.reservation.Reservation;
 import com.example.backend.reservation.ReservationRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +31,9 @@ public class PaymentService {
     private final PaymentRepository paymentRepository;
     private final RestTemplate restTemplate;
     private final EmailService emailService;
+    private final UserRepository userRepository;
+    private final PointHistoryRepository pointHistoryRepository;
+
 
     @Value("${toss.widget-secret-key}")
     private String tossWidgetSecretKey;
@@ -71,6 +79,25 @@ public class PaymentService {
 
         try {
             restTemplate.postForObject(url, request, Map.class);
+
+            if (reservation.getUsedPoints() != null && reservation.getUsedPoints() > 0) {
+                User user = reservation.getUser();
+                if (user != null) {
+                    // 포인트 환불
+                    int pointsToRefund = reservation.getUsedPoints();
+                    user.addPoints(pointsToRefund);
+                    userRepository.save(user);
+
+                    PointHistory refundHistory = PointHistory.builder()
+                            .user(user)
+                            .points(pointsToRefund)
+                            .type(PointTransactionType.EARNED)
+                            .description("예약 취소로 인한 환불")
+                            .reservation(reservation)
+                            .build();
+                    pointHistoryRepository.save(refundHistory);
+                }
+            }
 
             reservation.setStatus("CANCELLED");
             payment.setPaymentStatus("CANCELED");

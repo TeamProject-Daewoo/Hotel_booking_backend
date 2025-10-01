@@ -2,6 +2,9 @@ package com.example.backend.payment;
 
 import com.example.backend.authentication.User;
 import com.example.backend.authentication.UserRepository;
+import com.example.backend.point.PointHistory;
+import com.example.backend.point.PointHistoryRepository;
+import com.example.backend.point.PointTransactionType;
 import com.example.backend.reservation.Reservation;
 import com.example.backend.reservation.ReservationRepository;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -46,6 +49,7 @@ public class PaymentController {
     private final EmailService emailService; // EmailService 주입
     private final PaymentService paymentService;
     private final UserRepository userRepository;
+    private final PointHistoryRepository pointHistoryRepository;
 
 
     @Value("${toss.widget-secret-key}")
@@ -103,15 +107,22 @@ public class PaymentController {
             if (responseEntity.getStatusCode().is2xxSuccessful()) {
                 JsonNode successPayload = responseEntity.getBody();
 
-                // ✅ 포인트 차감 로직 추가 (디버깅 로그 포함)
-                System.out.println("=== 포인트 차감 시작 ===");
-                System.out.println("예약의 used_points: " + reservation.getUsedPoints());
-
                 if (reservation.getUsedPoints() != null && reservation.getUsedPoints() > 0) {
                     User user = reservation.getUser();
                     if (user != null) {
-                        user.usePoints(reservation.getUsedPoints());
+                        int pointsToUse = reservation.getUsedPoints();
+
+                        user.usePoints(pointsToUse);
                         userRepository.save(user);
+
+                        PointHistory usedHistory = PointHistory.builder()
+                                .user(user)
+                                .points(pointsToUse * -1)
+                                .type(PointTransactionType.USED)
+                                .description("예약 결제 시 사용")
+                                .reservation(reservation)
+                                .build();
+                        pointHistoryRepository.save(usedHistory);
                     } else {
                         System.out.println("사용자가 null입니다 (비회원 예약)");
                     }
@@ -135,15 +146,6 @@ public class PaymentController {
                         .paymentStatus(successPayload.path("status").asText())
                         .build();
                 paymentRepository.save(newPayment);
-
-                // ✅ 쿠폰 삭제 로직 (프론트에서 보낸 userCouponId 활용)
-                if (paymentDto.getUserCouponId() != null) {
-                    userCouponRepository.deleteById(paymentDto.getUserCouponId());
-                }
-
-                
-                // 이메일 발송 서비스 호출
-               // emailService.sendReservationConfirmationEmail(reservation);
             }
 
             return responseEntity;
