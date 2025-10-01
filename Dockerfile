@@ -1,5 +1,5 @@
 # 베이스 이미지로 Java 17 버전을 사용
-FROM eclipse-temurin:17-jdk-slim
+FROM eclipse-temurin:17-jdk
 
 RUN apt-get update && apt-get install -y curl
 
