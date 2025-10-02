@@ -55,7 +55,7 @@ services:
   # Nginx 리버스 프록시
   nginx:
     image: nginx:1.21-alpine
-    restart: always
+    restart: on-failure
     ports:
       - "80:80"
       - "443:443"
