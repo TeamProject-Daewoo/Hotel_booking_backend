@@ -20,7 +20,7 @@ public class ReceiptController {
 
     private final ReservationService reservationService;
 
-    @GetMapping("/receipt/{reservationId}")
+    @GetMapping("/api/receipt/{reservationId}")
     public void downloadReceipt(@PathVariable Long reservationId, HttpServletResponse response) throws IOException {
         ReservationDto reservation = reservationService.findReservationById(reservationId);
 
