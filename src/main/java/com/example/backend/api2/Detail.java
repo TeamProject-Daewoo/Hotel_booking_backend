@@ -1,5 +1,6 @@
 package com.example.backend.api2;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -45,9 +46,14 @@ public class Detail {
     private String roomtable;
     private String roomhairdryer;
     private String roomsize2;
+    @Column(name = "roomimg1", length = 512)
     private String roomimg1;
+    @Column(name = "roomimg2", length = 512)
     private String roomimg2;
-    private String roomimg4;
+    @Column(name = "roomimg3", length = 512)
     private String roomimg3;
+    @Column(name = "roomimg4", length = 512)
+    private String roomimg4;
+    @Column(name = "roomimg5", length = 512)
     private String roomimg5;
 }
