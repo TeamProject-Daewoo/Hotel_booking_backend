@@ -30,7 +30,7 @@ public class ReceiptController {
         }
 
         // 한글 폰트 경로 (Windows 기준)
-        String fontPath = "C:/Windows/Fonts/malgun.ttf";
+        String fontPath = "fonts/malgun.ttf";
 
         BaseFont baseFont;
         try {
