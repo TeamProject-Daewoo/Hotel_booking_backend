@@ -34,9 +34,9 @@ CREATE TABLE IF NOT EXISTS `coupon` (
   UNIQUE KEY `UKsre2vcap4vs6qucaksomk3c7s` (`coupon_code`),
   KEY `FK3e4y4bnfv8m81tye40jv751gt` (`hotel_id`),
   CONSTRAINT `FK3e4y4bnfv8m81tye40jv751gt` FOREIGN KEY (`hotel_id`) REFERENCES `hotels` (`contentid`)
-) ENGINE=InnoDB AUTO_INCREMENT=46 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=48 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- 테이블 데이터 HotelDB.coupon:~28 rows (대략적) 내보내기
+-- 테이블 데이터 HotelDB.coupon:~30 rows (대략적) 내보내기
 INSERT INTO `coupon` (`id`, `allow_duplicate`, `coupon_code`, `discount_amount`, `discount_percent`, `is_active`, `issuance_type`, `issued_count`, `max_issuance`, `name`, `valid_from`, `valid_period_after_download`, `valid_to`, `hotel_id`) VALUES
 	(1, b'1', 'dd', 1000, 0, b'1', 'MANUAL', 4, 5, 'dd', '2025-09-25 00:35:00.000000', 1, '2025-10-12 12:00:00.000000', NULL),
 	(4, b'1', 'ㅋㅋ', 1000, 0, b'1', 'AUTO', 0, 14, 'ㅋㅋ', '2025-09-27 12:39:00.000000', 14, '2025-10-30 21:37:00.000000', NULL),
@@ -62,10 +62,12 @@ INSERT INTO `coupon` (`id`, `allow_duplicate`, `coupon_code`, `discount_amount`,
 	(37, b'0', 'food', 0, 10, b'1', 'MANUAL', 1, NULL, 'food', '2025-09-29 00:00:00.000000', 9, '2025-10-01 23:59:59.000000', NULL),
 	(38, b'0', '신규쿠폰', 0, 10, b'1', 'AUTO', 1, NULL, '신규쿠폰', '2025-09-29 00:00:00.000000', 10, '2025-10-04 23:59:59.000000', NULL),
 	(41, b'1', 'sdf', 1000, 0, b'1', 'MANUAL', 3, NULL, 'dd', '2025-09-29 00:00:00.000000', 10, '2025-10-01 23:59:59.000000', NULL),
-	(42, b'1', 'hotelhub', 0, 50, b'1', 'EVENT', 26, NULL, 'hotelhub', '2025-09-29 00:00:00.000000', 10, '2025-11-01 23:59:59.000000', NULL),
+	(42, b'1', 'hotelhub', 0, 50, b'1', 'EVENT', 30, NULL, 'hotelhub', '2025-09-29 00:00:00.000000', 10, '2025-11-01 23:59:59.000000', NULL),
 	(43, b'1', 'hotelhub2', 0, 10, b'1', 'MANUAL', 3, NULL, 'hotelhub2', '2025-09-24 00:00:00.000000', 0, '2025-10-11 23:59:59.000000', NULL),
-	(44, b'0', 'welcome', 0, 70, b'1', 'EVENT', 1, NULL, 'HotelHub가입 감사합니다!', '2025-09-29 00:00:00.000000', 60, '2026-02-10 23:59:59.000000', NULL),
-	(45, b'0', '0202', 0, 10, b'1', 'AUTO', 0, 100, 'dfasfas', '2025-09-30 00:00:00.000000', 5, '2025-10-04 23:59:59.000000', NULL);
+	(44, b'0', 'welcome', 0, 70, b'1', 'EVENT', 2, NULL, 'HotelHub가입 감사합니다!', '2025-09-29 00:00:00.000000', 60, '2026-02-10 23:59:59.000000', NULL),
+	(45, b'0', '0202', 0, 10, b'1', 'AUTO', 0, 100, 'dfasfas', '2025-09-30 00:00:00.000000', 5, '2025-10-04 23:59:59.000000', NULL),
+	(46, b'0', 'Aaaaaa', 0, 20, b'1', 'EVENT', 0, 1, 'ㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏ', '2025-10-08 00:00:00.000000', 7, '2025-10-16 23:59:59.000000', NULL),
+	(47, b'0', 'chuseok', 10000, 0, b'1', 'EVENT', 1, 100, '추석맞이 할인이벤트!', '2025-10-01 00:00:00.000000', 30, '2025-10-10 23:59:59.000000', NULL);
 
 -- 테이블 HotelDB.hotels 구조 내보내기
 CREATE TABLE IF NOT EXISTS `hotels` (
@@ -87,8 +89,9 @@ CREATE TABLE IF NOT EXISTS `hotels` (
   CONSTRAINT `FKolxdpm165wpxjlhk5jsafkecg` FOREIGN KEY (`owner_username`) REFERENCES `users` (`user_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- 테이블 데이터 HotelDB.hotels:~71 rows (대략적) 내보내기
+-- 테이블 데이터 HotelDB.hotels:~72 rows (대략적) 내보내기
 INSERT INTO `hotels` (`area_code`, `sigungu_code`, `id`, `addr1`, `business_registration_number`, `category`, `contentid`, `firstimage`, `mapx`, `mapy`, `tel`, `title`, `owner_username`) VALUES
+	(3, 2, NULL, '대전 동구 광명길 64', '3333344444', 'B02010100', '1018248', 'https://hotelbookingdaewoo.s3.ap-northeast-2.amazonaws.com/hotels/c6fc511a-7c58-4021-ba46-928a3513fe6b-detail.png', '127.448106888375', '36.3235519622303', '010-1111-1112', '호텔호텔', NULL),
 	(32, 8, NULL, '강원특별자치도 영월군 영월읍 선돌길 83-9', NULL, 'B02010700', '1122064', 'http://tong.visitkorea.or.kr/cms/resource/27/1948427_image2_1.jpg', '128.4347977723', '37.1788536889', '033-373-1139', '강가에 하얀집 펜션', NULL),
 	(7, 3, NULL, '울산광역시 동구 녹수7길 58', NULL, 'B02010900', '1144607', 'http://tong.visitkorea.or.kr/cms/resource/53/2606153_image2_1.JPG', '129.4317771276', '35.5151783876', '052-233-2000', '경원BIZ모텔', NULL),
 	(36, 5, NULL, '경상남도 남해군 삼동면 죽방로 495', NULL, 'B02010700', '1351349', '', '127.9675765215', '34.8169300517', '055-867-4892', '가족사랑바다체험펜션', NULL),
@@ -110,14 +113,14 @@ INSERT INTO `hotels` (`area_code`, `sigungu_code`, `id`, `addr1`, `business_regi
 	(35, 11, NULL, '경상북도 안동시 풍천면 하회종가길 76-6', NULL, 'B02011600', '1865597', 'http://tong.visitkorea.or.kr/cms/resource/48/2993048_image2_1.jpg', '128.5162424474', '36.5389896786', '', '가람초연재', NULL),
 	(39, 3, NULL, '제주특별자치도 서귀포시 법환하로9번길 10', '2222222', 'B02010700', '1896032', 'http://tong.visitkorea.or.kr/cms/resource/88/3516088_image2_1.JPG', '126.5123383804', '33.2365870334', '064-739-4499', '가름게스트하우스', NULL),
 	(31, 1, NULL, '경기도 가평군 북면 가화로 2369-19', NULL, 'B02010900', '1979670', 'http://tong.visitkorea.or.kr/cms/resource/37/1979637_image2_1.JPG', '127.4766116592', '37.9524878464', '031-581-2256~7', '가평 하이랜드', NULL),
-	(32, 1, NULL, '강원특별자치도 강릉시 운정길 63 선교장', NULL, 'B02011600', '1989501', 'http://tong.visitkorea.or.kr/cms/resource/25/2578925_image2_1.jpg', '128.8848528574', '37.7855756438', '033-648-5311', '강릉선교장[한국관광 품질인증/Korea Quality]', NULL),
+	(32, 1, NULL, '강원특별자치도 강릉시 운정길 63 선교장', '137913', 'B02011600', '1989501', 'http://tong.visitkorea.or.kr/cms/resource/25/2578925_image2_1.jpg', '128.8848528574', '37.7855756438', '033-648-5311', '강릉선교장[한국관광 품질인증/Korea Quality]', NULL),
 	(32, 1, NULL, '강원특별자치도 강릉시 경강로2103번길 17', NULL, 'B02011100', '2038173', 'http://tong.visitkorea.or.kr/cms/resource/07/2684307_image2_1.jpg', '128.8954528054', '37.7564042254', '010-9299-7199', '강릉게스트하우스 중앙점[한국관광 품질인증/Korea Quality]', NULL),
 	(32, 15, NULL, '강원특별자치도 평창군 봉평면 흥정계곡길 72', NULL, 'B02010700', '2376711', 'http://tong.visitkorea.or.kr/cms/resource/93/2376693_image2_1.JPG', '128.3519002081', '37.6272975840', '010-5213-3200', '가을동화펜션', NULL),
-	(32, 1, NULL, '강원특별자치도 강릉시 용지각길 19', NULL, 'B02010900', '2398102', 'http://tong.visitkorea.or.kr/cms/resource/87/3044687_image2_1.jpg', '128.9056239515', '37.7615677151', '010-5919-0050', '강릉ing게스트하우스', NULL),
+	(32, 1, NULL, '강원특별자치도 강릉시 용지각길 19', '137913', 'B02010900', '2398102', 'http://tong.visitkorea.or.kr/cms/resource/87/3044687_image2_1.jpg', '128.9056239515', '37.7615677151', '010-5919-0050', '강릉ing게스트하우스', NULL),
 	(32, 11, NULL, '강원특별자치도 정선군 북평면 졸드루길 31-57', NULL, 'B02010700', '2398168', 'http://tong.visitkorea.or.kr/cms/resource/17/2579017_image2_1.jpg', '128.6366687230', '37.4518927338', '010-3757-1147', '강과 소나무[한국관광 품질인증/Korea Quality]', NULL),
 	(2, 8, NULL, '인천광역시 연수구 테크노파크로 200', NULL, 'B02010100', '2475088', 'http://tong.visitkorea.or.kr/cms/resource/10/3515110_image2_1.jpg', '126.6378263887', '37.3923573144', '032-729-1101', '경원재 바이 워커힐', NULL),
 	(2, 1, NULL, '인천광역시 강화군 송해면 상도숭뢰길 183', NULL, 'B02010900', '2521964', 'http://tong.visitkorea.or.kr/cms/resource/51/2521951_image2_1.JPG', '126.4771467709', '37.7866919073', '032-930-7058, 7062', '강화평화빌리지', NULL),
-	(32, 1, NULL, '강원특별자치도 강릉시 죽헌길 114 (죽헌동)', NULL, 'B02011600', '2531222', 'http://tong.visitkorea.or.kr/cms/resource/66/3525066_image2_1.jpg', '128.8779926182', '37.7773875687', '033-655-1117', '강릉오죽한옥마을', NULL),
+	(32, 1, NULL, '강원특별자치도 강릉시 죽헌길 114 (죽헌동)', '137913', 'B02011600', '2531222', 'http://tong.visitkorea.or.kr/cms/resource/66/3525066_image2_1.jpg', '128.8779926182', '37.7773875687', '033-655-1117', '강릉오죽한옥마을', NULL),
 	(37, 2, NULL, '전북특별자치도 군산시 월명로 516-1', NULL, 'B02011100', '2569871', '', '126.7047940872', '35.9858398862', '', '게스트하우스 소설여행', NULL),
 	(37, 12, NULL, '전북특별자치도 전주시 완산구 태조로 26-24', NULL, 'B02011600', '2570638', '', '127.1519253061', '35.8150087222', '', '강령전', NULL),
 	(36, 17, NULL, '경상남도 통영시 산양읍 논아랫개길 134-51', NULL, 'B02010700', '2575042', '', '128.4326896463', '34.7820505106', '', '갯내음 펜션', NULL),
@@ -149,17 +152,21 @@ INSERT INTO `hotels` (`area_code`, `sigungu_code`, `id`, `addr1`, `business_regi
 	(36, 2, NULL, '경상남도 거창군 위천면 거차1길 23-18', NULL, 'B02010700', '3103316', '', '127.8363413675', '35.7476089724', '055-945-8800', '거창서핑파크', NULL),
 	(0, 0, NULL, '강원특별자치도 원주시 이화5길 34-7 (단계동)', '3333333333', 'B02010700', '3105325', '', '127.9306939089', '37.3416199193', '010-3113-0830', '갬성하우스', NULL),
 	(36, 1, NULL, '경상남도 거제시 남부면 거제대로 283', '3333333333', 'B02010600', '397642', 'http://tong.visitkorea.or.kr/cms/resource/48/1981448_image2_1.jpg', '128.6384673539', '34.7381729828', '055-632-7977', '거제 썬트리팜리조트', NULL),
-	(7, 4, NULL, '울산 울주군 온양읍 대운길 5 1층', '137913', 'B02010100', '4848524', 'https://hotelbookingdaewoo.s3.ap-northeast-2.amazonaws.com/hotels/c81a5e9a-3e73-4f8a-8410-57538bec3ea2-KakaoTalk_20241125_153558732.jpg', '129.279414235103', '35.4119438309222', '02-1111-1111', '호텔', NULL),
-	(7, 4, NULL, '울산 울주군 온양읍 대운길 5 1층', '137913', 'B02010100', '5176308', 'https://hotelbookingdaewoo.s3.ap-northeast-2.amazonaws.com/hotels/8860b290-0a1d-42ad-9864-871a547955f7-KakaoTalk_20241125_153558732.jpg', '129.279414235103', '35.4119438309222', '02-1111-1111', '호텔', NULL),
+	(7, 4, NULL, '울산 울주군 온양읍 대운길 5 1층', '', 'B02010100', '4848524', 'https://hotelbookingdaewoo.s3.ap-northeast-2.amazonaws.com/hotels/c81a5e9a-3e73-4f8a-8410-57538bec3ea2-KakaoTalk_20241125_153558732.jpg', '129.279414235103', '35.4119438309222', '02-1111-1111', '호텔', NULL),
+	(7, 4, NULL, '울산 울주군 온양읍 대운길 5 1층', '', 'B02010100', '5176308', 'https://hotelbookingdaewoo.s3.ap-northeast-2.amazonaws.com/hotels/8860b290-0a1d-42ad-9864-871a547955f7-KakaoTalk_20241125_153558732.jpg', '129.279414235103', '35.4119438309222', '02-1111-1111', '호텔', NULL),
 	(32, 11, NULL, '강원특별자치도 정선군 정선읍 청량길 32', NULL, 'B02010700', '582215', 'http://tong.visitkorea.or.kr/cms/resource/09/582509_image2_1.jpg', '128.5773915547', '37.4241170266', '010-2289-0021', '가리왕산이야기 펜션', NULL),
 	(36, 17, NULL, '경상남도 통영시 용남면 견유1길 175', '3333333333', 'B02010700', '590873', 'http://tong.visitkorea.or.kr/cms/resource/57/1899757_image2_1.jpg', '128.4742332018', '34.8895753425', '010-4850-5230', '갯바위펜션', NULL),
 	(32, 17, NULL, '강원특별자치도 화천군 화천읍 중앙로2길 31-10', NULL, 'B02010900', '628541', 'http://tong.visitkorea.or.kr/cms/resource/70/3486370_image2_1.jpg', '127.7045446926', '38.1034772614', '033-441-7999', '갤러리하우스모텔', NULL),
 	(32, 16, NULL, '강원특별자치도 홍천군 북방면 노일로310번길 15', '2222222', 'B02010700', '678537', 'http://tong.visitkorea.or.kr/cms/resource/73/680173_image2_1.jpg', '127.7311991032', '37.6861096552', '010-2679-3536', '강변의수채화 펜션', NULL),
-	(7, 4, NULL, '울산 울주군 온양읍 대운길 5 1층', '137913', 'B02010100', '7605415', 'https://hotelbookingdaewoo.s3.ap-northeast-2.amazonaws.com/hotels/3c042bc0-d39f-4936-9d11-aa0693ccd909-KakaoTalk_20241125_153558732.jpg', '129.279414235103', '35.4119438309222', '02-1111-1111', '호텔', NULL),
+	(3, 2, NULL, '대전 동구 광명길 64', '3333344444', 'B02010100', '7014940', 'https://hotelbookingdaewoo.s3.ap-northeast-2.amazonaws.com/hotels/bdc1cd52-9c06-40e4-86fb-fc87a034fde8-detail.png', '127.448106888375', '36.3235519622303', '010-1111-1112', '호텔호텔', NULL),
+	(3, 2, NULL, '대전 동구 광명길 64', '3333344444', 'B02010100', '7042338', 'https://hotelbookingdaewoo.s3.ap-northeast-2.amazonaws.com/hotels/4d39dc7f-33ac-4d84-be26-4d87d607a5f5-detail.png', '127.448106888375', '36.3235519622303', '010-1111-1112', '호텔호텔', NULL),
+	(7, 4, NULL, '울산 울주군 온양읍 대운길 5 1층', '', 'B02010100', '7605415', 'https://hotelbookingdaewoo.s3.ap-northeast-2.amazonaws.com/hotels/3c042bc0-d39f-4936-9d11-aa0693ccd909-KakaoTalk_20241125_153558732.jpg', '129.279414235103', '35.4119438309222', '02-1111-1111', '호텔', NULL),
+	(33, 1, NULL, '충북 괴산군 장연면 미선미루1길 11', '3333344444', 'B02010100', '8387200', 'https://hotelbookingdaewoo.s3.ap-northeast-2.amazonaws.com/hotels/7eecf6e9-f4e2-4d71-a5ab-c9308a884a18-화면 캡처 2024-03-22 160100.png', '127.95543401621', '36.8114173911558', '010-1111-1111', '아메리카노', NULL),
 	(31, 19, NULL, '경기도 양평군 서종면 황순원로 103', NULL, 'B02010700', '913186', 'http://tong.visitkorea.or.kr/cms/resource/83/1942383_image2_1.jpg', '127.3780504440', '37.5971718095', '031-774-4226', '개울가펜션', NULL),
 	(32, 16, NULL, '강원특별자치도 홍천군 북방면 굴지강변로 281', NULL, 'B02010700', '940259', 'http://tong.visitkorea.or.kr/cms/resource/68/1849368_image2_1.jpg', '127.7832358849', '37.6915933201', '033-433-8309', '강가의성', NULL),
 	(31, 19, NULL, '경기도 양평군 용문면 용문산로 337', NULL, 'B02010700', '942523', 'http://tong.visitkorea.or.kr/cms/resource/30/1893430_image2_1.jpg', '127.6019460659', '37.5258897391', '031-771-5180', '가시버시펜션', NULL),
-	(34, 14, NULL, '충청남도 태안군 남면 진산1길 195-14', NULL, 'B02010700', '945148', '', '126.2729252076', '36.7086440078', '041-675-1262', '갯벌부흥펜션', NULL);
+	(34, 14, NULL, '충청남도 태안군 남면 진산1길 195-14', NULL, 'B02010700', '945148', '', '126.2729252076', '36.7086440078', '041-675-1262', '갯벌부흥펜션', NULL),
+	(1, 16, NULL, '서울 성동구 가람길 46', '3333344444', 'B02010100', '9530521', 'https://hotelbookingdaewoo.s3.ap-northeast-2.amazonaws.com/hotels/13d73a6b-5c19-407b-a03c-28692877b090-화면 캡처 2024-03-22 160100.png', '127.049084975108', '37.5518135184758', '010-1111-1111', 'ㅇㅁㄴ', NULL);
 
 -- 테이블 HotelDB.hotel_intro 구조 내보내기
 CREATE TABLE IF NOT EXISTS `hotel_intro` (
@@ -191,9 +198,9 @@ CREATE TABLE IF NOT EXISTS `hotel_intro` (
   `sports` varchar(255) DEFAULT NULL,
   `subfacility` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=71 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=76 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- 테이블 데이터 HotelDB.hotel_intro:~70 rows (대략적) 내보내기
+-- 테이블 데이터 HotelDB.hotel_intro:~73 rows (대략적) 내보내기
 INSERT INTO `hotel_intro` (`accomcountlodging`, `roomcount`, `id`, `barbecue`, `beauty`, `beverage`, `bicycle`, `campfire`, `checkintime`, `checkouttime`, `chkcooking`, `contentid`, `fitness`, `foodplace`, `infocenterlodging`, `karaoke`, `parkinglodging`, `publicbath`, `publicpc`, `reservationlodging`, `reservationurl`, `roomtype`, `sauna`, `scalelodging`, `seminar`, `sports`, `subfacility`) VALUES
 	(0, 0, 1, '0', '0', '0', '0', '0', '14:00', '익일12:00', '불가', '142785', '0', 'Cafe, Restaurant', '02-400-6641~3', '0', '가능(발렛파킹 무료)', '0', '0', '', '', '스탠다드 더블/트윈, 디럭스 더블, 주니어 스위트, 로얄 스위트', '0', '지상 8층/지하 3층', '0', '0', ''),
 	(0, 0, 2, '0', '0', '0', '0', '0', '15:00', '10:00', '불가', '2671267', '0', '', '', '0', '가능', '0', '0', '홈페이지', 'https://karakcheong.modoo.at/', '', '0', '', '0', '0', ''),
@@ -264,7 +271,12 @@ INSERT INTO `hotel_intro` (`accomcountlodging`, `roomcount`, `id`, `barbecue`, `
 	(0, 0, 67, '0', '0', '0', '0', '0', '15:00', '11:00', '불가', '2475088', '0', '', '032-729-1101', '0', '가능', '0', '0', '032-729-1101', '', '디럭스 더블 / 디럭스 트윈 / 디럭스 온돌 / 디럭스 스위트', '0', '3,057.22m², 2층', '1', '1', '연회장 / 레스토랑 / 미팅룸 / 부대시설 등'),
 	(3, 0, 68, '', NULL, '', '', NULL, '15', '11', NULL, '7605415', '', NULL, NULL, NULL, '', NULL, NULL, '', '', '', '', '', NULL, NULL, ''),
 	(3, 0, 69, '', NULL, '', '', NULL, '15', '11', NULL, '4848524', '', NULL, NULL, NULL, '', NULL, NULL, '', '', '', '', '', NULL, NULL, ''),
-	(3, 0, 70, '', NULL, '', '', NULL, '15', '11', NULL, '5176308', '', NULL, NULL, NULL, '', NULL, NULL, '', '', '', '', '', NULL, NULL, '');
+	(3, 0, 70, '', NULL, '', '', NULL, '15', '11', NULL, '5176308', '', NULL, NULL, NULL, '', NULL, NULL, '', '', '', '', '', NULL, NULL, ''),
+	(0, 0, 71, '', NULL, '', '', NULL, '13:00', '11:00', NULL, '7014940', '', NULL, NULL, NULL, '', NULL, NULL, '', '', '', '', '', NULL, NULL, ''),
+	(0, 0, 72, '', NULL, '', '', NULL, '13:00', '11:00', NULL, '7042338', '', NULL, NULL, NULL, '', NULL, NULL, '', '', '', '', '', NULL, NULL, ''),
+	(2, 2, 73, '', NULL, '', '', NULL, '13:00', '11:00', NULL, '1018248', '', NULL, NULL, NULL, '', NULL, NULL, '', '', '', '', '', NULL, NULL, ''),
+	(3, 2, 74, '', NULL, '', '', NULL, '14:00', '12:00', NULL, '9530521', '', NULL, NULL, NULL, '', NULL, NULL, '', '', '', '', '', NULL, NULL, ''),
+	(2, 0, 75, '', NULL, 'true', '', NULL, '14:00', '16:00', NULL, '8387200', 'true', NULL, NULL, NULL, '', NULL, NULL, '', '', '', '', '', NULL, NULL, '');
 
 -- 테이블 HotelDB.inquiry 구조 내보내기
 CREATE TABLE IF NOT EXISTS `inquiry` (
@@ -279,12 +291,13 @@ CREATE TABLE IF NOT EXISTS `inquiry` (
   PRIMARY KEY (`id`),
   KEY `FKp6nrxnpx4pxtntnq43n7p3o03` (`username`),
   CONSTRAINT `FKp6nrxnpx4pxtntnq43n7p3o03` FOREIGN KEY (`username`) REFERENCES `users` (`user_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- 테이블 데이터 HotelDB.inquiry:~2 rows (대략적) 내보내기
+-- 테이블 데이터 HotelDB.inquiry:~3 rows (대략적) 내보내기
 INSERT INTO `inquiry` (`created_at`, `id`, `category`, `title`, `username`, `content`, `status`, `attachment_url`) VALUES
 	('2025-10-01 18:10:15.883744', 1, '예약문의', '1fsdf', 'seungyup0915@gmail.com', 'sdfdsf', 'PENDING', NULL),
-	('2025-10-01 18:18:09.616185', 2, '취소/변경문의', '456', 'seungyup0916@gmail.com', '546', 'PENDING', NULL);
+	('2025-10-01 18:18:09.616185', 2, '취소/변경문의', '456', 'seungyup0916@gmail.com', '546', 'ANSWERED', NULL),
+	('2025-10-18 01:39:34.787465', 3, '기타', '쿠폰 왜 안돌려줘요?', 'seungyup0916@gmail.com', '아아아아 내 쿠폰 돌려달라고오오오오ㅠㅠㅠㅠㅠㅠ', 'ANSWERED', NULL);
 
 -- 테이블 HotelDB.inquiry_answer 구조 내보내기
 CREATE TABLE IF NOT EXISTS `inquiry_answer` (
@@ -298,9 +311,12 @@ CREATE TABLE IF NOT EXISTS `inquiry_answer` (
   KEY `FKjwh5v7rg017aaqdo2skhak8bs` (`admin_username`),
   CONSTRAINT `FK3irhermk3cm96u0y7oiv3ya4p` FOREIGN KEY (`inquiry_id`) REFERENCES `inquiry` (`id`),
   CONSTRAINT `FKjwh5v7rg017aaqdo2skhak8bs` FOREIGN KEY (`admin_username`) REFERENCES `users` (`user_name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- 테이블 데이터 HotelDB.inquiry_answer:~0 rows (대략적) 내보내기
+-- 테이블 데이터 HotelDB.inquiry_answer:~1 rows (대략적) 내보내기
+INSERT INTO `inquiry_answer` (`answered_at`, `id`, `inquiry_id`, `admin_username`, `answer_content`) VALUES
+	('2025-10-01 20:18:04.300618', 1, 2, 'admin', 's'),
+	('2025-10-18 01:41:45.831440', 2, 3, 'admin', '정책상 쩔수임 ㅅㄱ');
 
 -- 테이블 HotelDB.inquiry_file 구조 내보내기
 CREATE TABLE IF NOT EXISTS `inquiry_file` (
@@ -324,12 +340,13 @@ CREATE TABLE IF NOT EXISTS `notices` (
   `title` varchar(255) NOT NULL,
   `content` tinytext NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- 테이블 데이터 HotelDB.notices:~2 rows (대략적) 내보내기
+-- 테이블 데이터 HotelDB.notices:~3 rows (대략적) 내보내기
 INSERT INTO `notices` (`created_at`, `id`, `category`, `title`, `content`) VALUES
-	('2025-10-01 10:05:20.993934', 1, 'patch', 'dsafsa', 'sadfsa'),
-	('2025-10-01 10:05:42.367580', 2, 'event', 'dfd', 'fdfd');
+	('2025-10-01 10:05:42.367580', 2, 'event', 'dfd', 'fdfd'),
+	('2025-10-01 20:30:21.530170', 3, 'notice', '쿠폰 지급', 'dsdasd'),
+	('2025-10-02 00:42:25.941567', 4, 'event', '추석맞이 쿠폰 지급 이벤트!', '연휴기념 HotelHub에서 선착100분께 쿠폰을 뿌립니다!\n어서 가져가시고 모두 즐거운 한가위 보내세요~!\n\n쿠폰코드 : chuseok');
 
 -- 테이블 HotelDB.payments 구조 내보내기
 CREATE TABLE IF NOT EXISTS `payments` (
@@ -344,11 +361,20 @@ CREATE TABLE IF NOT EXISTS `payments` (
   PRIMARY KEY (`payment_id`),
   KEY `FKp8yh4sjt3u0g6aru1oxfh3o14` (`reservation_id`),
   CONSTRAINT `FKp8yh4sjt3u0g6aru1oxfh3o14` FOREIGN KEY (`reservation_id`) REFERENCES `reservations` (`reservation_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- 테이블 데이터 HotelDB.payments:~1 rows (대략적) 내보내기
+-- 테이블 데이터 HotelDB.payments:~10 rows (대략적) 내보내기
 INSERT INTO `payments` (`payment_amount`, `payment_date`, `payment_id`, `reservation_id`, `payment_key`, `payment_method`, `payment_status`, `user_name`) VALUES
-	(80000, '2025-10-01 18:47:17.751777', 1, 321, 'tgen_20251001184623tgBv9', '카드', 'DONE', 'kimys75128386@gmail.com');
+	(80000, '2025-10-01 18:47:17.751777', 1, 321, 'tgen_20251001184623tgBv9', '카드', 'CANCELED', 'kimys75128386@gmail.com'),
+	(100000, '2025-10-02 01:24:09.727636', 2, 330, 'tgen_20251002012350AXCm4', '간편결제', 'CANCELED', 'seungyup0916@gmail.com'),
+	(110000, '2025-10-02 01:30:15.863144', 3, 331, 'tgen_20251002012958uB2I6', '간편결제', 'DONE', 'seungyup0916@gmail.com'),
+	(90000, '2025-10-18 01:34:41.146993', 4, 332, 'tgen_20251002013446zkMs4', '간편결제', 'DONE', 'seungyup8@gmail.com'),
+	(1680000, '2025-10-02 10:17:18.038761', 5, 335, 'tgen_20251002101626y1v51', '간편결제', 'DONE', '8465867@naver.com'),
+	(170000, '2025-10-02 10:39:31.932604', 6, 336, 'tgen_20251002103908q4Jv7', '간편결제', 'DONE', '8465867@naver.com'),
+	(169500, '2025-10-02 10:42:27.139992', 7, 337, 'tgen_20251002104152AozO6', '간편결제', 'DONE', '8465867@naver.com'),
+	(168000, '2025-10-02 13:51:25.472682', 8, 339, 'tgen_20251002135119TEGk4', '간편결제', 'DONE', 'seungyup0916@gmail.com'),
+	(1048000, '2025-10-02 17:06:25.294489', 9, 340, 'tgen_20251002170606NPgE6', '간편결제', 'DONE', 'seungyup8@gmail.com'),
+	(167000, '2025-10-02 17:06:58.038978', 10, 341, 'tgen_20251002170644LICr9', '간편결제', 'DONE', 'seungyup8@gmail.com');
 
 -- 테이블 HotelDB.point_history 구조 내보내기
 CREATE TABLE IF NOT EXISTS `point_history` (
@@ -364,16 +390,32 @@ CREATE TABLE IF NOT EXISTS `point_history` (
   KEY `FKlmm2nu7f5elblp2o2w2rrcwhl` (`user_id`),
   CONSTRAINT `FKhvagyqfau9cumsi4qg0yt7mf5` FOREIGN KEY (`reservation_id`) REFERENCES `reservations` (`reservation_id`),
   CONSTRAINT `FKlmm2nu7f5elblp2o2w2rrcwhl` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- 테이블 데이터 HotelDB.point_history:~6 rows (대략적) 내보내기
+-- 테이블 데이터 HotelDB.point_history:~22 rows (대략적) 내보내기
 INSERT INTO `point_history` (`id`, `description`, `points`, `transaction_date`, `type`, `reservation_id`, `user_id`) VALUES
 	(1, '예약 결제 시 사용', -5000, '2025-10-01 00:28:21.000000', 'USED', 302, 'seungyup8@gmail.com'),
 	(3, '리뷰 작성 보상', 5000, '2025-10-01 00:59:42.918331', 'EARNED', NULL, 'seungyup8@gmail.com'),
 	(4, '예약 결제 시 사용', -30000, '2025-10-01 09:09:51.759776', 'USED', 303, 'seungyup8@gmail.com'),
 	(5, '신규 회원가입 축하 포인트', 50000, '2025-10-01 17:01:02.973183', 'EARNED', NULL, 'seungyup0916@gmail.com'),
 	(6, '리뷰 작성 보상', 5000, '2025-10-01 19:11:55.573534', 'EARNED', NULL, 'seungyup8@gmail.com'),
-	(7, '리뷰 작성 보상', 5000, '2025-11-01 19:19:37.413877', 'EARNED', NULL, 'seungyup8@gmail.com');
+	(7, '리뷰 작성 보상', 5000, '2025-11-01 19:19:37.413877', 'EARNED', NULL, 'seungyup8@gmail.com'),
+	(8, '예약 결제 시 사용', -50000, '2025-10-02 01:24:09.668735', 'USED', 330, 'seungyup0916@gmail.com'),
+	(9, '예약 취소로 인한 환불', 50000, '2025-10-02 01:25:32.218838', 'EARNED', 330, 'seungyup0916@gmail.com'),
+	(10, '예약 결제 시 사용', -50000, '2025-10-02 01:30:15.788471', 'USED', 331, 'seungyup0916@gmail.com'),
+	(11, '리뷰 작성 보상', 5000, '2025-10-18 01:33:36.348433', 'EARNED', NULL, 'seungyup0916@gmail.com'),
+	(12, '예약 결제 시 사용', -30000, '2025-10-18 01:34:41.104211', 'USED', 332, 'seungyup8@gmail.com'),
+	(13, '리뷰 작성 보상', 5000, '2025-10-18 01:35:54.209435', 'EARNED', NULL, 'seungyup8@gmail.com'),
+	(14, '예약 결제 시 사용', -500, '2025-10-02 10:42:27.124295', 'USED', 337, '8465867@naver.com'),
+	(15, '리뷰 작성 보상', 5000, '2025-10-02 17:03:40.095522', 'EARNED', NULL, 'seungyup8@gmail.com'),
+	(16, '리뷰 작성 보상', 5000, '2025-10-02 17:04:48.494506', 'EARNED', NULL, 'seungyup8@gmail.com'),
+	(17, '예약 결제 시 사용', -2000, '2025-10-02 17:06:25.275892', 'USED', 340, 'seungyup8@gmail.com'),
+	(18, '예약 결제 시 사용', -3000, '2025-10-02 17:06:58.028124', 'USED', 341, 'seungyup8@gmail.com'),
+	(19, '리뷰 작성 보상', 5000, '2025-10-02 17:07:54.638203', 'EARNED', NULL, 'seungyup8@gmail.com'),
+	(20, '리뷰 작성 보상', 5000, '2025-10-02 17:08:10.404668', 'EARNED', NULL, 'seungyup8@gmail.com'),
+	(21, '리뷰 작성 보상', 5000, '2025-10-02 17:09:44.536628', 'EARNED', NULL, 'seungyup8@gmail.com'),
+	(22, '리뷰 작성 보상', 5000, '2025-10-02 17:09:58.363668', 'EARNED', NULL, 'seungyup8@gmail.com'),
+	(23, '리뷰 작성 보상', 5000, '2025-10-02 17:10:10.242279', 'EARNED', NULL, 'seungyup8@gmail.com');
 
 -- 테이블 HotelDB.regions 구조 내보내기
 CREATE TABLE IF NOT EXISTS `regions` (
@@ -386,7 +428,7 @@ CREATE TABLE IF NOT EXISTS `regions` (
   UNIQUE KEY `UKako7554e9yeydkyxf852w7pk9` (`code`,`area_code`)
 ) ENGINE=InnoDB AUTO_INCREMENT=493 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- 테이블 데이터 HotelDB.regions:~246 rows (대략적) 내보내기
+-- 테이블 데이터 HotelDB.regions:~50 rows (대략적) 내보내기
 INSERT INTO `regions` (`area_code`, `code`, `id`, `name`, `name_chosung`) VALUES
 	(NULL, 1, 247, '서울', 'ㅅㅇ'),
 	(NULL, 2, 248, '인천', 'ㅇㅊ'),
@@ -661,9 +703,9 @@ CREATE TABLE IF NOT EXISTS `reservations` (
   CONSTRAINT `FKgfv9ya0o9ak9v1uow8gnl921v` FOREIGN KEY (`used_coupon_id`) REFERENCES `coupon` (`id`),
   CONSTRAINT `FKlsofgt74yhf0f6hq8wo2ev5aj` FOREIGN KEY (`contentid`) REFERENCES `hotels` (`contentid`),
   CONSTRAINT `FKtm8u50ifr1rmgpf0a883d630m` FOREIGN KEY (`user_name`) REFERENCES `users` (`user_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=329 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=342 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- 테이블 데이터 HotelDB.reservations:~90 rows (대략적) 내보내기
+-- 테이블 데이터 HotelDB.reservations:~98 rows (대략적) 내보내기
 INSERT INTO `reservations` (`check_in_date`, `check_out_date`, `num_adults`, `num_children`, `total_price`, `reservation_date`, `reservation_id`, `contentid`, `reserv_name`, `reserv_phone`, `roomcode`, `status`, `user_name`, `base_price`, `discount_price`, `used_points`, `used_coupon_id`) VALUES
 	('2025-09-24', '2025-09-25', 3, 0, 500, '2025-09-24 23:40:15.831933', 2, '1896032', '승엽', '82102368377', '24', 'PAID', 'seungyup8@gmail.com', 500, 0, 0, NULL),
 	('2025-09-25', '2025-09-26', 6, 0, 390000, '2025-09-25 02:13:12.571238', 4, '139190', '승엽', '82102368377', '180', 'PAID', 'seungyup8@gmail.com', 390000, 0, 0, NULL),
@@ -676,12 +718,12 @@ INSERT INTO `reservations` (`check_in_date`, `check_out_date`, `num_adults`, `nu
 	('2025-09-21', '2025-09-23', 3, 0, 75000, '2025-09-26 17:20:37.759198', 58, '1896032', '이승엽', '010-2368-3770', '22', 'PAID', 'seungyup8@gmail.com', 75000, 0, 0, NULL),
 	('2025-09-24', '2025-09-25', 3, 0, 80000, '2025-09-26 17:48:59.039386', 62, '137913', 'kys', '010-1111-1111', '175', 'PAID', 'kimys75128386@gmail.com', 80000, 0, 0, NULL),
 	('2025-09-24', '2025-09-25', 2, 0, 100000, '2025-09-26 18:13:39.298706', 64, '678537', 'kys', '010-1111-1111', '163', 'PAID', 'kimys75128386@gmail.com', 100000, 0, 0, NULL),
-	('2025-09-26', '2025-09-27', 3, 0, 70000, '2025-09-26 19:25:40.234994', 72, '139190', '이승엽', '010-2368-3770', '178', 'PAID', 'seungyup8@gmail.com', 70000, 0, 0, NULL),
+	('2025-09-26', '2025-09-27', 3, 0, 70000, '2025-09-26 19:25:40.234994', 72, '2531222', '이승엽', '010-2368-3770', '178', 'PAID', 'seungyup8@gmail.com', 70000, 0, 0, NULL),
 	('2025-10-07', '2025-10-11', 4, 0, 520000, '2025-09-26 19:29:00.576469', 74, '137913', '이승엽', '010-2368-3770', '171', 'CANCELLED', 'seungyup8@gmail.com', 520000, 0, 0, NULL),
-	('2025-09-27', '2025-09-28', 2, 0, 80000, '2025-09-27 02:28:27.382334', 106, '678537', '이승엽', '010-2368-3770', '164', 'PAID', 'seungyup8@gmail.com', 100000, 80000, NULL, NULL),
-	('2025-09-27', '2025-09-28', 2, 0, 78000, '2025-09-27 03:18:51.923760', 111, '678537', 'admin', '010-1234-1234', '163', 'PAID', 'seungyup0915@gmail.com', 100000, 78000, NULL, NULL),
-	('2025-09-27', '2025-09-28', 2, 0, 85800, '2025-09-27 03:33:55.305017', 112, '678537', 'admin', '010-1234-1234', '167', 'PAID', 'seungyup0915@gmail.com', 110000, 85800, NULL, NULL),
-	('2025-09-27', '2025-09-28', 2, 0, 70200, '2025-09-27 03:47:20.649800', 113, '678537', 'admin', '010-1234-1234', '165', 'PAID', 'seungyup0915@gmail.com', 90000, 70200, NULL, NULL),
+	('2025-09-27', '2025-09-28', 2, 0, 80000, '2025-09-27 02:28:27.382334', 106, '2531222', '이승엽', '010-2368-3770', '164', 'PAID', 'seungyup8@gmail.com', 100000, 80000, NULL, NULL),
+	('2025-09-27', '2025-09-28', 2, 0, 78000, '2025-09-27 03:18:51.923760', 111, '2531222', 'admin', '010-1234-1234', '163', 'PAID', 'seungyup0915@gmail.com', 100000, 78000, NULL, NULL),
+	('2025-09-27', '2025-09-28', 2, 0, 85800, '2025-09-27 03:33:55.305017', 112, '2531222', 'admin', '010-1234-1234', '167', 'PAID', 'seungyup0915@gmail.com', 110000, 85800, NULL, NULL),
+	('2025-09-27', '2025-09-28', 2, 0, 70200, '2025-09-27 03:47:20.649800', 113, '2531222', 'admin', '010-1234-1234', '165', 'PAID', 'seungyup0915@gmail.com', 90000, 70200, NULL, NULL),
 	('2025-09-27', '2025-09-28', 2, 0, 109000, '2025-09-27 04:11:28.789355', 114, '678537', 'admin', '010-1234-1234', '166', 'PAID', 'seungyup0915@gmail.com', 110000, 109000, NULL, NULL),
 	('2025-09-27', '2025-09-28', 5, 0, 218400, '2025-09-27 15:13:49.731850', 116, '3101943', 'admin', '010-1234-1234', '294', 'PAID', 'seungyup0915@gmail.com', 280000, 218400, NULL, NULL),
 	('2025-09-27', '2025-09-28', 4, 0, 58500, '2025-09-27 15:16:12.237695', 117, '3102121', 'admin', '010-1234-1234', '291', 'PAID', 'seungyup0915@gmail.com', 75000, 58500, NULL, NULL),
@@ -696,19 +738,19 @@ INSERT INTO `reservations` (`check_in_date`, `check_out_date`, `num_adults`, `nu
 	('2025-09-27', '2025-09-28', 4, 0, 101400, '2025-09-27 18:00:33.981022', 136, '137913', 'admin', '010-1234-1234', '171', 'PAID', 'seungyup0915@gmail.com', 130000, 101400, NULL, NULL),
 	('2025-09-27', '2025-09-28', 3, 0, 58500, '2025-09-27 18:12:29.320132', 137, '1896032', 'admin', '010-1234-1234', '22', 'PAID', 'seungyup0915@gmail.com', 75000, 58500, NULL, NULL),
 	('2025-09-27', '2025-09-28', 3, 0, 70000, '2025-09-27 18:32:37.669851', 141, '1896032', 'admin', '010-1234-1234', '24', 'PAID', 'seungyup0915@gmail.com', 70000, 0, NULL, NULL),
-	('2025-09-28', '2025-09-29', 4, 0, 94000, '2025-09-28 04:05:20.841102', 191, '137913', '이승엽', '010-2368-3770', '170', 'PAID', 'seungyup8@gmail.com', 100000, 6000, 5000, 28),
+	('2025-09-28', '2025-09-29', 4, 0, 94000, '2025-09-28 04:05:20.841102', 191, '2531222', '이승엽', '010-2368-3770', '170', 'PAID', 'seungyup8@gmail.com', 100000, 6000, 5000, 28),
 	('2025-09-28', '2025-09-29', 3, 0, 79000, '2025-09-28 14:18:54.390547', 196, '137913', 'kys', '010-1111-1111', '175', 'PAID', 'kimys75128386@gmail.com', 80000, 79000, NULL, NULL),
 	('2025-09-28', '2025-09-29', 4, 0, 130000, '2025-09-28 15:50:20.698559', 197, '137913', 'kys', '010-1111-1111', '171', 'PAID', 'kimys75128386@gmail.com', 130000, 0, NULL, NULL),
 	('2025-09-28', '2025-09-29', 4, 0, 80000, '2025-09-28 15:52:53.865669', 198, '137913', 'kys', '010-1111-1111', '177', 'PAID', 'kimys75128386@gmail.com', 80000, 0, NULL, NULL),
 	('2025-09-28', '2025-09-29', 2, 0, 50000, '2025-09-28 16:44:59.035789', 199, '137913', 'kys', '010-1111-1111', '172', 'PAID', 'kimys75128386@gmail.com', 50000, 0, NULL, NULL),
 	('2025-09-28', '2025-09-29', 2, 0, 150000, '2025-09-28 21:21:27.814876', 200, '138547', 'aaa', '01011111111', '160', 'PAID', NULL, 150000, 0, NULL, NULL),
 	('2025-09-28', '2025-09-29', 4, 0, 70000, '2025-09-28 22:00:35.629461', 201, '137913', 'kys', '010-1111-1111', '177', 'PAID', 'kimys75128386@gmail.com', 80000, 70000, NULL, NULL),
-	('2025-09-28', '2025-09-29', 2, 0, 100000, '2025-09-28 23:20:37.284391', 203, '678537', '이승엽', '010-2368-3770', '167', 'PAID', 'seungyup8@gmail.com', 110000, 10000, 9500, 29),
-	('2025-09-28', '2025-09-29', 3, 0, 67000, '2025-09-28 23:29:59.752788', 204, '3103316', '이승엽', '010-2368-3770', '273', 'PAID', 'seungyup8@gmail.com', 85000, 18000, 1000, 21),
+	('2025-09-28', '2025-09-29', 2, 0, 100000, '2025-09-28 23:20:37.284391', 203, '2531222', '이승엽', '010-2368-3770', '167', 'PAID', 'seungyup8@gmail.com', 110000, 10000, 9500, 29),
+	('2025-09-28', '2025-09-29', 3, 0, 67000, '2025-09-28 23:29:59.752788', 204, '2531222', '이승엽', '010-2368-3770', '273', 'PAID', 'seungyup8@gmail.com', 85000, 18000, 1000, 21),
 	('2025-10-09', '2025-10-11', 2, 0, 2126600, '2025-09-28 23:40:06.449067', 205, '143125', '이승엽', '010-2368-3770', '258', 'CANCELLED', 'seungyup8@gmail.com', 2662000, 535400, 3000, 22),
 	('2025-09-29', '2025-09-30', 3, 0, 60000, '2025-09-29 01:07:17.418935', 212, '137913', 'kys', '010-1111-1111', '173', 'PAID', 'kimys75128386@gmail.com', 60000, 0, NULL, NULL),
 	('2025-10-10', '2025-10-11', 4, 0, 95000, '2025-09-29 18:00:07.573339', 221, '2531222', '이승엽', '010-2368-3770', '158', 'CANCELLED', 'seungyup8@gmail.com', 200000, 105000, 5000, 25),
-	('2025-09-29', '2025-09-30', 2, 0, 1331000, '2025-09-29 18:06:41.540178', 224, '143125', '이승엽', '01023683770', '258', 'PAID', NULL, 1331000, 0, 0, NULL),
+	('2025-09-29', '2025-09-30', 2, 0, 1331000, '2025-09-29 18:06:41.540178', 224, '2531222', '이승엽', '01023683770', '258', 'PAID', NULL, 1331000, 0, 0, NULL),
 	('2025-09-30', '2025-10-01', 3, 0, 40000, '2025-09-30 00:55:49.180207', 229, '137913', 'kys', '010-1111-1111', '175', 'PAID', 'kimys75128386@gmail.com', 80000, 40000, 0, 42),
 	('2025-10-03', '2025-10-04', 4, 0, 65000, '2025-09-30 00:57:59.818953', 231, '137913', 'kys', '010-1111-1111', '171', 'PAID', 'kimys75128386@gmail.com', 130000, 65000, 0, 42),
 	('2025-10-02', '2025-10-03', 2, 0, 65000, '2025-09-30 01:21:59.147710', 232, '2531222', '이용석', '010-2222-2222', '150', 'CANCELLED', '8465867@naver.com', 65000, 0, 0, NULL),
@@ -718,7 +760,7 @@ INSERT INTO `reservations` (`check_in_date`, `check_out_date`, `num_adults`, `nu
 	('2025-10-10', '2025-10-11', 4, 0, 198000, '2025-09-30 02:53:06.384406', 236, '2531222', '이승엽', '010-2368-3770', '158', 'CANCELLED', 'seungyup8@gmail.com', 200000, 2000, 1500, 29),
 	('2025-10-08', '2025-10-11', 2, 0, 234000, '2025-09-30 03:01:58.521881', 237, '678537', '이승엽', '010-2368-3770', '164', 'CANCELLED', 'seungyup8@gmail.com', 300000, 66000, 6000, 22),
 	('2025-10-01', '2025-10-02', 3, 0, 68500, '2025-09-30 03:11:40.519915', 238, '139190', '이승엽', '010-2368-3770', '178', 'CANCELLED', 'seungyup8@gmail.com', 70000, 1500, 1500, NULL),
-	('2025-10-02', '2025-10-03', 3, 0, 68800, '2025-09-30 14:23:13.616612', 239, '139190', '이승엽', '010-2368-3770', '178', 'PAID', 'seungyup8@gmail.com', 70000, 1200, 1200, NULL),
+	('2025-10-02', '2025-10-03', 3, 0, 68800, '2025-09-30 14:23:13.616612', 239, '2531222', '이승엽', '010-2368-3770', '178', 'PAID', 'seungyup8@gmail.com', 70000, 1200, 1200, NULL),
 	('2025-10-10', '2025-10-11', 6, 0, 307000, '2025-09-30 15:42:06.995992', 242, '139190', '이승엽', '010-2368-3770', '180', 'CANCELLED', 'seungyup8@gmail.com', 390000, 83000, 5000, 23),
 	('2025-10-03', '2025-10-06', 2, 0, 10000, '2025-09-30 16:25:24.156040', 248, '137913', 'admin', '010-1234-1234', '172', 'CANCELLED', 'seungyup0915@gmail.com', 50000, 40000, 40000, 42),
 	('2025-11-13', '2025-11-27', 4, 0, 1820000, '2025-09-30 16:27:46.949338', 250, '137913', 'admin', '010-1234-1234', '171', 'CANCELLED', 'seungyup0915@gmail.com', 1820000, 0, 0, NULL),
@@ -740,7 +782,7 @@ INSERT INTO `reservations` (`check_in_date`, `check_out_date`, `num_adults`, `nu
 	('2025-10-22', '2025-10-25', 3, 0, 240000, '2025-09-30 17:30:10.362947', 273, '137913', 'admin', '010-1234-1234', '175', 'PAID', 'seungyup0915@gmail.com', 240000, 0, 0, NULL),
 	('2025-10-02', '2025-10-09', 4, 0, 840000, '2025-09-30 17:30:59.318785', 274, '139867', 'kys', '010-1111-1111', '197', 'CANCELLED', 'kimys75128386@gmail.com', 840000, 0, 0, NULL),
 	('2025-10-02', '2025-10-03', 4, 0, 115000, '2025-09-30 17:36:38.277498', 275, '139867', 'kys', '010-1111-1111', '197', 'PAID', 'kimys75128386@gmail.com', 120000, 5000, 5000, NULL),
-	('2025-09-30', '2025-10-01', 5, 0, 140000, '2025-09-30 18:01:25.488608', 276, '3101943', 'admin', '010-1234-1234', '294', 'PAID', 'seungyup0915@gmail.com', 280000, 140000, 0, 42),
+	('2025-09-30', '2025-10-01', 5, 0, 140000, '2025-09-30 18:01:25.488608', 276, '2531222', 'admin', '010-1234-1234', '294', 'PAID', 'seungyup0915@gmail.com', 280000, 140000, 0, 42),
 	('2025-10-16', '2025-10-18', 2, 0, 100000, '2025-09-30 18:16:22.388955', 277, '678537', 'admin', '010-1234-1234', '163', 'PAID', 'seungyup0915@gmail.com', 200000, 100000, 0, 42),
 	('2025-10-02', '2025-10-03', 3, 0, 80000, '2025-09-30 19:10:39.383186', 279, '137913', 'kys', '010-1111-1111', '175', 'CANCELLED', 'kimys75128386@gmail.com', 80000, 0, 0, NULL),
 	('2025-10-03', '2025-10-04', 4, 0, 100000, '2025-09-30 19:18:13.053127', 280, '137913', 'kys', '010-1111-1111', '170', 'PAID', 'kimys75128386@gmail.com', 100000, 0, 0, NULL),
@@ -751,9 +793,18 @@ INSERT INTO `reservations` (`check_in_date`, `check_out_date`, `num_adults`, `nu
 	('2025-10-01', '2025-10-02', 4, 0, 130000, '2025-09-30 20:45:20.324036', 289, '137913', 'a', '010-1212-1111', '171', 'PAID', 'aaaaaaa', 130000, 0, 0, NULL),
 	('2025-10-03', '2025-10-08', 2, 0, 250000, '2025-09-30 20:49:05.053846', 290, '137913', 'kys', '010-1111-1111', '172', 'PAID', 'kimys75128386@gmail.com', 250000, 0, 0, NULL),
 	('2025-10-03', '2025-10-04', 2, 0, 55000, '2025-09-30 20:52:50.761060', 291, '1896032', 'kys', '010-1111-1111', '21', 'PAID', 'kimys75128386@gmail.com', 55000, 0, 0, NULL),
-	('2025-09-01', '2025-09-02', 3, 0, 75000, '2025-10-01 00:12:38.697128', 302, '137913', '이승엽', '010-2368-3770', '175', 'PAID', 'seungyup8@gmail.com', 80000, 5000, 5000, NULL),
-	('2025-10-01', '2025-10-02', 2, 0, 60000, '2025-10-01 09:09:07.453696', 303, '678537', '이승엽', '010-2368-3770', '164', 'PAID', 'seungyup8@gmail.com', 100000, 40000, 30000, 37),
-	('2025-10-09', '2025-10-10', 3, 0, 80000, '2025-10-01 18:45:57.339698', 321, '137913', 'kys', '010-1111-1111', '175', 'PAID', 'kimys75128386@gmail.com', 80000, 0, 0, NULL);
+	('2025-09-01', '2025-09-02', 3, 0, 75000, '2025-10-01 00:12:38.697128', 302, '2531222', '이승엽', '010-2368-3770', '175', 'PAID', 'seungyup8@gmail.com', 80000, 5000, 5000, NULL),
+	('2025-10-01', '2025-10-02', 2, 0, 60000, '2025-10-01 09:09:07.453696', 303, '2531222', '이승엽', '010-2368-3770', '164', 'PAID', 'seungyup8@gmail.com', 100000, 40000, 30000, 37),
+	('2025-10-09', '2025-10-10', 3, 0, 80000, '2025-10-01 18:45:57.339698', 321, '137913', 'kys', '010-1111-1111', '175', 'CANCELLED', 'kimys75128386@gmail.com', 80000, 0, 0, NULL),
+	('2025-10-06', '2025-10-10', 2, 0, 100000, '2025-10-02 01:23:23.076183', 330, '2531222', 'test', '010-1212-1212', '150', 'CANCELLED', 'seungyup0916@gmail.com', 160000, 60000, 50000, 47),
+	('2025-10-13', '2025-10-17', 2, 0, 110000, '2025-10-02 01:29:46.429564', 331, '2531222', 'test', '010-1212-1212', '150', 'PAID', 'seungyup0916@gmail.com', 160000, 50000, 50000, NULL),
+	('2025-05-18', '2025-05-19', 3, 0, 90000, '2025-10-18 01:34:12.381444', 332, '2531222', '이승엽', '010-2368-3770', '156', 'PAID', 'seungyup8@gmail.com', 120000, 30000, 30000, NULL),
+	('2025-10-09', '2025-10-21', 3, 0, 1680000, '2025-10-02 10:16:21.951046', 335, '2531222', '이용석', '010-2222-2222', '154', 'PAID', '8465867@naver.com', 1680000, 0, 0, NULL),
+	('2025-10-04', '2025-10-05', 4, 0, 170000, '2025-10-02 10:39:01.989805', 336, '2531222', '이용석', '010-2222-2222', '157', 'PAID', '8465867@naver.com', 170000, 0, 0, NULL),
+	('2025-10-22', '2025-10-23', 4, 0, 169500, '2025-10-02 10:41:35.350300', 337, '2531222', '이용석', '010-2222-2222', '157', 'PAID', '8465867@naver.com', 170000, 500, 500, NULL),
+	('2025-10-09', '2025-10-11', 5, 0, 168000, '2025-10-02 13:51:03.364342', 339, '3101943', 'test', '010-1212-1212', '294', 'PAID', 'seungyup0916@gmail.com', 560000, 392000, 0, 44),
+	('2025-09-22', '2025-09-29', 6, 0, 1048000, '2025-10-02 17:05:52.376799', 340, '1989501', '이승엽', '010-2368-3770', '149', 'PAID', 'seungyup8@gmail.com', 1050000, 2000, 2000, NULL),
+	('2025-09-02', '2025-09-03', 4, 0, 167000, '2025-10-02 17:06:37.039095', 341, '1989501', '이승엽', '010-2368-3770', '157', 'PAID', 'seungyup8@gmail.com', 170000, 3000, 3000, NULL);
 
 -- 테이블 HotelDB.reviews 구조 내보내기
 CREATE TABLE IF NOT EXISTS `reviews` (
@@ -775,12 +826,21 @@ CREATE TABLE IF NOT EXISTS `reviews` (
   CONSTRAINT `FK4mjgyh1vc99vaf9l18j2ejc89` FOREIGN KEY (`reservation_id`) REFERENCES `reservations` (`reservation_id`),
   CONSTRAINT `FKb9igk5exfb4knqklcvka6cdhx` FOREIGN KEY (`hotel_id`) REFERENCES `hotels` (`contentid`),
   CONSTRAINT `FKtkna5al9upvksllbdki1ly7e1` FOREIGN KEY (`user_name`) REFERENCES `users` (`user_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- 테이블 데이터 HotelDB.reviews:~2 rows (대략적) 내보내기
+-- 테이블 데이터 HotelDB.reviews:~11 rows (대략적) 내보내기
 INSERT INTO `reviews` (`is_deleted`, `is_reported`, `rating`, `created_at`, `reservation_id`, `review_id`, `content`, `content_chosung`, `hotel_id`, `image_url`, `user_name`) VALUES
 	(b'0', b'0', 5, '2025-10-01 19:11:55.546950', 106, 1, '오', 'ㅇ', '678537', NULL, 'seungyup8@gmail.com'),
-	(b'0', b'0', 5, '2025-11-01 19:19:37.395474', 239, 2, '굿굿', 'ㄱㄱ', '139190', NULL, 'seungyup8@gmail.com');
+	(b'0', b'0', 5, '2025-11-01 19:19:37.395474', 239, 2, '굿굿', 'ㄱㄱ', '139190', NULL, 'seungyup8@gmail.com'),
+	(b'0', b'0', 5, '2025-10-18 01:33:36.314997', 331, 3, '아 너무 편안했어요 ㅠㅠㅠ', 'ㅇ ㄴㅁ ㅍㅇㅎㅇㅇ ㅠㅠㅠ', '2531222', NULL, 'seungyup0916@gmail.com'),
+	(b'1', b'1', 1, '2025-10-18 01:35:54.138758', 332, 4, '와 진짜 똥냄새 너무 나잖아. 직원들 생김새도 너무 못생겼어. 다시오나봐라 퉷', 'ㅇ ㅈㅉ ㄸㄴㅅ ㄴㅁ ㄴㅈㅇ. ㅈㅇㄷ ㅅㄱㅅㄷ ㄴㅁ ㅁㅅㄱㅇ. ㄷㅅㅇㄴㅂㄹ ㅌ', '2531222', NULL, 'seungyup8@gmail.com'),
+	(b'0', b'0', 1, '2025-10-02 17:03:40.017282', 302, 5, '진짜 숙소 너무 냄새나고 직원들 못생기고 하, 똥이나 먹어라 진짜', 'ㅈㅉ ㅅㅅ ㄴㅁ ㄴㅅㄴㄱ ㅈㅇㄷ ㅁㅅㄱㄱ ㅎ, ㄸㅇㄴ ㅁㅇㄹ ㅈㅉ', '2531222', NULL, 'seungyup8@gmail.com'),
+	(b'0', b'0', 5, '2025-10-02 17:04:48.474050', 72, 6, '우왕 진짜 너무 좋아용><', 'ㅇㅇ ㅈㅉ ㄴㅁ ㅈㅇㅇ><', '2531222', NULL, 'seungyup8@gmail.com'),
+	(b'0', b'0', 3, '2025-10-02 17:07:54.638203', 340, 7, '애매했음 ㅇㅇ', 'ㅇㅁㅎㅇ ㅇㅇ', '1989501', NULL, 'seungyup8@gmail.com'),
+	(b'0', b'0', 2, '2025-10-02 17:08:10.395165', 341, 8, '아쉬운데?', 'ㅇㅅㅇㄷ?', '1989501', NULL, 'seungyup8@gmail.com'),
+	(b'0', b'0', 5, '2025-10-02 17:09:44.529124', 204, 9, '다음에 또와야징~', 'ㄷㅇㅇ ㄸㅇㅇㅈ~', '2531222', NULL, 'seungyup8@gmail.com'),
+	(b'0', b'0', 5, '2025-10-02 17:09:58.356670', 203, 10, '아 너무 행복했어용.... 황홀s..', 'ㅇ ㄴㅁ ㅎㅂㅎㅇㅇ.... ㅎㅎs..', '2531222', NULL, 'seungyup8@gmail.com'),
+	(b'0', b'0', 5, '2025-10-02 17:10:10.236141', 191, 11, 'good veryverygood', 'good veryverygood', '2531222', NULL, 'seungyup8@gmail.com');
 
 -- 테이블 HotelDB.rooms 구조 내보내기
 CREATE TABLE IF NOT EXISTS `rooms` (
@@ -801,11 +861,11 @@ CREATE TABLE IF NOT EXISTS `rooms` (
   `roomcook` varchar(255) DEFAULT NULL,
   `roomhairdryer` varchar(255) DEFAULT NULL,
   `roomhometheater` varchar(255) DEFAULT NULL,
-  `roomimg1` varchar(255) DEFAULT NULL,
-  `roomimg2` varchar(255) DEFAULT NULL,
-  `roomimg3` varchar(255) DEFAULT NULL,
-  `roomimg4` varchar(255) DEFAULT NULL,
-  `roomimg5` varchar(255) DEFAULT NULL,
+  `roomimg1` varchar(512) DEFAULT NULL,
+  `roomimg2` varchar(512) DEFAULT NULL,
+  `roomimg3` varchar(512) DEFAULT NULL,
+  `roomimg4` varchar(512) DEFAULT NULL,
+  `roomimg5` varchar(512) DEFAULT NULL,
   `roominternet` varchar(255) DEFAULT NULL,
   `roomintro` varchar(255) DEFAULT NULL,
   `roompc` varchar(255) DEFAULT NULL,
@@ -818,9 +878,9 @@ CREATE TABLE IF NOT EXISTS `rooms` (
   `roomtoiletries` varchar(255) DEFAULT NULL,
   `roomtv` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=313 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=328 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- 테이블 데이터 HotelDB.rooms:~312 rows (대략적) 내보내기
+-- 테이블 데이터 HotelDB.rooms:~318 rows (대략적) 내보내기
 INSERT INTO `rooms` (`roombasecount`, `roomcount`, `roommaxcount`, `roomoffseasonminfee1`, `roomoffseasonminfee2`, `roompeakseasonminfee1`, `roompeakseasonminfee2`, `id`, `contentid`, `roomaircondition`, `roombath`, `roombathfacility`, `roomcable`, `roomcode`, `roomcook`, `roomhairdryer`, `roomhometheater`, `roomimg1`, `roomimg2`, `roomimg3`, `roomimg4`, `roomimg5`, `roominternet`, `roomintro`, `roompc`, `roomrefrigerator`, `roomsize1`, `roomsize2`, `roomsofa`, `roomtable`, `roomtitle`, `roomtoiletries`, `roomtv`) VALUES
 	(2, 0, 0, 108000, 108000, 108000, 108000, 1, '142785', 'Y', 'Y', 'Y', 'Y', '', '', 'Y', '', '', '', '', '', '', 'Y', '※ 위 정보는 2021년 08월에 수정된 정보로(정상요금), 해당 숙박시설 이용요금이 수시로 변동됨에 따라 이용요금 및 기타 자세한 사항은 홈페이지 참조 요망', '', 'Y', '10', '33', 'Y', '', '디럭스 더블', 'Y', 'Y'),
 	(3, 0, 3, 128000, 128000, 128000, 128000, 2, '142785', 'Y', 'Y', '', 'Y', '', '', 'Y', '', '', '', '', '', '', 'Y', '※ 위 정보는 2021년 08월에 수정된 정보로(정상요금), 해당 숙박시설 이용요금이 수시로 변동됨에 따라 이용요금 및 기타 자세한 사항은 홈페이지 참조 요망', '', 'Y', '0', '0', 'Y', '', '주니어 스위트', 'Y', 'Y'),
@@ -956,21 +1016,21 @@ INSERT INTO `rooms` (`roombasecount`, `roomcount`, `roommaxcount`, `roomoffseaso
 	(2, 0, 0, 75000, 165000, 180000, 200000, 132, '2903046', 'Y', '', 'Y', 'Y', '', '', 'Y', '', 'http://tong.visitkorea.or.kr/cms/resource/11/2950311_image2_1.jpg', '', '', '', '', 'Y', '', '', 'Y', '6', '22.8', '', 'Y', '스탠다드트윈', 'Y', 'Y'),
 	(5, 0, 0, 135000, 265000, 260000, 290000, 133, '2903046', 'Y', 'Y', 'Y', 'Y', '', '', 'Y', '', 'http://tong.visitkorea.or.kr/cms/resource/19/2950319_image2_1.jpg', '', '', '', '', 'Y', '', '', 'Y', '14', '48.4', 'Y', 'Y', '스위트룸', 'Y', 'Y'),
 	(2, 1, 4, 430000, 550000, 550000, 600000, 134, '3102100', 'Y', '', 'Y', 'Y', '', 'Y', 'Y', 'Y', '', '', '', '', '', 'Y', '', '', 'Y', '27', '89.3', 'Y', 'Y', '한옥스테이', 'Y', 'Y'),
-	(4, 9, 4, 20000, 25000, 30000, 30000, 135, '2398102', 'Y', '', '', '', '', '', 'Y', '', '', '', '', '', '', 'Y', '※ 1인 요금', 'Y', 'Y', '5', '17', '', 'Y', '4인실 도미토리', 'Y', 'Y'),
-	(2, 6, 2, 50000, 60000, 80000, 80000, 136, '2398102', 'Y', '', '', '', '', '', 'Y', '', '', 'http://tong.visitkorea.or.kr/cms/resource/12/2684312_image2_1.jpg', '', '', '', 'Y', '', 'Y', 'Y', '5', '17', '', 'Y', '2인실 온돌', 'Y', 'Y'),
+	(4, 0, 4, 20000, 25000, 30000, 30000, 135, '2398102', 'Y', '', '', '', '', '', 'Y', '', '', '', '', '', '', 'Y', '※ 1인 요금', 'Y', 'Y', '5', '17', '', 'Y', '4인실 도미토리', 'Y', 'Y'),
+	(2, 0, 2, 50000, 60000, 80000, 80000, 136, '2398102', 'Y', '', '', '', '', '', 'Y', '', '', 'http://tong.visitkorea.or.kr/cms/resource/12/2684312_image2_1.jpg', '', '', '', 'Y', '', 'Y', 'Y', '5', '17', '', 'Y', '2인실 온돌', 'Y', 'Y'),
 	(2, 0, 2, 60000, 60000, 60000, 60000, 137, '2038173', 'Y', '', '', '', '48014', '', 'Y', '', '', '', '', '', '', 'Y', '', '', '', '10', '34', '', '', '트윈룸', 'Y', ''),
 	(1, 0, 8, 22000, 22000, 22000, 22000, 138, '2038173', 'Y', '', '', '', '48010', '', 'Y', '', '', '', '', '', '', 'Y', '', '', '', '30', '100', '', '', '8인 도미토리룸', 'Y', ''),
 	(1, 0, 2, 42000, 42000, 42000, 42000, 139, '2038173', 'Y', '', '', '', '48015', '', 'Y', '', '', '', '', '', '', 'Y', '', '', '', '10', '34', '', '', '더블룸', 'Y', ''),
 	(1, 0, 4, 29000, 29000, 29000, 29000, 140, '2038173', 'Y', '', '', '', '57169', '', 'Y', '', 'http://tong.visitkorea.or.kr/cms/resource/41/2964341_image2_1.png', '', '', '', '', '', '', '', '', '10', '34', '', '', '3인도미토리룸', 'Y', ''),
-	(6, 0, 6, 50000, 60000, 70000, 70000, 141, '1989501', 'Y', '', '', '', '', '', '', '', 'http://tong.visitkorea.or.kr/cms/resource/57/2578957_image2_1.jpg', 'http://tong.visitkorea.or.kr/cms/resource/59/2578959_image2_1.jpg', 'http://tong.visitkorea.or.kr/cms/resource/61/2578961_image2_1.jpg', '', '', 'Y', '', '', 'Y', '4', '15', '', '', '행랑채', '', 'Y'),
-	(12, 0, 12, 220000, 230000, 250000, 250000, 142, '1989501', 'Y', '', '', '', '', '', '', '', 'http://tong.visitkorea.or.kr/cms/resource/64/2578964_image2_1.jpg', 'http://tong.visitkorea.or.kr/cms/resource/68/2578968_image2_1.jpg', 'http://tong.visitkorea.or.kr/cms/resource/69/2578969_image2_1.jpg', '', '', 'Y', '', '', 'Y', '20', '67', '', '', '홍예헌1', '', 'Y'),
-	(30, 0, 30, 550000, 600000, 700000, 700000, 143, '1989501', 'Y', '', 'Y', '', '', '', '', '', 'http://tong.visitkorea.or.kr/cms/resource/29/2578929_image2_1.jpg', 'http://tong.visitkorea.or.kr/cms/resource/33/2578933_image2_1.jpg', 'http://tong.visitkorea.or.kr/cms/resource/32/2578932_image2_1.jpg', '', '', 'Y', '', '', 'Y', '0', '0', '', '', '전통문화체험관', '', 'Y'),
-	(6, 0, 6, 220000, 250000, 300000, 300000, 144, '1989501', 'Y', '', 'Y', '', '', '', '', '', 'http://tong.visitkorea.or.kr/cms/resource/16/2578916_image2_1.jpg', 'http://tong.visitkorea.or.kr/cms/resource/17/2578917_image2_1.jpg', 'http://tong.visitkorea.or.kr/cms/resource/18/2578918_image2_1.jpg', '', '', 'Y', '', '', 'Y', '12', '40', '', 'Y', '서별당', '', 'Y'),
-	(7, 0, 7, 150000, 170000, 200000, 200000, 145, '1989501', 'Y', '', '', '', '', '', '', '', 'http://tong.visitkorea.or.kr/cms/resource/19/2578919_image2_1.jpg', 'http://tong.visitkorea.or.kr/cms/resource/21/2578921_image2_1.jpg', '', '', '', 'Y', '', '', 'Y', '12', '40', '', '', '연지당', '', 'Y'),
-	(14, 0, 14, 220000, 250000, 280000, 280000, 146, '1989501', 'Y', '', '', '', '', '', '', '', 'http://tong.visitkorea.or.kr/cms/resource/70/2578970_image2_1.jpg', 'http://tong.visitkorea.or.kr/cms/resource/72/2578972_image2_1.jpg', 'http://tong.visitkorea.or.kr/cms/resource/73/2578973_image2_1.jpg', '', '', 'Y', '', '', 'Y', '25', '83', '', '', '홍예헌2', '', 'Y'),
-	(6, 0, 6, 150000, 170000, 200000, 200000, 147, '1989501', 'Y', '', 'Y', '', '', 'Y', '', '', 'http://tong.visitkorea.or.kr/cms/resource/49/2578949_image2_1.jpg', 'http://tong.visitkorea.or.kr/cms/resource/52/2578952_image2_1.jpg', 'http://tong.visitkorea.or.kr/cms/resource/53/2578953_image2_1.jpg', '', '', 'Y', '', '', 'Y', '12', '40', '', '', '초가2', '', 'Y'),
-	(6, 0, 6, 120000, 130000, 150000, 150000, 148, '1989501', 'Y', '', '', '', '', '', '', '', 'http://tong.visitkorea.or.kr/cms/resource/36/2578936_image2_1.jpg', 'http://tong.visitkorea.or.kr/cms/resource/38/2578938_image2_1.jpg', 'http://tong.visitkorea.or.kr/cms/resource/39/2578939_image2_1.jpg', '', '', 'Y', '', '', 'Y', '8', '27', '', '', '중랑채', '', 'Y'),
-	(6, 0, 6, 150000, 170000, 200000, 200000, 149, '1989501', 'Y', '', '', '', '', 'Y', '', '', 'http://tong.visitkorea.or.kr/cms/resource/42/2578942_image2_1.jpg', 'http://tong.visitkorea.or.kr/cms/resource/44/2578944_image2_1.jpg', 'http://tong.visitkorea.or.kr/cms/resource/46/2578946_image2_1.jpg', '', '', 'Y', '', '', 'Y', '13', '43', '', '', '초가1', '', 'Y'),
+	(6, 8, 6, 50000, 60000, 70000, 70000, 141, '1989501', 'Y', '', '', '', '', '', '', '', 'http://tong.visitkorea.or.kr/cms/resource/57/2578957_image2_1.jpg', 'http://tong.visitkorea.or.kr/cms/resource/59/2578959_image2_1.jpg', 'http://tong.visitkorea.or.kr/cms/resource/61/2578961_image2_1.jpg', '', '', 'Y', '', '', 'Y', '4', '15', '', '', '행랑채', '', 'Y'),
+	(12, 2, 12, 220000, 230000, 250000, 250000, 142, '1989501', 'Y', '', '', '', '', '', '', '', 'http://tong.visitkorea.or.kr/cms/resource/64/2578964_image2_1.jpg', 'http://tong.visitkorea.or.kr/cms/resource/68/2578968_image2_1.jpg', 'http://tong.visitkorea.or.kr/cms/resource/69/2578969_image2_1.jpg', '', '', 'Y', '', '', 'Y', '20', '67', '', '', '홍예헌1', '', 'Y'),
+	(30, 1, 30, 550000, 600000, 700000, 700000, 143, '1989501', 'Y', '', 'Y', '', '', '', '', '', 'http://tong.visitkorea.or.kr/cms/resource/29/2578929_image2_1.jpg', 'http://tong.visitkorea.or.kr/cms/resource/33/2578933_image2_1.jpg', 'http://tong.visitkorea.or.kr/cms/resource/32/2578932_image2_1.jpg', '', '', 'Y', '', '', 'Y', '0', '0', '', '', '전통문화체험관', '', 'Y'),
+	(6, 3, 6, 220000, 250000, 300000, 300000, 144, '1989501', 'Y', '', 'Y', '', '', '', '', '', 'http://tong.visitkorea.or.kr/cms/resource/16/2578916_image2_1.jpg', 'http://tong.visitkorea.or.kr/cms/resource/17/2578917_image2_1.jpg', 'http://tong.visitkorea.or.kr/cms/resource/18/2578918_image2_1.jpg', '', '', 'Y', '', '', 'Y', '12', '40', '', 'Y', '서별당', '', 'Y'),
+	(7, 3, 7, 150000, 170000, 200000, 200000, 145, '1989501', 'Y', '', '', '', '', '', '', '', 'http://tong.visitkorea.or.kr/cms/resource/19/2578919_image2_1.jpg', 'http://tong.visitkorea.or.kr/cms/resource/21/2578921_image2_1.jpg', '', '', '', 'Y', '', '', 'Y', '12', '40', '', '', '연지당', '', 'Y'),
+	(14, 2, 14, 220000, 250000, 280000, 280000, 146, '1989501', 'Y', '', '', '', '', '', '', '', 'http://tong.visitkorea.or.kr/cms/resource/70/2578970_image2_1.jpg', 'http://tong.visitkorea.or.kr/cms/resource/72/2578972_image2_1.jpg', 'http://tong.visitkorea.or.kr/cms/resource/73/2578973_image2_1.jpg', '', '', 'Y', '', '', 'Y', '25', '83', '', '', '홍예헌2', '', 'Y'),
+	(6, 5, 6, 150000, 170000, 200000, 200000, 147, '1989501', 'Y', '', 'Y', '', '', 'Y', '', '', 'http://tong.visitkorea.or.kr/cms/resource/49/2578949_image2_1.jpg', 'http://tong.visitkorea.or.kr/cms/resource/52/2578952_image2_1.jpg', 'http://tong.visitkorea.or.kr/cms/resource/53/2578953_image2_1.jpg', '', '', 'Y', '', '', 'Y', '12', '40', '', '', '초가2', '', 'Y'),
+	(6, 3, 6, 120000, 130000, 150000, 150000, 148, '1989501', 'Y', '', '', '', '', '', '', '', 'http://tong.visitkorea.or.kr/cms/resource/36/2578936_image2_1.jpg', 'http://tong.visitkorea.or.kr/cms/resource/38/2578938_image2_1.jpg', 'http://tong.visitkorea.or.kr/cms/resource/39/2578939_image2_1.jpg', '', '', 'Y', '', '', 'Y', '8', '27', '', '', '중랑채', '', 'Y'),
+	(6, 5, 6, 150000, 170000, 200000, 200000, 149, '1989501', 'Y', '', '', '', '', 'Y', '', '', 'http://tong.visitkorea.or.kr/cms/resource/42/2578942_image2_1.jpg', 'http://tong.visitkorea.or.kr/cms/resource/44/2578944_image2_1.jpg', 'http://tong.visitkorea.or.kr/cms/resource/46/2578946_image2_1.jpg', '', '', 'Y', '', '', 'Y', '13', '43', '', '', '초가1', '', 'Y'),
 	(2, 5, 3, 65000, 75000, 90000, 90000, 150, '2531222', 'Y', '', '', 'Y', '', '', 'Y', '', 'http://tong.visitkorea.or.kr/cms/resource/74/3525074_image2_1.jpg', 'http://tong.visitkorea.or.kr/cms/resource/75/3525075_image2_1.jpg', '', '', '', 'Y', '※ 위 정보는 2025년 08월에 작성된 정보로 해당 숙박시설 이용 요금이 수시로 변동됨에 따라 이용요금 및 기타 자세한 사항은 홈페이지 참조 요망', '', 'Y', '16', '0', '', 'Y', '보급형', '', 'Y'),
 	(2, 1, 3, 80000, 95000, 110000, 110000, 151, '2531222', 'Y', '', '', 'Y', '', '', 'Y', '', 'http://tong.visitkorea.or.kr/cms/resource/71/3525071_image2_1.jpg', 'http://tong.visitkorea.or.kr/cms/resource/72/3525072_image2_1.jpg', '', '', '', 'Y', '※ 위 정보는 2025년 08월에 작성된 정보로 해당 숙박시설 이용 요금이 수시로 변동됨에 따라 이용요금 및 기타 자세한 사항은 홈페이지 참조 요망', '', 'Y', '23', '0', '', 'Y', '미래형 2', '', 'Y'),
 	(6, 1, 8, 250000, 300000, 360000, 360000, 152, '2531222', 'Y', '', '', 'Y', '', '', 'Y', '', 'http://tong.visitkorea.or.kr/cms/resource/84/3525084_image2_1.jpg', 'http://tong.visitkorea.or.kr/cms/resource/85/3525085_image2_1.jpg', '', '', '', 'Y', '※ 위 정보는 2025년 08월에 작성된 정보로 해당 숙박시설 이용 요금이 수시로 변동됨에 따라 이용요금 및 기타 자세한 사항은 홈페이지 참조 요망', '', 'Y', '75', '0', '', 'Y', '최고급형 VIP', '', 'Y'),
@@ -1133,7 +1193,15 @@ INSERT INTO `rooms` (`roombasecount`, `roomcount`, `roommaxcount`, `roomoffseaso
 	(2, 7, 3, 286000, 330000, 418000, 418000, 309, '2475088', 'Y', 'Y', 'Y', 'Y', '', '', 'Y', '', 'http://tong.visitkorea.or.kr/cms/resource/21/3515121_image2_1.jpg', 'http://tong.visitkorea.or.kr/cms/resource/20/3515120_image2_1.jpg', '', '', '', 'Y', '※ 위 정보는 2025년 7월에 작성된 정보로 해당 숙박시설 이용 요금이 수시로 변동됨에 따라 이용요금 및 기타 자세한 사항은 홈페이지 참조 요망', '', 'Y', '0', '36.64', 'Y', 'Y', '디럭스 더블', 'Y', 'Y'),
 	(2, 1, 2, 0, 0, 0, 0, 310, '7605415', 'N', 'N', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'N', '', NULL, 'N', '', NULL, 'N', 'N', '디럭스', NULL, 'N'),
 	(2, 1, 2, 0, 0, 0, 0, 311, '4848524', 'N', 'N', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'N', '', NULL, 'N', '', NULL, 'N', 'N', '디럭스', NULL, 'N'),
-	(2, 1, 2, 0, 0, 0, 0, 312, '5176308', 'N', 'N', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'N', '', NULL, 'N', '', NULL, 'N', 'N', '디럭스', NULL, 'N');
+	(2, 1, 2, 0, 0, 0, 0, 312, '5176308', 'N', 'N', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'N', '', NULL, 'N', '', NULL, 'N', 'N', '디럭스', NULL, 'N'),
+	(2, 1, 2, 10000, 31231, 321313, 31233, 313, '9530521', 'N', 'N', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'N', '', NULL, 'N', '', NULL, 'N', 'N', '디럭', NULL, 'N'),
+	(2, 1, 4, 100000, 100000, 0, 0, 315, '7014940', 'Y', 'Y', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'N', '객실', NULL, 'N', '30m', NULL, 'N', 'N', '디럭스룸', NULL, 'N'),
+	(3, 3, 5, 100000, 100000, 300000, 300000, 316, '7014940', 'N', 'Y', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Y', '객실', NULL, 'N', '30m', NULL, 'N', 'N', '가야', NULL, 'Y'),
+	(2, 1, 4, 10000, 10000, 30000, 0, 317, '7014940', 'Y', 'Y', NULL, NULL, NULL, NULL, NULL, NULL, 'https://hotelbookingdaewoo.s3.ap-northeast-2.amazonaws.com/hotels/555dc606-291e-4bc2-8e38-41434d148759-226fd15e-c862-42db-a50b-da18f1a3a298-2bf5b5ad-9efa-4d73-9efc-c7cbc8fe77d3-68c44c94-1bfe-493d-aab1-ce906ed018aa-4874f35b-7757-4ec6-8104-29afa4305f14-cb0788b8-c403-4cdf-98a8-7fce33f374d9-add.png', '', '', '', '', 'N', '', NULL, 'N', '30', NULL, 'N', 'N', 'ㅇㅇㅇ', NULL, 'N'),
+	(3, 3, 4, 30000, 10000, 20000, 30002, 318, '7014940', 'Y', 'Y', NULL, NULL, NULL, NULL, NULL, NULL, 'https://hotelbookingdaewoo.s3.ap-northeast-2.amazonaws.com/hotels/14db3e06-1bfd-427b-8abc-39db3f487a60-d31209cd-e773-444b-b1c0-530576d0cc7d-fba8fb93-481e-4793-8277-a40f1ac8143c-4ce6ebe6-6bb7-4c24-8f92-d2219e3f05c1-a81926e1-9b98-4cc5-854a-67f8ad3adcec-4850444c-9b7b-432f-b16d-6c3b5c668bf5-5ad25934-c6f8-40f3-ba9c-119f6bfef905-9e975ea0-ef71-40f0-9fa9-127b1cdcec33-3c49cbe3-441d-4501-b582-8665b64d5635-815e0389-5cba-49a8-af1c-894f8acadd29-다운로드.jpg', 'https://hotelbookingdaewoo.s3.ap-northeast-2.amazonaws.com/hotels/0aeb5d09-5d10-46a2-be4b-a857fb0903cc-74815668-27b8-4aaf-9db7-a36e9ee6c4e1-7a9aab4a-27e8-4542-b488-b2c89f754d28-21a366e0-f35d-405a-9754-e6be0186ac6d-f567cfde-4566-4e73-8de0-2a7e214a1b2b-8145f164-88b7-4a45-a22f-1a357b4f2504-dd5c9cbe-baba-418e-8f6a-eb4f964a8731-aa2994f0-3a21-4e1e-a850-39aa2443b348-723ee960-dd77-4247-9a2c-536a7325b545-210335e2-1199-423b-ac45-4c9b8ff6511e-다운로드.jpg', 'https://hotelbookingdaewoo.s3.ap-northeast-2.amazonaws.com/hotels/26245856-a626-4667-85ad-62301763536a-6594056a-d0c5-49f1-b774-3267c9f963d5-1dff188b-cac2-4d2c-a60c-900f06f93a6b-40cc9fdb-6ea7-463b-b3ef-5979e510a018-4f98a732-cab7-4ed8-b01e-1acb659fc10f-96123b3f-447c-46ce-98bb-edda262eb0bc-f95fe05d-4087-4b71-a2be-6c5b1580951c-다운로드.jpg', '', '', 'Y', '와아', NULL, 'Y', '30', NULL, 'N', 'N', '와ㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏ', NULL, 'N'),
+	(4, 5, 5, 10000, 10000, 20000, 30000, 319, '8387200', 'Y', 'Y', NULL, NULL, NULL, NULL, NULL, NULL, 'https://hotelbookingdaewoo.s3.ap-northeast-2.amazonaws.com/hotels/09832a42-10dc-4cca-a126-9993f8e3770a-다운로드.jpg', NULL, NULL, NULL, NULL, 'N', '다ㅏ', NULL, 'N', '90', NULL, 'N', 'N', '아ㅏㅏㅣㅏㅏㅏㅏㅏ', NULL, 'N'),
+	(2, 4, 4, 1000, 10000, 10000, 10000, 322, '7014940', 'N', 'N', NULL, NULL, NULL, NULL, NULL, NULL, 'https://hotelbookingdaewoo.s3.ap-northeast-2.amazonaws.com/hotels/2310cc4b-bddd-4bff-993d-f7e1bc5c07d3-다운로드.jpg', 'https://hotelbookingdaewoo.s3.ap-northeast-2.amazonaws.com/hotels/06d25f87-3ca5-4c66-a018-d9f581d9e063-다운로드.jpg', 'https://hotelbookingdaewoo.s3.ap-northeast-2.amazonaws.com/hotels/74a7262d-a235-4b7f-bc09-27f339c218a5-다운로드.jpg', 'https://hotelbookingdaewoo.s3.ap-northeast-2.amazonaws.com/hotels/1d546e8a-a0f0-4ce0-ad5f-bb6b2dbcee53-다운로드.jpg', 'https://hotelbookingdaewoo.s3.ap-northeast-2.amazonaws.com/hotels/072806c3-33de-4d44-958a-a1da09897939-다운로드.jpg', 'Y', '아ㅏㅏㅏㅏㅏㅏㅏ아ㅏ', NULL, 'Y', '30', NULL, 'Y', 'N', 'ㅇㅁㅇㅁㅇ', NULL, 'Y'),
+	(2, 1, 4, 1000, 0, 10000, 10000, 325, '7014940', 'Y', 'N', NULL, NULL, NULL, NULL, NULL, NULL, 'https://hotelbookingdaewoo.s3.ap-northeast-2.amazonaws.com/hotels/cdee6ec4-bf5f-4ff5-9d4c-44478ae6ed7b-207e1a1b-e0fd-434a-b222-280a62cdaa88-4e425d58-e19b-4f21-a756-e7974f2ecec7-다운로드.jpg', '', '', '', '', 'N', '12', NULL, 'N', '30', NULL, 'N', 'N', 'ㅇㄴㅁ', NULL, 'N');
 
 -- 테이블 HotelDB.room_price_overrides 구조 내보내기
 CREATE TABLE IF NOT EXISTS `room_price_overrides` (
@@ -1146,9 +1214,28 @@ CREATE TABLE IF NOT EXISTS `room_price_overrides` (
   PRIMARY KEY (`id`),
   KEY `FKkbku6ugian7iy4fooj7td3atf` (`room_id`),
   CONSTRAINT `FKkbku6ugian7iy4fooj7td3atf` FOREIGN KEY (`room_id`) REFERENCES `rooms` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- 테이블 데이터 HotelDB.room_price_overrides:~0 rows (대략적) 내보내기
+-- 테이블 데이터 HotelDB.room_price_overrides:~18 rows (대략적) 내보내기
+INSERT INTO `room_price_overrides` (`end_date`, `price`, `start_date`, `id`, `room_id`, `title`) VALUES
+	('2025-10-10', 40000, '2025-10-06', 1, 150, '추석맞이 할인'),
+	('2025-10-10', 80000, '2025-10-06', 2, 151, '추석맞이 할인'),
+	('2025-10-10', 250000, '2025-10-06', 3, 152, '추석맞이 할인'),
+	('2025-10-10', 230000, '2025-10-06', 4, 153, '추석맞이 할인'),
+	('2025-10-10', 140000, '2025-10-06', 5, 154, '추석맞이 할인'),
+	('2025-10-10', 120000, '2025-10-06', 6, 155, '추석맞이 할인'),
+	('2025-10-10', 120000, '2025-10-06', 7, 156, '추석맞이 할인'),
+	('2025-10-10', 170000, '2025-10-06', 8, 157, '추석맞이 할인'),
+	('2025-10-10', 200000, '2025-10-06', 9, 158, '추석맞이 할인'),
+	('2025-10-17', 40000, '2025-10-13', 10, 150, '추석끝맞이 할인'),
+	('2025-10-17', 80000, '2025-10-13', 11, 151, '추석끝맞이 할인'),
+	('2025-10-17', 250000, '2025-10-13', 12, 152, '추석끝맞이 할인'),
+	('2025-10-17', 230000, '2025-10-13', 13, 153, '추석끝맞이 할인'),
+	('2025-10-17', 140000, '2025-10-13', 14, 154, '추석끝맞이 할인'),
+	('2025-10-17', 120000, '2025-10-13', 15, 155, '추석끝맞이 할인'),
+	('2025-10-17', 120000, '2025-10-13', 16, 156, '추석끝맞이 할인'),
+	('2025-10-17', 170000, '2025-10-13', 17, 157, '추석끝맞이 할인'),
+	('2025-10-17', 200000, '2025-10-13', 18, 158, '추석끝맞이 할인');
 
 -- 테이블 HotelDB.users 구조 내보내기
 CREATE TABLE IF NOT EXISTS `users` (
@@ -1166,21 +1253,24 @@ CREATE TABLE IF NOT EXISTS `users` (
   PRIMARY KEY (`user_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- 테이블 데이터 HotelDB.users:~13 rows (대략적) 내보내기
+-- 테이블 데이터 HotelDB.users:~16 rows (대략적) 내보내기
 INSERT INTO `users` (`join_date`, `business_registration_number`, `login_type`, `name`, `password_hash`, `phone_number`, `user_name`, `uuid`, `approval_status`, `role`, `points`) VALUES
-	('2025-09-24 19:21:30.253099', NULL, NULL, '이용석', '$2a$10$0zsfpTOwH0A0f2zHAVR5I..ILyF0u7DJFvuZ2AZhK4fJXRKJ0kbbO', '010-2222-2222', '8465867@naver.com', NULL, 'APPROVED', 'USER', 95000),
+	('2025-09-24 19:21:30.253099', NULL, NULL, '이용석', '$2a$10$0zsfpTOwH0A0f2zHAVR5I..ILyF0u7DJFvuZ2AZhK4fJXRKJ0kbbO', '010-2222-2222', '8465867@naver.com', NULL, 'APPROVED', 'USER', 94500),
 	('2025-09-27 17:06:22.444367', '2222222', NULL, 'a', '$2a$10$sCfiiXa9cX7ir.LkUt0tdOOAKcEV7K5UTs37H.Bd1/kjdx6FdC54i', '010-1212-1111', 'aaaaaaa', NULL, 'APPROVED', 'BUSINESS', 0),
 	('2025-09-24 18:54:09.639648', '111111111', NULL, 'admin', '$2a$10$eIOCaAbLu8pUACfNQ.wXoumVTxS13uBLt4Ko9MERzM2IxGkGzgPjm', '010-1111-1111', 'admin', NULL, 'APPROVED', 'ADMIN_SUPER', 0),
 	('2025-09-30 20:02:15.541283', NULL, NULL, '홍길동', '$2a$10$Wz/EQuGW2/bH.GLW2BU.K.ljYzLWl4.Sm4AgWVv3G4JWRmVPlu3lq', NULL, 'adminbiz', NULL, 'APPROVED', 'ADMIN_BIZ', 0),
 	('2025-09-30 21:09:24.239863', NULL, NULL, 'admincs', '$2a$10$v1nTg6mQ0W.71KCpcWH83eE2rwlf9LUUHOGfCqcePDGXh1nTbUIrm', NULL, 'admincs', NULL, 'APPROVED', 'ADMIN_CS', 0),
 	('2025-09-24 20:29:22.771119', '137913', NULL, 'business', '$2a$10$bTbOuqq40KgC5wD1Nu3CB.rpntelOh5tCLu5lsx2IxGBxhWjfXl5S', '010-1234-1234', 'business', NULL, 'APPROVED', 'BUSINESS', 0),
+	('2025-10-01 20:55:55.694099', '3333344444', NULL, '아아아', '$2a$10$h8jx1Y.rXl45dt3CHcH2XO.0rAw9ha/6YI/Q72jrITT.GtIjUeDBa', '010-1111-1111', 'business2', NULL, 'APPROVED', 'BUSINESS', 0),
 	('2025-09-28 18:18:11.040852', NULL, NULL, 'kys', '$2a$10$DmVzb5k3HDJHEWAvbVF1OeWQ5DOTgyujreKjOQD2.32uXzn4X343O', '010-1111-1111', 'kimys75128386@gmail.com', NULL, 'APPROVED', 'USER', 5000),
-	('2025-09-10 12:00:00.000000', NULL, NULL, 'admin', '$2a$10$RV9vzvYhaH/eoenB.DpZPec3lvP9P5xgDWk5WT.kIXe9g0oV2gLlm', '010-1234-1234', 'seungyup0915@gmail.com', NULL, 'APPROVED', 'USER', 160000),
-	('2025-10-01 17:01:02.888598', NULL, NULL, 'test', '$2a$10$cmEsYrRz0PJbC.ssGLqHVecWCKgwp3m5krSbKFHxzrusDRJjQiYH.', '010-1212-1212', 'seungyup0916@gmail.com', NULL, 'APPROVED', 'USER', 50000),
-	('2025-09-29 18:51:26.414695', NULL, 'KAKAO', '이승엽', '$2a$10$BSBWRVGcdgGb6.bieOfOPOHB0NQi/xBDok3HIyJ630P1oH9blbwlW', '010-2368-3770', 'seungyup8@gmail.com', '4460656671', 'APPROVED', 'USER', 134100),
+	('2025-09-10 12:00:00.000000', NULL, NULL, '2승엽', '$2a$10$RV9vzvYhaH/eoenB.DpZPec3lvP9P5xgDWk5WT.kIXe9g0oV2gLlm', '010-1234-1234', 'seungyup0915@gmail.com', NULL, 'APPROVED', 'USER', 160000),
+	('2025-10-01 17:01:02.888598', NULL, NULL, 'test', '$2a$10$cmEsYrRz0PJbC.ssGLqHVecWCKgwp3m5krSbKFHxzrusDRJjQiYH.', '010-1212-1212', 'seungyup0916@gmail.com', NULL, 'APPROVED', 'USER', 5000),
+	('2025-09-29 18:51:26.414695', NULL, 'KAKAO', '이승엽', '$2a$10$BSBWRVGcdgGb6.bieOfOPOHB0NQi/xBDok3HIyJ630P1oH9blbwlW', '010-2368-3770', 'seungyup8@gmail.com', '4460656671', 'APPROVED', 'USER', 139100),
 	('2025-09-29 02:46:46.820466', NULL, NULL, 'admin2', '$2a$10$aVynykAq8fL1rXFFubGhVeg5O7L5.ez6jNS03jkJVIQ9OV9C5BupS', '010-1234-1234', 'seungyup8@naver.com', NULL, 'APPROVED', 'ADMIN_SUPER', 0),
 	('2025-09-30 18:06:03.295876', '3333333333', NULL, '승엽', '$2a$10$gx3GFbjFs.llco8dhlLmQ.KvzZc./arDASg1DnzQjuPwuT083QwIa', '010-1234-1234', 'sylee', NULL, 'APPROVED', 'BUSINESS', 0),
-	('2025-09-24 19:09:53.050617', '2222222222', NULL, 'test', '$2a$10$e7oRXfEM.FMRYN6vP.4YgeqjBPCB7AbQ4wJ8Ap0pTwwzXRAMhuR.6', '010-1111-1111', 'test', NULL, 'APPROVED', 'ADMIN_SUPER', 0);
+	('2025-09-24 19:09:53.050617', '2222222222', NULL, 'test', '$2a$10$e7oRXfEM.FMRYN6vP.4YgeqjBPCB7AbQ4wJ8Ap0pTwwzXRAMhuR.6', '010-1111-1111', 'test', NULL, 'APPROVED', 'ADMIN_SUPER', 0),
+	('2025-10-01 20:49:05.674992', '5555555555', NULL, '테스트', '$2a$10$d8qqmeToGgFWNcXWkNdAJOSAu9AmUVvhU3QSPyjeexVs77zbqr67K', '010-6546-5465', 'test1', NULL, 'APPROVED', 'BUSINESS', 0),
+	('2025-10-01 20:51:46.200401', '', NULL, '테스트투', '$2a$10$tEwaq.hYY2nbW6j.fEzAYOfsFoSRCHLdGGzZW0.qyERN2X2/bvdu.', '010-9999-9888', 'test2', NULL, 'APPROVED', 'BUSINESS', 0);
 
 -- 테이블 HotelDB.user_coupon 구조 내보내기
 CREATE TABLE IF NOT EXISTS `user_coupon` (
@@ -1197,14 +1287,20 @@ CREATE TABLE IF NOT EXISTS `user_coupon` (
   KEY `FK333cxxgbeghqf0yh0hd94bods` (`user_name`),
   CONSTRAINT `FK23vpkw483hhbe77dgvimcipf4` FOREIGN KEY (`coupon_id`) REFERENCES `coupon` (`id`),
   CONSTRAINT `FK333cxxgbeghqf0yh0hd94bods` FOREIGN KEY (`user_name`) REFERENCES `users` (`user_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- 테이블 데이터 HotelDB.user_coupon:~4 rows (대략적) 내보내기
+-- 테이블 데이터 HotelDB.user_coupon:~10 rows (대략적) 내보내기
 INSERT INTO `user_coupon` (`is_used`, `coupon_id`, `expire_at`, `id`, `issued_at`, `used_at`, `issued_source`, `user_name`) VALUES
 	(b'0', 42, '2025-10-11 18:19:30.645582', 1, '2025-10-01 18:19:30.645582', NULL, 'CODE_INPUT', 'seungyup0915@gmail.com'),
 	(b'0', 42, '2025-10-11 18:21:42.011083', 2, '2025-10-01 18:21:42.011083', NULL, 'CODE_INPUT', 'seungyup0915@gmail.com'),
 	(b'0', 1, '2025-10-02 18:25:20.362224', 3, '2025-10-01 18:25:20.362224', NULL, 'CODE_INPUT', 'seungyup0915@gmail.com'),
-	(b'1', 42, '2025-10-11 19:10:42.809109', 4, '2025-10-01 19:10:42.809109', '2025-10-01 19:10:54.336135', 'CODE_INPUT', 'seungyup8@gmail.com');
+	(b'1', 42, '2025-10-11 19:10:42.809109', 4, '2025-10-01 19:10:42.809109', '2025-10-01 19:10:54.336135', 'CODE_INPUT', 'seungyup8@gmail.com'),
+	(b'1', 47, '2025-11-01 00:49:51.670624', 5, '2025-10-02 00:49:51.670624', '2025-10-02 01:23:31.033448', 'CODE_INPUT', 'seungyup0916@gmail.com'),
+	(b'0', 42, '2025-10-12 11:09:45.993071', 6, '2025-10-02 11:09:45.993071', NULL, 'CODE_INPUT', '8465867@naver.com'),
+	(b'0', 42, '2025-10-12 12:59:36.715224', 7, '2025-10-02 12:59:36.715224', NULL, 'CODE_INPUT', 'seungyup0916@gmail.com'),
+	(b'1', 44, '2025-12-01 13:00:45.173309', 8, '2025-10-02 13:00:45.173309', '2025-10-02 13:51:05.175746', 'CODE_INPUT', 'seungyup0916@gmail.com'),
+	(b'0', 42, '2025-10-12 13:17:27.069569', 9, '2025-10-02 13:17:27.069569', NULL, 'CODE_INPUT', 'seungyup0916@gmail.com'),
+	(b'0', 42, '2025-10-12 13:30:26.817611', 10, '2025-10-02 13:30:26.818614', NULL, 'CODE_INPUT', 'seungyup0916@gmail.com');
 
 -- 테이블 HotelDB.wishlist 구조 내보내기
 CREATE TABLE IF NOT EXISTS `wishlist` (
@@ -1216,17 +1312,19 @@ CREATE TABLE IF NOT EXISTS `wishlist` (
   KEY `FK35mo3u4ngqvr0mtu3qbee50lm` (`user_name`),
   CONSTRAINT `FK35mo3u4ngqvr0mtu3qbee50lm` FOREIGN KEY (`user_name`) REFERENCES `users` (`user_name`),
   CONSTRAINT `FK9qlhljo04fjodkq32igfpuhos` FOREIGN KEY (`hotel_id`) REFERENCES `hotels` (`contentid`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- 테이블 데이터 HotelDB.wishlist:~7 rows (대략적) 내보내기
+-- 테이블 데이터 HotelDB.wishlist:~9 rows (대략적) 내보내기
 INSERT INTO `wishlist` (`wishlist_id`, `hotel_id`, `user_name`) VALUES
-	(2, '139190', 'seungyup8@gmail.com'),
 	(3, '137913', 'kimys75128386@gmail.com'),
 	(4, '678537', 'kimys75128386@gmail.com'),
 	(5, '139190', 'kimys75128386@gmail.com'),
 	(6, '1802452', 'kimys75128386@gmail.com'),
-	(7, '2475088', 'seungyup0916@gmail.com'),
-	(8, '2521964', 'seungyup0916@gmail.com');
+	(9, '1989501', 'seungyup0916@gmail.com'),
+	(10, '2531222', 'seungyup0916@gmail.com'),
+	(11, '7014940', 'kimys75128386@gmail.com'),
+	(12, '2531222', 'seungyup8@gmail.com'),
+	(13, '1989501', 'seungyup8@gmail.com');
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
