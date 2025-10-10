@@ -1,7 +1,9 @@
 | 구분 | 링크 |
 |------|------|
-| 🌐 **Frontend (Vue 3)** | [![Frontend Repo](https://img.shields.io/badge/GitHub-Hotelhub__Frontend-181717?logo=github)](https://github.com/TeamProject-Daewoo/Hotelhub_frontend) |
-| ⚙️ **Backend (Spring Boot)** | [![Backend Repo](https://img.shields.io/badge/GitHub-Hotelhub__Backend-181717?logo=github)](https://github.com/TeamProject-Daewoo/Hotel_booking_backend) |
+| 🌐 **User-Frontend (Vue 3)** | [![User-Frontend Repo](https://img.shields.io/badge/GitHub-Hotelhub__Frontend-181717?logo=github)](https://github.com/TeamProject-Daewoo/Hotel_booking_frontend) |
+| 🌐 **Business-Frontend (Vue 3)** | [![Business-Frontend Repo](https://img.shields.io/badge/GitHub-Hotelhub__Frontend-181717?logo=github)](https://github.com/TeamProject-Daewoo/BUS-Frontend) |
+| 🌐 **Admin-Frontend (Vue 3)** | [![Admin-Frontend Repo](https://img.shields.io/badge/GitHub-Hotelhub__Frontend-181717?logo=github)](https://github.com/TeamProject-Daewoo/ADMIN-Frontend) |
+| ⚙️ **Management-Backend (Spring Boot)** | [![Management-Backend Repo](https://img.shields.io/badge/GitHub-Hotelhub__Backend-181717?logo=github)](https://github.com/TeamProject-Daewoo/Management-Backend) |
 
 # 🏨 Hotelhub
 
