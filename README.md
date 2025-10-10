@@ -6,7 +6,8 @@
 
 ---
 
-![hotelhub-preview](docs/preview.png)
+![hotelhub-preview]<img width="1883" height="836" alt="image" src="https://github.com/user-attachments/assets/3d0f2944-0e46-4edc-8ffb-3c14074b4805" />
+
 
 ## 🌿 프로젝트 소개
 **Hotelhub**은 호텔 예약 서비스의 모든 과정을 통합한 플랫폼으로,  
