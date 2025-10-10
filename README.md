@@ -1,8 +1,8 @@
 |List| Repository | Link. |
 |------|------|------|
-|사용자 프론트엔드| 🌐 **User-Frontend (Vue 3)** | [![User-Frontend Repo](https://img.shields.io/badge/GitHub-Hotel_booking_frontend-181717?logo=github)](https://github.com/TeamProject-Daewoo/Hotel_booking_frontend) |
-|사업자 프론트엔드| 🌐 **Business-Frontend (Vue 3)** | [![Business-Frontend Repo](https://img.shields.io/badge/GitHub-BUS--Frontend-181717?logo=github)](https://github.com/TeamProject-Daewoo/BUS-Frontend) |
-|관리자 프론트엔드| 🌐 **Admin-Frontend (Vue 3)** | [![Admin-Frontend Repo](https://img.shields.io/badge/GitHub-ADMIN--Frontend-181717?logo=github)](https://github.com/TeamProject-Daewoo/ADMIN-Frontend) |
+|사용자 프론트엔드| 🌐 **Hotel_booking_frontend (Vue 3)** | [![User-Frontend Repo](https://img.shields.io/badge/GitHub-Hotel_booking_frontend-181717?logo=github)](https://github.com/TeamProject-Daewoo/Hotel_booking_frontend) |
+|사업자 프론트엔드| 🌐 **BUS-Frontend (Vue 3)** | [![Business-Frontend Repo](https://img.shields.io/badge/GitHub-BUS--Frontend-181717?logo=github)](https://github.com/TeamProject-Daewoo/BUS-Frontend) |
+|관리자 프론트엔드| 🌐 **ADMIN-Frontend (Vue 3)** | [![Admin-Frontend Repo](https://img.shields.io/badge/GitHub-ADMIN--Frontend-181717?logo=github)](https://github.com/TeamProject-Daewoo/ADMIN-Frontend) |
 |사업자+관리자 백엔드| ⚙️ **Management-Backend (Spring Boot)** | [![Management-Backend Repo](https://img.shields.io/badge/GitHub-Management--Backend-181717?logo=github)](https://github.com/TeamProject-Daewoo/Management-Backend) |
 
 
