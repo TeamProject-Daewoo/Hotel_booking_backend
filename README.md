@@ -1,3 +1,8 @@
+| 구분 | 링크 |
+|------|------|
+| 🌐 **Frontend (Vue 3)** | [![Frontend Repo](https://img.shields.io/badge/GitHub-Hotelhub__Frontend-181717?logo=github)](https://github.com/TeamProject-Daewoo/Hotelhub_frontend) |
+| ⚙️ **Backend (Spring Boot)** | [![Backend Repo](https://img.shields.io/badge/GitHub-Hotelhub__Backend-181717?logo=github)](https://github.com/TeamProject-Daewoo/Hotel_booking_backend) |
+
 # 🏨 Hotelhub
 
 > 다양한 사용자 그룹(일반 사용자, 사업자, 관리자)을 위한 **올인원 호텔 예약 생태계**  
@@ -6,7 +11,7 @@
 
 ---
 
-![hotelhub-preview]<img width="1883" height="836" alt="image" src="https://github.com/user-attachments/assets/3d0f2944-0e46-4edc-8ffb-3c14074b4805" />
+<img width="1883" height="836" alt="image" src="https://github.com/user-attachments/assets/3d0f2944-0e46-4edc-8ffb-3c14074b4805" />
 
 
 ## 🌿 프로젝트 소개
