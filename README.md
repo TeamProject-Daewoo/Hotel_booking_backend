@@ -116,5 +116,15 @@
 
 ---
 
-## 🏗️ 배포 구조도 ``` www.hotelhub.store ├── 사용자 페이지 (Hotelhub Frontend) │ └── API 요청 → /api → Hotelhub Backend │ ├── /business → 사업자 페이지 (Business-Frontend) │ └── API 요청 → /business/api → Management-Backend │ └── /admin → 관리자 페이지 (Admin-Frontend) └── API 요청 → /admin/api → Management-Backend ```
+## 🏗️ 배포 구조도
+```
+├── 사용자 페이지 (Hotelhub Frontend)
+│ └── API 요청 → /api → Hotelhub Backend
+│
+├── /business → 사업자 페이지 (Business-Frontend)
+│ └── API 요청 → /business/api → Management-Backend
+│
+└── /admin → 관리자 페이지 (Admin-Frontend)
+└── API 요청 → /admin/api → Management-Backend
+```
 
