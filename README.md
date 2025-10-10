@@ -74,4 +74,22 @@
 - Kakao Map API  
 - Tour API 4.0  
 
-###
+### ☁️ Infra
+- AWS EC2 / RDS / S3  
+- Nginx  
+- Docker / Docker Compose  
+- GitHub Actions  
+- ECR  
+
+---
+
+## 🚀 배포 및 CI/CD
+
+- GitHub Actions를 통한 **dispatch 트리거**를 사용하여  
+  `Hotel_booking_backend` 레포지토리에서 최종 배포 자동화  
+- 각 Repository를 **Docker 이미지화**하여 **AWS ECR**에 저장  
+- **EC2 서버**에서 `docker-compose` 실행을 통해 컨테이너 배포  
+- **Nginx 리버스 프록시**를 통해 프론트엔드와 백엔드 트래픽 분리  
+- Docker 기반 **무중단 배포 환경** 구성  
+
+---
