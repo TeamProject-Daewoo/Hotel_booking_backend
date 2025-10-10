@@ -1,6 +1,6 @@
-|List| Repository | Link. |
-|------|------|------|
-|사용자 프론트엔드| 🌐 **Hotel_booking_frontend (Vue 3)** | [![User-Frontend Repo](https://img.shields.io/badge/GitHub-Hotel_booking_frontend-181717?logo=github)](https://github.com/TeamProject-Daewoo/Hotel_booking_frontend) |
+|List| Repository | GitHub | Link. |
+|------|------|------|------|
+|사용자 프론트엔드| 🌐 **Hotel_booking_frontend (Vue 3)** | [![User-Frontend Repo](https://img.shields.io/badge/GitHub-Hotel_booking_frontend-181717?logo=github)](https://github.com/TeamProject-Daewoo/Hotel_booking_frontend) | 
 |사용자 백엔드 ⭐ 배포 메인| 🌐 **Hotel_booking_backend (Spring Boot)** | [![User-Frontend Repo](https://img.shields.io/badge/GitHub-Hotel_booking_backend-181717?logo=github)](https://github.com/TeamProject-Daewoo/Hotel_booking_backend) |
 |사업자 프론트엔드| 🌐 **BUS-Frontend (Vue 3)** | [![Business-Frontend Repo](https://img.shields.io/badge/GitHub-BUS--Frontend-181717?logo=github)](https://github.com/TeamProject-Daewoo/BUS-Frontend) |
 |관리자 프론트엔드| 🌐 **ADMIN-Frontend (Vue 3)** | [![Admin-Frontend Repo](https://img.shields.io/badge/GitHub-ADMIN--Frontend-181717?logo=github)](https://github.com/TeamProject-Daewoo/ADMIN-Frontend) |
@@ -108,10 +108,10 @@
 
 | 구분 | 도메인 / 경로 | 연결 대상 | 설명 |
 |------|----------------|------------|------|
-| 사용자 프론트엔드 | [www.hotelhub.store](http://www.hotelhub.store) | Hotelhub Frontend (Vue 3) | 일반 사용자용 메인 서비스 |
-| 사업자 프론트엔드 | [www.hotelhub.store/business](http://www.hotelhub.store/business) | Business-Frontend (Vue 3) | 호텔 등록 및 관리 페이지 |
-| 관리자 프론트엔드 | [www.hotelhub.store/admin](http://www.hotelhub.store/admin) | Admin-Frontend (Vue 3) | 관리자 대시보드 |
-| 사용자 백엔드 API | `/api` | Hotelhub Backend (Spring Boot) | 사용자 예약, 결제, 리뷰, 쿠폰 API |
+| 사용자 프론트엔드 | [www.hotelhub.store](http://www.hotelhub.store) | Hotel_booking_frontend (Vue 3) | 일반 사용자용 메인 서비스 |
+| 사업자 프론트엔드 | [www.hotelhub.store/business](http://www.hotelhub.store/business) | BUS-Frontend (Vue 3) | 호텔 등록 및 관리 페이지 |
+| 관리자 프론트엔드 | [www.hotelhub.store/admin](http://www.hotelhub.store/admin) | ADMIN-Frontend (Vue 3) | 관리자 대시보드 |
+| 사용자 백엔드 API | `/api` | Hotel_booking_backend (Spring Boot) | 사용자 예약, 결제, 리뷰, 쿠폰 API |
 | 사업자/관리자 백엔드 API | `/business/api`, `/admin/api` | Management-Backend (Spring Boot) | 사업자/관리자 전용 API |
 
 ---
