@@ -1,0 +1,80 @@
+name: Build Backend and Deploy All Services
+
+on:
+  push:
+    branches: [ "main" ] # 1. main 브랜치에 push될 때
+  repository_dispatch:
+    types: [ deploy-trigger ] # 2. deploy-trigger 신호를 받았을 때
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      # 1. AWS 자격 증명 설정
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      # 2. Amazon ECR에 로그인
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build backend project with Maven
+        run: mvn clean package -DskipTests
+
+      # 3. 백엔드 Docker 이미지 빌드 및 Push
+      - name: Build and push backend image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: user-backend
+          IMAGE_TAG: latest
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+      # 4. EC2에 접속하여 전체 서비스 배포
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.AWS_EC2_HOST }}
+          username: ${{ secrets.AWS_EC2_USER }}
+          key: ${{ secrets.AWS_EC2_KEY }}
+          script: |
+            # 배포 디렉토리로 이동 (없으면 생성하고 git clone)
+            if [ ! -d "/home/ubuntu/app" ]; then
+              git clone https://github.com/TeamProject-Daewoo/Hotel_booking_backend.git /home/ubuntu/app
+            fi
+            cd /home/ubuntu/app
+            git pull origin main # 최신 docker-compose.yml, nginx.conf 업데이트
+
+            # ECR 로그인
+            aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | sudo docker login --username AWS --password-stdin ${{ steps.login-ecr.outputs.registry }}
+
+            # 최신 이미지 Pull
+            sudo docker pull ${{ steps.login-ecr.outputs.registry }}/user-backend:latest
+            sudo docker pull ${{ steps.login-ecr.outputs.registry }}/management-backend:latest
+            sudo docker pull ${{ steps.login-ecr.outputs.registry }}/user-frontend:latest
+            sudo docker pull ${{ steps.login-ecr.outputs.registry }}/admin-frontend:latest
+            sudo docker pull ${{ steps.login-ecr.outputs.registry }}/business-frontend:latest
+
+            # DB 접속 정보를 담은 .env 파일 생성
+            sudo tee .env <<EOF
+            DB_URL=${{ secrets.DB_URL }}
+            DB_USERNAME=${{ secrets.DB_USERNAME }}
+            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+            SERVER_PORT=8080
+            AWS_S3_ACCESS_KEY_ID=${{ secrets.AWS_S3_ACCESS_KEY_ID }}
+            AWS_SECRET_S3_ACCESS_KEY=${{ secrets.AWS_SECRET_S3_ACCESS_KEY }}
+            EOF
+            
+            # Docker Compose로 서비스 실행
+            sudo docker-compose up -d
+            
+            sudo docker image prune -a -f

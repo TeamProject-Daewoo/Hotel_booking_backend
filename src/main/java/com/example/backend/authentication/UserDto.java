@@ -36,6 +36,7 @@ public class UserDto {
     public static class Login {
         private String username;
         private String password;
+        private String recaptchaToken;
     }
 
     @Data
