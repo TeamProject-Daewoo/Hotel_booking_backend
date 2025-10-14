@@ -31,6 +31,7 @@ public class UserService implements UserDetailsService {
     private final JwtTokenProvider jwtTokenProvider;
     private final KakaoService kakaoService;
     private final PointHistoryRepository pointHistoryRepository;
+    private final RecaptchaService recaptchaService;
 
     @Value("${point.welcome.amount:1000}") // 기본값 1000점으로 설정
     private int welcomePointAmount;
@@ -74,6 +75,11 @@ public class UserService implements UserDetailsService {
      */
     @Transactional
     public TokenInfo login(UserDto.Login loginDto) {
+    	
+    	if (!recaptchaService.verifyRecaptcha(loginDto.getRecaptchaToken())) {
+            throw new IllegalArgumentException("reCAPTCHA 검증에 실패했습니다.");
+        }
+    	
         // 1. Login ID/PW 를 기반으로 Authentication 객체 생성
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword());
