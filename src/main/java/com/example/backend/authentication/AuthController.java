@@ -55,7 +55,7 @@ public class AuthController {
     @PostMapping("/logout")
     public ResponseEntity<String> logout() {
         // 쿠키의 만료 시간을 0으로 설정하여 삭제
-        ResponseCookie deleteCookie = ResponseCookie.from("refreshToken", null)
+        ResponseCookie deleteCookie = ResponseCookie.from("refreshToken", "")
                 .maxAge(0)
                 .path("/")
                 .build();
