@@ -63,7 +63,8 @@ public class SecurityConfig {
         		"http://localhost:5173/", 
         		"http://localhost:5174/",
         		"http://localhost:6500/",
-        		"http://localhost:7000/"
+        		"http://localhost:7000/",
+        		"http://localhost:5500"
         		));
         config.addAllowedOriginPattern("http://172.29.*.*");
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
