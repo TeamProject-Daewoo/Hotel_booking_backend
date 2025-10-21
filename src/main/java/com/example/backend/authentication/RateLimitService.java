@@ -23,7 +23,7 @@ public class RateLimitService {
                 .addLimit(
                     limit ->
                         // 10번의 실패 기회 (Capacity)
-                        limit.capacity(10)
+                        limit.capacity(5)
                              // 1분에 5개씩 기회 복원 (Refill)
                             .refillGreedy(2, Duration.ofMinutes(1))
                 )
