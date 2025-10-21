@@ -3,6 +3,9 @@ FROM eclipse-temurin:17-jdk
 
 RUN apt-get update && apt-get install -y curl
 
+RUN mkdir -p /app/uploads/default
+RUN mkdir -p /app/uploads/alt
+
 # JAR 파일이 위치할 디렉토리 지정 (Maven 기준)
 ARG JAR_FILE=target/*.jar
 
