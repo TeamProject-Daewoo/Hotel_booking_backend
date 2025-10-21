@@ -47,7 +47,23 @@ public class SecurityConfig {
 						.anyRequest().permitAll()/* .authenticated() */)
             
             // 이전에 만든 JwtAuthenticationFilter를 UsernamePasswordAuthenticationFilter 앞에 추가
-            .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
+            .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
+            .exceptionHandling(exceptions -> exceptions
+                    .authenticationEntryPoint((request, response, authException) -> {
+                        // 1. 인증 실패 시 (401 - 토큰이 없거나 유효하지 않음)
+                        response.setStatus(401);
+                        response.setCharacterEncoding("UTF-8");
+                        response.setContentType("text/plain; charset=UTF-8");
+                        response.getWriter().write("에러 안알려줌 (인증 필요)");
+                    })
+                    .accessDeniedHandler((request, response, accessDeniedException) -> {
+                        // 2. 인가 실패 시 (403 - 권한이 없음)
+                        response.setStatus(403);
+                        response.setCharacterEncoding("UTF-8");
+                        response.setContentType("text/plain; charset=UTF-8");
+                        response.getWriter().write("에러 안알려줌 (권한 없음)");
+                    })
+                );
 
         return http.build();
     }
