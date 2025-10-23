@@ -1,25 +1,27 @@
 package com.example.backend.review;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import org.apache.tika.Tika;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.example.backend.authentication.User;
 import com.example.backend.authentication.UserRepository;
-import com.example.backend.common.HangulUtils;
 import com.example.backend.point.PointHistory;
 import com.example.backend.point.PointHistoryRepository;
 import com.example.backend.point.PointTransactionType;
 import com.example.backend.reservation.Reservation;
 import com.example.backend.reservation.ReservationRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -43,6 +45,9 @@ public class ReviewService {
         
         String imageUrl = null;
         if (photo != null && !photo.isEmpty()) {
+        	if (!isImageFile(photo)) {
+                throw new IllegalArgumentException("이미지 파일(jpg, png, gif)만 업로드할 수 있습니다.");
+            }
             File uploadDirFile = new File(uploadDir);
             if (!uploadDirFile.exists()) {
                 uploadDirFile.mkdirs();
@@ -112,6 +117,24 @@ public class ReviewService {
                 .imageUrl(review.getImageUrl())
                 .visitCount(visitCount)
                 .build();
+    }
+    
+    private boolean isImageFile(MultipartFile file) throws IOException {
+        if (file == null || file.isEmpty()) {
+            return false; // 파일이 없는 경우도 처리
+        }
+
+        // 허용할 MIME 타입 목록 (이미지 파일)
+        List<String> allowedMimeTypes = Arrays.asList("image/jpeg", "image/png", "image/gif");
+
+        // Apache Tika를 사용하여 파일의 실제 MIME 타입을 감지
+        Tika tika = new Tika();
+        String mimeType = tika.detect(file.getInputStream());
+        
+        System.out.println("감지된 실제 MIME 타입: " + mimeType);
+
+        // 실제 MIME 타입이 허용 목록에 있는지 확인
+        return allowedMimeTypes.contains(mimeType);
     }
 
 }

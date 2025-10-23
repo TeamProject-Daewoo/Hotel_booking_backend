@@ -1,12 +1,14 @@
 package com.example.backend.mail; // 패키지 경로는 본인 프로젝트에 맞게 수정
 
-import lombok.RequiredArgsConstructor;
+import java.security.SecureRandom;
+
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
-import java.util.Random;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -14,6 +16,7 @@ public class MailService {
 
     private final JavaMailSender mailSender;
     private final CacheManager cacheManager; // Spring의 CacheManager를 주입받음
+    private static final SecureRandom RANDOM = new SecureRandom();
     
     public enum VerificationResult {
         SUCCESS,
@@ -73,8 +76,7 @@ public class MailService {
      * 6자리 랜덤 숫자 코드 생성
      */
     private String createRandomCode() {
-        Random random = new Random();
-        int code = 100000 + random.nextInt(900000);
+    	int code = 100000 + RANDOM.nextInt(900000);
         return String.valueOf(code);
     }
 }

@@ -1,22 +1,31 @@
 package com.example.backend.mypage;
 
-import com.example.backend.point.PointHistoryDto;
-import lombok.RequiredArgsConstructor;
+import java.io.IOException;
+import java.util.List;
 
-import org.springframework.data.repository.query.Param;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.backend.point.PointHistoryDto;
 import com.example.backend.review.ReviewResponseDto;
 import com.example.backend.review.ReviewService;
-
-import java.io.IOException;
 import com.example.backend.wish.WishRequestDto;
 import com.example.backend.wish.WishResponseDto;
 
-import java.util.List;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/api/mypage")
@@ -25,6 +34,7 @@ public class MypageController {
 
     private final MypageService mypageService;
     private final ReviewService reviewService;
+    private static final Logger log = LoggerFactory.getLogger(MypageController.class);
 
     @GetMapping("/profile")
     public ResponseEntity<ProfileResponseDto> getMyProfile(Authentication authentication) {
@@ -42,6 +52,12 @@ public class MypageController {
 
     @DeleteMapping("/member")
     public ResponseEntity<Void> withdrawMember(Authentication authentication) {
+
+        // 사용자가 인증되지 않은 상태인지 확인합니다.
+        if (authentication == null || !authentication.isAuthenticated()) {
+        	log.warn("인증되지 않은 사용자의 요청입니다");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
         String currentMemberId = authentication.getName();
         mypageService.deleteMember(currentMemberId);
         return ResponseEntity.ok().build();
