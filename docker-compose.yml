@@ -12,6 +12,15 @@ services:
       - SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
       - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
       - SERVER_PORT=${SERVER_PORT}
+      - DEFAULT_UPLOAD=${DEFAULT_UPLOAD}
+      - ALT_UPLOAD=${ALT_UPLOAD}
+    volumes:
+      # EC2 서버의 /home/ubuntu/app/uploads/default 폴더를
+      # 컨테이너 내부의 /app/uploads/default 폴더와 연결합니다.
+      - ./uploads/default:/app/uploads/default
+      # EC2 서버의 /home/ubuntu/app/uploads/alt 폴더를
+      # 컨테이너 내부의 /app/uploads/alt 폴더와 연결합니다.
+      - ./uploads/alt:/app/uploads/alt
     healthcheck:
       test: ["CMD", "curl", "-f", "http://user-backend:8080/actuator/health"]
       interval: 10s
@@ -81,3 +90,4 @@ services:
     volumes:
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
+    command: renew --quiet
