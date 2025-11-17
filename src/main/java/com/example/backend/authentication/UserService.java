@@ -44,7 +44,7 @@ public class UserService implements UserDetailsService {
         userRepository.findByUsername(signUpDto.getUsername()).ifPresent(existingUser -> {
             // 사용자가 이미 존재하면, 로그인 타입을 담아 예외를 발생시킴
             throw new UserAlreadyExistsException(
-                    "이미 가입된 이메일입니다.",
+                    "이미 가입된 이메일입니다.",    
                     existingUser.getLoginType() == null ? "이메일" : existingUser.getLoginType()
             );
         });

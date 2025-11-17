@@ -40,4 +40,19 @@ public class GlobalExceptionHandler {
         
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
+
+    @ExceptionHandler(UserAlreadyExistsException.class)
+    public ResponseEntity<Map<String, String>> handleUserAlreadyExists(UserAlreadyExistsException ex) {
+        
+        // 1. 프론트엔드로 보낼 JSON 본문 생성
+        Map<String, String> responseBody = Map.of(
+            "message", ex.getMessage(),     // 예: "이미 가입된 이메일입니다."
+            "loginType", ex.getLoginType()  // 예: "이메일" 또는 "KAKAO"
+        );
+        
+        // 2. 409 Conflict 상태 코드와 함께 JSON 본문을 반환
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT) // 409
+                .body(responseBody);
+    }
 }
