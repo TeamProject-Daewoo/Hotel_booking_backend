@@ -26,7 +26,7 @@ public class KakaoService {
     @Value("${kakao.client-id}")
     private String clientId;
 
-    @Value("${kakao.redirect-uri-local}")
+    @Value("${kakao.redirect-uri}")
     private String redirectUri;
 
     @Value("${kakao.token-uri}")
