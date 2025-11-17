@@ -20,7 +20,12 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "reservations")
+@Table(name = "reservations", indexes = {
+    @Index(name = "idx_fk_contentid", columnList = "contentid"),
+    @Index(name = "idx_fk_user_name", columnList = "user_name"),
+    @Index(name = "idx_check_in_date", columnList = "check_in_date"),
+    @Index(name = "idx_check_out_date", columnList = "check_out_date")
+})
 public class Reservation {
 
     @Id

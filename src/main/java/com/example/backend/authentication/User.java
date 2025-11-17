@@ -77,7 +77,7 @@ public class User implements UserDetails {
         this.uuid = uuid;
         this.point = 0;
 
-        if (role == Role.ADMIN || role == Role.BUSINESS) {
+        if (role == Role.ADMIN_SUPER || role == Role.BUSINESS) {
             this.approvalStatus = ApprovalStatus.PENDING;
         } else {
             this.approvalStatus = ApprovalStatus.APPROVED;

@@ -6,6 +6,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,7 +17,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-@Table(name = "HOTEL_INTRO")
+@Table(name = "HOTEL_INTRO", indexes = {
+    @Index(name = "idx_contentid", columnList = "contentid")
+})
 public class Intro {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -19,6 +19,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "regions", uniqueConstraints = {
     @UniqueConstraint(columnNames = {"code", "area_code"}),
+}, indexes = {
+    @Index(name = "idx_name_chosung", columnList = "name_chosung"),
+    @Index(name = "idx_name", columnList = "name")
 })
 public class Region {
 
