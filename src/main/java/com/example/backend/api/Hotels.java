@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,7 +17,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
-@Table(name = "HOTELS")
+@Table(name = "HOTELS", indexes = {
+    @Index(name = "idx_title", columnList = "title"),
+    @Index(name = "idx_addr1", columnList = "addr1"),
+    @Index(name = "idx_business_registration_number", columnList = "business_registration_number")
+})
 public class Hotels {
     private Long id;
     

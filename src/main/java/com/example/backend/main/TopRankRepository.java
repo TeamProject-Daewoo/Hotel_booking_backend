@@ -26,7 +26,8 @@ public interface TopRankRepository extends JpaRepository<Hotels, String> {
         "LEFT JOIN Review r ON h.contentid = r.hotel.contentid " +
         "LEFT JOIN Reservation res ON h.contentid = res.hotel.contentid AND res.checkInDate >= :startDate " +
         "GROUP BY h.contentid, h.title, h.addr1 " +
-        "ORDER BY COUNT(DISTINCT res.reservationId) DESC, COALESCE(AVG(r.rating), 0.0) DESC"
+        "ORDER BY COUNT(DISTINCT res.reservationId) DESC, COALESCE(AVG(r.rating), 0.0) DESC " +
+        "LIMIT 10"
     )
     List<TopRankResponseDto> findTopRankings(
         @Param("startDate") LocalDate startDate,

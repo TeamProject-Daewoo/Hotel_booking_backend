@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,7 +15,9 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "ROOMS")
+@Table(name = "ROOMS", indexes = {
+    @Index(name = "idx_contentid", columnList = "contentid")
+})
 public class Detail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
