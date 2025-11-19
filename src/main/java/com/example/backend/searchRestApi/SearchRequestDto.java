@@ -18,4 +18,6 @@ public class SearchRequestDto {
     private Map<String, Boolean> amenities;
     private String order;
     private String category;
+    private int page;
+    private int size;
 }

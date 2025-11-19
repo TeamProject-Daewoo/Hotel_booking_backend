@@ -18,7 +18,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SearchService {
     
-    @Autowired
     private final SearchRepository searchRepository;
     private final ReservationService reservationService;
 
