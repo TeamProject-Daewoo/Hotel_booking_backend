@@ -30,6 +30,8 @@ public class SearchWarmup implements CommandLineRunner {
         dummyDto.setCategory("HOTEL");
         dummyDto.setAmenities(new HashMap<>());
         dummyDto.setFreebies(new HashMap<>()); 
+        dummyDto.setPage(1);
+        dummyDto.setSize(1);
         // 2. 서비스 로직 호출 (웜업 실행)
         try {
             searchService.findBySearchElements(dummyDto);

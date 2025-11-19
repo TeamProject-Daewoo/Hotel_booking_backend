@@ -50,6 +50,7 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
         this.queryFactory = queryFactory;
     }
 
+    //최종 결과 카운트와 실제 데이터 합쳐서 반환
     @Override
     public SearchResponseDto findBySearchElements(SearchRequestDto searchRequest) {
         JPAQuery<?> baseQuery = createBaseQuery(searchRequest);
@@ -63,27 +64,8 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
         
         return responseDto;
     }
-    
-    // 검색 조건에 맞는 호텔을 조회하는 공통 BaseQuery를 생성
-    @Override
-    public JPAQuery<?> createBaseQuery(SearchRequestDto searchRequest) {
-        BooleanBuilder commonCondition = getCommonConditions(searchRequest, searchRequest.getCheckInDate(), searchRequest.getCheckOutDate());
-        BooleanExpression availabilityCondition = createAvailabilityCondition(searchRequest);
 
-        return queryFactory
-            .from(hotels)
-            .leftJoin(rooms).on(hotels.contentid.eq(rooms.contentid))
-            .leftJoin(intro).on(hotels.contentid.eq(intro.contentid))
-            .leftJoin(review).on(review.hotel.contentid.eq(hotels.contentid)
-                .and(review.isDeleted.isFalse()))
-            .where(
-                commonCondition
-                    .and(availabilityCondition) // 예약 가능 조건
-                    .and(categorySelectCondition(searchRequest.getCategory())) // 카테고리 선택 조건 O
-            )
-            .having(ratingGoe(searchRequest.getRating()));
-    }
-
+    //카테고리 필터를 제외한 전체 개수 반환(카테고리 필터링을 적용하면, 선택한 카테고리에 따라 총 개수가 달라짐)
     @Override
     public JPAQuery<?> createCountBaseQuery(SearchRequestDto searchRequest) {
         BooleanBuilder commonCondition = getCommonConditions(searchRequest, searchRequest.getCheckInDate(), searchRequest.getCheckOutDate());
@@ -100,6 +82,14 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
                 // 카테고리 선택 조건 X
             )
             .having(ratingGoe(searchRequest.getRating()));
+    }
+
+    // 카테고리에 따른 실제 결과만 반환
+    @Override
+    public JPAQuery<?> createBaseQuery(SearchRequestDto searchRequest) {
+        return createCountBaseQuery(searchRequest).where(
+            categorySelectCondition(searchRequest.getCategory())    // 기존 쿼리에서 카테고리 선택 조건만 추가
+        );
     }
 
     // 실제 카드 목록만 받아오는 쿼리
@@ -131,6 +121,8 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
             )
             .groupBy(hotels.contentid, hotels.title, hotels.firstimage, hotels.addr1, hotels.mapx, hotels.mapy)
             .orderBy(orderCondition(searchRequest.getOrder(), RESERVATION_COUNT_ALIAS))
+            .offset((long) (searchRequest.getPage() - 1) * searchRequest.getSize())
+            .limit(searchRequest.getSize())
             .fetch();
     }
     private BooleanExpression createAvailabilityCondition(SearchRequestDto searchRequest) {
@@ -385,6 +377,7 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
         if (orderSpecifier != null) {
             specifiers.add(orderSpecifier);
         }
+        specifiers.add(hotels.contentid.asc()); //페이징 시 중복 데이터 문제를 피하기 위한 최소한의 정렬
         
         return specifiers.toArray(new OrderSpecifier[0]);
     }
