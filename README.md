@@ -117,14 +117,5 @@
 ---
 
 ## 🏗️ 배포 구조도
-```
-├── 사용자 페이지 (Hotelhub Frontend)
-│ └── API 요청 → /api → Hotelhub Backend
-│
-├── /business → 사업자 페이지 (Business-Frontend)
-│ └── API 요청 → /business/api → Management-Backend
-│
-└── /admin → 관리자 페이지 (Admin-Frontend)
-└── API 요청 → /admin/api → Management-Backend
-```
+<img width="1280" height="720" alt="Image" src="https://github.com/user-attachments/assets/ae5b1965-a03f-4892-a96d-389b8016f779" />
 
